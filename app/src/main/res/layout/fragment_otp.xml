@@ -106,11 +106,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:text="@string/signup_title"
+                    android:text="Verify OTP"
                     android:textColor="#101010"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvBackToLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Back to login"
+                    android:textColor="#00C896"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/titleSignUp"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
@@ -122,7 +134,7 @@
                     android:text="@string/label_username_email"
                     android:textColor="#737373"
                     android:textSize="14sp"
-                    app:layout_constraintTop_toBottomOf="@id/titleSignUp"
+                    app:layout_constraintTop_toBottomOf="@id/tvBackToLogin"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <EditText
@@ -286,7 +298,6 @@
                     app:layout_constraintTop_toTopOf="@id/tvHaveAccount"
                     app:layout_constraintBottom_toBottomOf="@id/tvHaveAccount"
                     app:layout_constraintStart_toEndOf="@id/tvHaveAccount" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

@@ -8,17 +8,17 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 
-class fragment_signup : Fragment() {
+class fragment_otp : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_signup, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_otp, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val btnSignUp = view.findViewById<TextView>(R.id.btnSignUp)
-        btnSignUp.setOnClickListener {
-            findNavController().navigate(R.id.action_fragment_signup_to_fragment_otp)
+        val tvBackToLogin = view.findViewById<TextView>(R.id.tvBackToLogin)
+        tvBackToLogin.setOnClickListener {
+            findNavController().navigate(R.id.action_fragment_otp_to_fragment_signup)
         }
     }
 }

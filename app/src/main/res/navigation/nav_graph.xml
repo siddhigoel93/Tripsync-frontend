@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragment_signup">
+
+    <fragment
+        android:id="@+id/fragment_signup"
+        android:name="com.example.tripsync.fragment_signup"
+        android:label="Sign Up"
+        tools:layout="@layout/fragment_signup" >
+        <action
+            android:id="@+id/action_fragment_signup_to_fragment_otp"
+            app:destination="@id/fragment_otp" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_otp"
+        android:name="com.example.tripsync.fragment_otp"
+        android:label="fragment_otp"
+        tools:layout="@layout/fragment_otp" >
+        <action
+            android:id="@+id/action_fragment_otp_to_fragment_signup"
+            app:destination="@id/fragment_signup" />
+    </fragment>
+</navigation>
