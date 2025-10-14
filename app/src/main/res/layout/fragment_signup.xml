@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,7 +13,7 @@
         android:layout_height="0dp"
         android:background="#D9F3FD"
         android:fillViewport="true"
-        android:scrollbarStyle="outsideOverlay"
+        android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +22,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingBottom="24dp"
             tools:layout_width="360dp"
             tools:layout_height="800dp">
 
@@ -45,13 +47,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintGuide_begin="48dp" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/gCardTop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.2688" />
 
             <TextView
                 android:id="@+id/headline"
@@ -90,16 +85,19 @@
                 app:layout_constraintStart_toStartOf="@id/gStart"
                 app:layout_constraintEnd_toEndOf="@id/gEnd" />
 
+            <!-- White card extends to bottom (height=0dp, top & bottom constrained) -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/signUpCard"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:background="@drawable/white_card"
                 android:paddingTop="24dp"
                 android:paddingBottom="24dp"
-                app:layout_constraintTop_toTopOf="@id/gCardTop"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/subText"
                 app:layout_constraintStart_toStartOf="@id/gStart"
-                app:layout_constraintEnd_toEndOf="@id/gEnd">
+                app:layout_constraintEnd_toEndOf="@id/gEnd"
+                app:layout_constraintBottom_toBottomOf="parent">
 
                 <TextView
                     android:id="@+id/titleSignUp"
@@ -248,11 +246,26 @@
                 </FrameLayout>
 
                 <TextView
+                    android:id="@+id/tvConfirmError"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="6dp"
+                    android:text="Both passwords are different"
+                    android:textColor="#D32F2F"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/confirmContainer"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <TextView
                     android:id="@+id/btnSignUp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="111dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/next_button"
                     android:gravity="center"
@@ -261,7 +274,7 @@
                     android:text="@string/sign_up"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
-                    app:layout_constraintTop_toBottomOf="@id/confirmContainer"
+                    app:layout_constraintTop_toBottomOf="@id/tvConfirmError"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
@@ -286,7 +299,6 @@
                     app:layout_constraintTop_toTopOf="@id/tvHaveAccount"
                     app:layout_constraintBottom_toBottomOf="@id/tvHaveAccount"
                     app:layout_constraintStart_toEndOf="@id/tvHaveAccount" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
