@@ -1,5 +1,6 @@
 package com.example.tripsync
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -46,8 +47,10 @@ class fragment_otp : Fragment() {
         val subText = view.findViewById<TextView>(R.id.subText)
         val backtologin = view.findViewById<TextView>(R.id.tvBackToLogin)
 
+        backtologin.paintFlags = backtologin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
         backtologin.setOnClickListener {
-            view.findNavController().navigate(R.id.action_fragment_signup_to_login)
+            view.findNavController().navigate(R.id.action_fragment_otp_to_login)
         }
 
         boxes = listOf(et1, et2, et3, et4, et5, et6)

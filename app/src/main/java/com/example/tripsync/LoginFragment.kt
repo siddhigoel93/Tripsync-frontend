@@ -7,10 +7,10 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-
 class LoginFragment : Fragment() {
 
     private var isRemembered = false
@@ -32,6 +32,8 @@ class LoginFragment : Fragment() {
         val btnNext = view.findViewById<Button>(R.id.btnNext)
         val usernameError = view.findViewById<TextView>(R.id.usernameError)
         val passwordError = view.findViewById<TextView>(R.id.passwordError)
+
+
 
         forgotPassword.paintFlags = forgotPassword.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         signup.paintFlags = signup.paintFlags or Paint.UNDERLINE_TEXT_FLAG
