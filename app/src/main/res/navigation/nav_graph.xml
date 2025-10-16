@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragment_signup">
+    app:startDestination="@id/onboardingFragment">
 
     <fragment
         android:id="@+id/fragment_signup"
@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_fragment_signup_to_fragment_otp"
             app:destination="@id/fragment_otp" />
+        <action
+            android:id="@+id/action_fragment_signup_to_login"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragment_otp"
@@ -20,7 +23,48 @@
         android:label="fragment_otp"
         tools:layout="@layout/fragment_otp" >
         <action
-            android:id="@+id/action_fragment_otp_to_fragment_signup"
+            android:id="@+id/action_fragment_otp_to_login"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.example.tripsync.onboarding.OnboardingFragment"
+        android:label="Onboarding">
+        <action
+            android:id="@+id/action_onboarding_to_login"
+            app:destination="@id/loginFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.tripsync.LoginFragment"
+        android:label="Login">
+        <action
+            android:id="@+id/action_login_to_forgot"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_login_to_signup"
             app:destination="@id/fragment_signup" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.example.tripsync.ResetPasswordFragment"
+        android:label="Reset Password" >
+        <action
+            android:id="@+id/action_resetPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.tripsync.ForgotPasswordFragment"
+        android:label="Forgot Password" >
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_resetPasswordFragment"
+            app:destination="@id/resetPasswordFragment" />
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 
 class fragment_signup : Fragment() {
@@ -55,6 +56,11 @@ class fragment_signup : Fragment() {
         val signUpCard = view.findViewById<View>(R.id.signUpCard)
         val headline = view.findViewById<TextView>(R.id.headline)
         val subText = view.findViewById<TextView>(R.id.subText)
+        val signin = view.findViewById<TextView>(R.id.tvSignIn)
+
+        signin.setOnClickListener {
+            view.findNavController().navigate(R.id.action_fragment_signup_to_login)
+        }
 
         fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
             val start = editText.selectionStart

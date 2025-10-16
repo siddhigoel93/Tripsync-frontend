@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 
 class fragment_otp : Fragment() {
@@ -39,11 +40,15 @@ class fragment_otp : Fragment() {
         et4 = view.findViewById(R.id.et4)
         et5 = view.findViewById(R.id.et5)
         et6 = view.findViewById(R.id.et6)
-        val tvBack = view.findViewById<TextView>(R.id.tvBackToLogin)
         val scrollView = view.findViewById<ScrollView>(R.id.scrollViewOtp)
         val otpCard = view.findViewById<View>(R.id.otpCard)
         val headline = view.findViewById<TextView>(R.id.headline)
         val subText = view.findViewById<TextView>(R.id.subText)
+        val backtologin = view.findViewById<TextView>(R.id.tvBackToLogin)
+
+        backtologin.setOnClickListener {
+            view.findNavController().navigate(R.id.action_fragment_signup_to_login)
+        }
 
         boxes = listOf(et1, et2, et3, et4, et5, et6)
 
@@ -81,9 +86,6 @@ class fragment_otp : Fragment() {
 
         et1.requestFocus()
 
-        tvBack.setOnClickListener {
-            findNavController().navigate(R.id.action_fragment_otp_to_fragment_signup)
-        }
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())

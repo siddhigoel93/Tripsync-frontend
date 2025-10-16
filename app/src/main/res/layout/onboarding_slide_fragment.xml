@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D9F3FD">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.08"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.92"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.96"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.585"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/roboto_black"
+        android:text="PLAN"
+        android:textColor="#009DD7"
+        android:textSize="38sp"
+        app:layout_constraintBottom_toTopOf="@id/img"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/img"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:paddingHorizontal="12dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/plan"
+        app:layout_constraintBottom_toTopOf="@id/guide_middle"
+        app:layout_constraintStart_toStartOf="@id/guide_left"
+        app:layout_constraintEnd_toEndOf="@id/guide_right" />
+    <View
+        android:id="@+id/signInCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/white_card"
+        app:layout_constraintTop_toBottomOf="@id/guide_middle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <LinearLayout
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:id="@+id/bar1"
+            android:layout_width="22dp"
+            android:layout_height="4dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/progress_selected"/>
+        <View
+            android:id="@+id/bar2"
+            android:layout_width="22dp"
+            android:layout_height="4dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/progress_element"/>
+        <View
+            android:id="@+id/bar3"
+            android:layout_width="22dp"
+            android:layout_height="4dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/progress_element"/>
+        <View
+            android:id="@+id/bar4"
+            android:layout_width="22dp"
+            android:layout_height="4dp"
+            android:background="@drawable/progress_element"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Smart Destination Discovery"
+        android:textColor="#00A078"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/progress"
+        app:layout_constraintStart_toStartOf="@id/guide_left"
+        app:layout_constraintEnd_toEndOf="@id/guide_right"/>
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:text="Explore trending destinations, hidden gems,\nand personalized recommendations — all in\none place."
+        android:textColor="#000000"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="@id/guide_right"
+        app:layout_constraintStart_toStartOf="@id/guide_left"
+        app:layout_constraintTop_toBottomOf="@id/tvHeading" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:background="@drawable/nextbutton"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        app:backgroundTint="#00B487"
+        android:paddingVertical="8dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@id/guide_left"
+        app:layout_constraintEnd_toEndOf="@id/guide_right"
+        app:layout_constraintTop_toBottomOf="@id/text"
+       />
+
+    <TextView
+        android:id="@+id/skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Skip"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        app:layout_goneMarginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@id/btn"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,10 @@
-<resources>
-    <style name="Theme.TripSync" parent="Theme.Material3.DayNight.NoActionBar">
+
+<resources xmlns:tools="http://schemas.android.com/tools" >
+    <style name="Base.Theme.TripSync" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="android:windowFullscreen">false</item>
     </style>
 </resources>
+
