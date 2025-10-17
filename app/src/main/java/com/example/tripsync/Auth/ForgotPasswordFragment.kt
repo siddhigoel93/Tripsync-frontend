@@ -2,6 +2,7 @@ package com.example.tripsync.Auth
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,8 @@ import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import kotlin.math.log
 
 class ForgotPasswordFragment : Fragment() {
 
@@ -77,26 +80,43 @@ class ForgotPasswordFragment : Fragment() {
         return view
     }
 
-    private fun sendResetOtp(email: String,  view: View) {
-
-
+    private fun sendResetOtp(email: String, view: View) {
         lifecycleScope.launch {
             try {
                 val authService = ApiClient.getAuthService(requireContext())
-                val response = authService.requestPasswordReset(EmailRequest(email))
+                val request = EmailRequest(email)
+                Log.d("ForgotPassword", "Sending request: $request")
 
+                val response = authService.requestPasswordReset(request)
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP sent successfully!", Toast.LENGTH_SHORT).show()
                     val bundle = Bundle().apply { putString("email", email) }
                     view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetOTP, bundle)
                 } else {
-                    val error = response.errorBody()?.string()
-                    Toast.makeText(requireContext(), "Failed to send OTP :  $error", Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ForgotPassword", "Failed to send OTP: $errorBody")
+
+                    // Try parsing JSON for backend error details
+                    val message = try {
+                        val json = JSONObject(errorBody ?: "{}")
+                        val errors = json.optJSONObject("errors")
+                        if (errors?.optJSONArray("email") != null) {
+                            "Your account is not verified. Please verify your email first."
+                        } else {
+                            json.optString("message", "Failed to send OTP")
+                        }
+                    } catch (ex: Exception) {
+                        "Failed to send OTP"
+                    }
+
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
+                Log.e("ForgotPassword", "Exception occurred", e)
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 }

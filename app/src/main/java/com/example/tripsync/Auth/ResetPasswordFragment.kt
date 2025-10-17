@@ -1,9 +1,12 @@
 package com.example.tripsync.Auth
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +32,7 @@ class ResetPasswordFragment : Fragment() {
     private lateinit var ivPasswordEye2: ImageView
     private lateinit var passwordConfirmError: TextView
     private lateinit var signInText: TextView
-    private lateinit var passwordField: View
+    private lateinit var passwordField: EditText
     private lateinit var passwordConfirmField: View
 
     private var isPasswordVisible1 = false
@@ -48,8 +51,20 @@ class ResetPasswordFragment : Fragment() {
         ivPasswordEye2 = view.findViewById(R.id.ivPasswordEye)
         passwordConfirmError = view.findViewById(R.id.passwordConfirmError)
         signInText = view.findViewById(R.id.signup)
-        passwordField = view.findViewById(R.id.passwordField)
+        passwordField = view.findViewById(R.id.etPassword)
         passwordConfirmField = view.findViewById(R.id.passwordConfirmField)
+
+        // Rules icons
+        val icon1 = view.findViewById<ImageView>(R.id.icon1)
+        val icon2 = view.findViewById<ImageView>(R.id.icon2)
+        val icon3 = view.findViewById<ImageView>(R.id.icon3)
+        val icon4 = view.findViewById<ImageView>(R.id.icon4)
+
+        // Rules text
+        val rule1 = view.findViewById<TextView>(R.id.rule1)
+        val rule2 = view.findViewById<TextView>(R.id.rule2)
+        val rule3 = view.findViewById<TextView>(R.id.rule3)
+        val rule4 = view.findViewById<TextView>(R.id.rule4)
 
         signInText.paintFlags = signInText.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
@@ -63,6 +78,26 @@ class ResetPasswordFragment : Fragment() {
                 if (hasFocus) R.drawable.selected_input else R.drawable.input_border
             )
         }
+
+        passwordField.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val password = s.toString()
+                val hasMinLength = password.length >= 8
+                val hasUppercase = password.any { it.isUpperCase() }
+                val hasSpecial = password.any { "!@#$%^&*(),.?\":{}|<>".contains(it) }
+                val hasNumber = password.any { it.isDigit() }
+
+                // Update rules dynamically
+                updateRule(hasMinLength, icon1, rule1)
+                updateRule(hasUppercase, icon2, rule2)
+                updateRule(hasSpecial, icon3, rule3)
+                updateRule(hasNumber, icon4, rule4)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         setupPasswordToggle()
         setupButton()
@@ -149,11 +184,22 @@ class ResetPasswordFragment : Fragment() {
         }
     }
 
-    fun showPasswordNoteDialog() {
+    private fun showPasswordNoteDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_password_note, null)
         val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
         dialogView.findViewById<TextView>(R.id.btnCloseNote).setOnClickListener { dialog.dismiss() }
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun updateRule(isValid: Boolean, icon: ImageView, textView: TextView) {
+        if (isValid) {
+            icon.setColorFilter(Color.parseColor("#00C896")) // green tick
+            textView.setTextColor(Color.parseColor("#00C896"))
+        }
+//        else {
+//            icon.setColorFilter(Color.parseColor("#9E9E9E")) // grey
+//            textView.setTextColor(Color.parseColor("#9E9E9E"))
+//        }
     }
 }

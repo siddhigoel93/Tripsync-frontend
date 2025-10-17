@@ -125,9 +125,9 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
                     val response = authService.loginUser(request)
 
                     Toast.makeText(requireContext(), "Login Successful!", Toast.LENGTH_SHORT).show()
-
-                    val accessToken = response.data?.tokens?.access
-                    val refreshToken = response.data?.tokens?.refresh
+                    val responseBody = response.body()
+                    val accessToken = responseBody?.data?.tokens?.access
+                    val refreshToken = responseBody?.data?.tokens?.refresh
 //                    println("Access Token: $accessToken")
 //                    println("Refresh Token: $refreshToken")
                     val prefs = requireContext().getSharedPreferences("auth", 0)
@@ -146,10 +146,10 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
                     }
                     when (e.code()) {
                         400, 401 -> {
-                            passwordError.text = "(Invalid credentials)"
+                            usernameError.text = "(Invalid credentials)"
                             etUsername.setBackgroundResource(R.drawable.wrong_input)
                             passwordField.setBackgroundResource(R.drawable.wrong_input)
-                            passwordError.visibility = View.VISIBLE
+                            usernameError.visibility = View.VISIBLE
                         }
                         403 -> {
                             usernameError.text = "(Invalid or wrong username)"
@@ -166,7 +166,7 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
                         }
                     }
                 } catch (e: IOException) {
-                    Toast.makeText(requireContext(), "Network failure:: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Network failure: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Unexpected error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }
