@@ -1,7 +1,6 @@
 package com.example.tripsync.api.models
 
-
-data class OTPVerifyRequest(
+data class RegistrationOtpVerifyRequest(
     val email: String,
     val otp: String
 )

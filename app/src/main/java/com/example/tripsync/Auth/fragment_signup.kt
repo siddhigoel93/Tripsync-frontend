@@ -11,15 +11,21 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
+import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.models.RegisterRequest
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 class fragment_signup : Fragment() {
+
 
     private var passVisible = false
     private var confirmVisible = false
@@ -31,6 +37,7 @@ class fragment_signup : Fragment() {
             override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
                 source.subSequence(startIndex, endIndex)
         }
+
         override fun getTransformation(source: CharSequence?, view: View?): CharSequence {
             if (source == null) return ""
             return AsteriskCharSequence(source)
@@ -113,7 +120,8 @@ class fragment_signup : Fragment() {
         fun showPasswordNoteDialog() {
             val dialogView = layoutInflater.inflate(R.layout.dialog_password_note, null)
             val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
-            dialogView.findViewById<TextView>(R.id.btnCloseNote).setOnClickListener { dialog.dismiss() }
+            dialogView.findViewById<TextView>(R.id.btnCloseNote)
+                .setOnClickListener { dialog.dismiss() }
             dialog.show()
             dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         }
@@ -136,11 +144,13 @@ class fragment_signup : Fragment() {
                 return@setOnClickListener
             }
 
-            if (p1.isNotEmpty() && p2.isNotEmpty() && p1 == p2) {
-                findNavController().navigate(R.id.action_fragment_signup_to_fragment_otp)
-            } else {
+            if (p1 != p2) {
                 showPasswordError("Both passwords are different")
+                return@setOnClickListener
             }
+
+            // ✅ Call API to register user
+            registerUser(email, p1, p2, view)
         }
 
         val watcher = object : TextWatcher {
@@ -160,7 +170,8 @@ class fragment_signup : Fragment() {
             val keyboardHeight = ime.bottom
             if (keyboardHeight > 0) {
                 signUpCard.animate().translationY(-keyboardHeight * 0.6f).setDuration(200).start()
-                headline.animate().translationY(-keyboardHeight * 0.28f).scaleX(0.88f).scaleY(0.88f).setDuration(200).start()
+                headline.animate().translationY(-keyboardHeight * 0.28f).scaleX(0.88f).scaleY(0.88f)
+                    .setDuration(200).start()
                 subText.animate().alpha(0.0f).setDuration(200).start()
                 scrollView.postDelayed({
                     scrollView.smoothScrollTo(0, signUpCard.top)
@@ -173,4 +184,44 @@ class fragment_signup : Fragment() {
             insets
         }
     }
+
+    private fun registerUser(email: String, password: String, password2: String, view: View) {
+        lifecycleScope.launch {
+            try {
+                val api = ApiClient.getAuthService(requireContext())
+                val response = api.registerUser(RegisterRequest(email, password, password2))
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    if (body != null && body.status == "success") {
+                        Toast.makeText(
+                            requireContext(),
+                            "OTP sent successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        val bundle = Bundle().apply { putString("email", email) }
+                        view.findNavController()
+                            .navigate(R.id.action_fragment_signup_to_fragment_otp, bundle)
+                    } else {
+                        // Show API error message (like invalid email / already registered)
+                        val errorMsg = body?.message ?: "Registration failed"
+                        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // Parse errorBody if server returns error
+                    val errorBody = response.errorBody()?.string()
+                    val errorMsg = try {
+                        JSONObject(errorBody ?: "{}").optString("message", "Registration failed")
+                    } catch (_: Exception) {
+                        "Registration failed"
+                    }
+                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
 }

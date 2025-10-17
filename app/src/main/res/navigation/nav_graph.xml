@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_otp"
-        android:name="com.example.tripsync.Auth.fragment_otp"
+        android:name="com.example.tripsync.Auth.FragmentOtp"
         android:label="fragment_otp"
         tools:layout="@layout/fragment_otp" >
         <action

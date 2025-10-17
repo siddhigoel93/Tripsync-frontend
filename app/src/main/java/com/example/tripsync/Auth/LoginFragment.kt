@@ -94,7 +94,6 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
         }
 
 
-
         btnNext.setOnClickListener {
             usernameError.visibility = View.GONE
             passwordError.visibility = View.GONE
@@ -124,46 +123,41 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
                     val request = LoginRequest(email, password)
                     val response = authService.loginUser(request)
 
-                    Toast.makeText(requireContext(), "Login Successful!", Toast.LENGTH_SHORT).show()
-                    val responseBody = response.body()
-                    val accessToken = responseBody?.data?.tokens?.access
-                    val refreshToken = responseBody?.data?.tokens?.refresh
-//                    println("Access Token: $accessToken")
-//                    println("Refresh Token: $refreshToken")
-                    val prefs = requireContext().getSharedPreferences("auth", 0)
-                    prefs.edit().apply {
-                        putString("access_token", accessToken)
-                        putString("refresh_token", refreshToken)
-                        apply()
-                    }
-//                      navigation code
-                } catch (e: HttpException) {
-                    val errorBody = e.response()?.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody ?: "{}").optString("message", "Invalid credentials")
-                    } catch (_: Exception) {
-                        "Invalid credentials"
-                    }
-                    when (e.code()) {
-                        400, 401 -> {
-                            usernameError.text = "(Invalid credentials)"
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        if (body != null && body.status == "success") {  // API-level check
+                            val accessToken = body.data?.tokens?.access
+                            val refreshToken = body.data?.tokens?.refresh
+
+                            // Save tokens
+                            val prefs = requireContext().getSharedPreferences("auth", 0)
+                            prefs.edit().apply {
+                                putString("access_token", accessToken)
+                                putString("refresh_token", refreshToken)
+                                apply()
+                            }
+
+                            Toast.makeText(requireContext(), "Login Successful!", Toast.LENGTH_SHORT).show()
+                            // Navigate to home
+//
+                        } else {
+                            val errorMessage = body?.message ?:"(No user found with this email)"
+                            usernameError.text = "($errorMessage)"
+                            usernameError.visibility = View.VISIBLE
                             etUsername.setBackgroundResource(R.drawable.wrong_input)
                             passwordField.setBackgroundResource(R.drawable.wrong_input)
-                            usernameError.visibility = View.VISIBLE
                         }
-                        403 -> {
-                            usernameError.text = "(Invalid or wrong username)"
-                            etUsername.setBackgroundResource(R.drawable.wrong_input)
-                            usernameError.visibility = View.VISIBLE
+                    } else {
+                        val errorBody = response.errorBody()?.string()
+                        val errorMessage = try {
+                            JSONObject(errorBody ?: "{}").optString("message", "Invalid credentials")
+                        } catch (_: Exception) {
+                            "Invalid credentials"
                         }
-                        404 -> {
-                            usernameError.text = "(No user found with this email)"
-                            etUsername.setBackgroundResource(R.drawable.wrong_input)
-                            usernameError.visibility = View.VISIBLE
-                        }
-                        else -> {
-                            Toast.makeText(requireContext(), "Error : ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
+                        usernameError.text = "($errorMessage)"
+                        usernameError.visibility = View.VISIBLE
+                        etUsername.setBackgroundResource(R.drawable.wrong_input)
+                        passwordField.setBackgroundResource(R.drawable.wrong_input)
                     }
                 } catch (e: IOException) {
                     Toast.makeText(requireContext(), "Network failure: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
@@ -172,6 +166,7 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
                 }
             }
         }
+
 
         return view
     }

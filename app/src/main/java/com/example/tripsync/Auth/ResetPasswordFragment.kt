@@ -19,7 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
-import com.example.tripsync.api.models.OTPVerifyRequest
+import com.example.tripsync.api.models.ResetPasswordOTPRequest
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 
@@ -54,7 +54,7 @@ class ResetPasswordFragment : Fragment() {
         passwordField = view.findViewById(R.id.etPassword)
         passwordConfirmField = view.findViewById(R.id.passwordConfirmField)
 
-        // Rules icons
+        // Password rules icons
         val icon1 = view.findViewById<ImageView>(R.id.icon1)
         val icon2 = view.findViewById<ImageView>(R.id.icon2)
         val icon3 = view.findViewById<ImageView>(R.id.icon3)
@@ -68,6 +68,7 @@ class ResetPasswordFragment : Fragment() {
 
         signInText.paintFlags = signInText.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
+        // Focus change highlighting
         etPassword2.setOnFocusChangeListener { _, hasFocus ->
             passwordConfirmField.setBackgroundResource(
                 if (hasFocus) R.drawable.selected_input else R.drawable.input_border
@@ -79,23 +80,16 @@ class ResetPasswordFragment : Fragment() {
             )
         }
 
-        passwordField.addTextChangedListener(object : TextWatcher {
+        // Password rules validation
+        etPassword.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val password = s.toString()
-                val hasMinLength = password.length >= 8
-                val hasUppercase = password.any { it.isUpperCase() }
-                val hasSpecial = password.any { "!@#$%^&*(),.?\":{}|<>".contains(it) }
-                val hasNumber = password.any { it.isDigit() }
-
-                // Update rules dynamically
-                updateRule(hasMinLength, icon1, rule1)
-                updateRule(hasUppercase, icon2, rule2)
-                updateRule(hasSpecial, icon3, rule3)
-                updateRule(hasNumber, icon4, rule4)
+                updateRule(password.length >= 8, icon1, rule1)
+                updateRule(password.any { it.isUpperCase() }, icon2, rule2)
+                updateRule(password.any { "!@#$%^&*(),.?\":{}|<>".contains(it) }, icon3, rule3)
+                updateRule(password.any { it.isDigit() }, icon4, rule4)
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
 
@@ -119,13 +113,12 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun togglePasswordVisibility(editText: EditText, eyeIcon: ImageView, isVisible: Boolean) {
-        if (isVisible) {
-            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-            eyeIcon.setImageResource(R.drawable.eye)
-        } else {
-            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            eyeIcon.setImageResource(R.drawable.eyedisable)
-        }
+        editText.inputType = if (isVisible)
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        else
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+        eyeIcon.setImageResource(if (isVisible) R.drawable.eye else R.drawable.eyedisable)
         editText.setSelection(editText.text.length)
     }
 
@@ -143,10 +136,7 @@ class ResetPasswordFragment : Fragment() {
                     passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
                     passwordConfirmError.visibility = View.GONE
                 }
-                pass1.length < 8 -> {
-                    showPasswordNoteDialog()
-                    passwordConfirmError.visibility = View.GONE
-                }
+                pass1.length < 8 -> showPasswordNoteDialog()
                 pass1 != pass2 -> {
                     passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
                     passwordConfirmError.visibility = View.VISIBLE
@@ -163,14 +153,15 @@ class ResetPasswordFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val api = ApiClient.getAuthService(requireContext())
-                val request = OTPVerifyRequest(email, otp, newPassword, confirmPassword)
-                val response = api.verifyOtp(request)
+                val request = ResetPasswordOTPRequest(email, otp, newPassword, confirmPassword)
+                val response = api.verifyPasswordResetOtp(request)
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Password reset successfully!", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
                 } else {
-                    Toast.makeText(requireContext(), "Failed: Invalid OTP or data", Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    Toast.makeText(requireContext(), "Failed: $errorBody", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -197,9 +188,5 @@ class ResetPasswordFragment : Fragment() {
             icon.setColorFilter(Color.parseColor("#00C896")) // green tick
             textView.setTextColor(Color.parseColor("#00C896"))
         }
-//        else {
-//            icon.setColorFilter(Color.parseColor("#9E9E9E")) // grey
-//            textView.setTextColor(Color.parseColor("#9E9E9E"))
-//        }
     }
 }

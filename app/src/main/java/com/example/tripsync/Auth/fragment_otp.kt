@@ -10,16 +10,26 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.tripsync.R
+import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.models.EmailRequest
+import com.example.tripsync.api.models.RegistrationOtpVerifyRequest
+import com.example.tripsync.api.models.VerifyOtpResponse
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
+import kotlinx.coroutines.launch
 
-class fragment_otp : Fragment() {
+class FragmentOtp : Fragment() {
 
     private lateinit var et1: EditText
     private lateinit var et2: EditText
@@ -29,6 +39,11 @@ class fragment_otp : Fragment() {
     private lateinit var et6: EditText
     private lateinit var boxes: List<EditText>
 
+    private lateinit var btnVerify: MaterialTextView
+    private lateinit var tvResend: TextView
+    private lateinit var backToLogin: TextView
+    private lateinit var email: String
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,26 +51,53 @@ class fragment_otp : Fragment() {
     ): View? = inflater.inflate(R.layout.fragment_otp, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        email = arguments?.getString("email") ?: ""
+
         et1 = view.findViewById(R.id.et1)
         et2 = view.findViewById(R.id.et2)
         et3 = view.findViewById(R.id.et3)
         et4 = view.findViewById(R.id.et4)
         et5 = view.findViewById(R.id.et5)
         et6 = view.findViewById(R.id.et6)
+        btnVerify = view.findViewById(R.id.btnVerify)
+        tvResend = view.findViewById(R.id.tvResendOtp)
+        backToLogin = view.findViewById(R.id.tvBackToLogin)
+
         val scrollView = view.findViewById<ScrollView>(R.id.scrollViewOtp)
         val otpCard = view.findViewById<View>(R.id.otpCard)
         val headline = view.findViewById<TextView>(R.id.headline)
         val subText = view.findViewById<TextView>(R.id.subText)
-        val backtologin = view.findViewById<TextView>(R.id.tvBackToLogin)
 
-        backtologin.paintFlags = backtologin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
-        backtologin.setOnClickListener {
+        backToLogin.paintFlags = backToLogin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        backToLogin.setOnClickListener {
             view.findNavController().navigate(R.id.action_fragment_otp_to_login)
         }
 
         boxes = listOf(et1, et2, et3, et4, et5, et6)
+        setupOtpBoxes()
+        et1.requestFocus()
 
+        btnVerify.setOnClickListener { submitOtp() }
+        tvResend.setOnClickListener { resendOtp() }
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val keyboardHeight = imeInsets.bottom
+            if (keyboardHeight > 0) {
+                otpCard.animate().translationY(-keyboardHeight * 0.55f).setDuration(200).start()
+                headline.animate().translationY(-keyboardHeight * 0.28f).scaleX(0.95f).scaleY(0.95f).setDuration(200).start()
+                subText.animate().alpha(0.0f).setDuration(200).start()
+                scrollView.postDelayed({ scrollView.smoothScrollTo(0, otpCard.top) }, 120)
+            } else {
+                otpCard.animate().translationY(0f).setDuration(200).start()
+                headline.animate().translationY(0f).scaleX(1f).scaleY(1f).setDuration(200).start()
+                subText.animate().alpha(1.0f).setDuration(200).start()
+            }
+            insets
+        }
+    }
+
+    private fun setupOtpBoxes() {
         boxes.forEachIndexed { index, et ->
             et.filters = arrayOf(InputFilter.LengthFilter(1))
             et.inputType = InputType.TYPE_CLASS_NUMBER
@@ -65,9 +107,7 @@ class fragment_otp : Fragment() {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
-                    if (s?.length == 1 && index < boxes.lastIndex) {
-                        boxes[index + 1].requestFocus()
-                    }
+                    if (s?.length == 1 && index < boxes.lastIndex) boxes[index + 1].requestFocus()
                     updateFocusVisual(index)
                 }
             })
@@ -83,41 +123,70 @@ class fragment_otp : Fragment() {
                 }
                 false
             }
-            et.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) updateFocusVisual(index)
-            }
-        }
-
-        et1.requestFocus()
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
-            val keyboardHeight = imeInsets.bottom
-            if (keyboardHeight > 0) {
-                otpCard.animate().translationY(-keyboardHeight * 0.55f).setDuration(200).start()
-                headline.animate().translationY(-keyboardHeight * 0.28f).scaleX(0.95f).scaleY(0.95f).setDuration(200).start()
-                subText.animate().alpha(0.0f).setDuration(200).start()
-                scrollView.postDelayed({
-                    scrollView.smoothScrollTo(0, otpCard.top)
-                }, 120)
-            } else {
-                otpCard.animate().translationY(0f).setDuration(200).start()
-                headline.animate().translationY(0f).scaleX(1f).scaleY(1f).setDuration(200).start()
-                subText.animate().alpha(1.0f).setDuration(200).start()
-            }
-            insets
+            et.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) updateFocusVisual(index) }
         }
     }
 
     private fun updateFocusVisual(activeIndex: Int) {
         boxes.forEachIndexed { index, box ->
-            if (index == activeIndex) {
-                box.isSelected = true
-                box.isActivated = true
-            } else {
-                box.isSelected = false
-                box.isActivated = false
+            box.isSelected = index == activeIndex
+            box.isActivated = index == activeIndex
+        }
+    }
+
+    private fun getOtp(): String = boxes.joinToString("") { it.text.toString().trim() }
+
+    private fun submitOtp() {
+        val otp = getOtp()
+        if (otp.length != 6) {
+            Toast.makeText(requireContext(), "Enter complete OTP", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        lifecycleScope.launch {
+            try {
+                val api = ApiClient.getAuthService(requireContext())
+                val request = RegistrationOtpVerifyRequest(email, otp)
+                val response = api.verifyOtp(request) // API call
+
+                if (response.isSuccessful) {
+                    val body: VerifyOtpResponse? = response.body()
+                    val accessToken = body?.data?.tokens?.access
+                    val refreshToken = body?.data?.tokens?.refresh
+
+                    if (accessToken != null && refreshToken != null) {
+                        val prefs = requireContext().getSharedPreferences("auth", 0)
+                        prefs.edit().apply {
+                            putString("access_token", accessToken)
+                            putString("refresh_token", refreshToken)
+                            apply()
+                        }
+                        Toast.makeText(requireContext(), "Email verified successfully!", Toast.LENGTH_SHORT).show()
+//                        view?.findNavController()?.navigate(R.id.action_fragment_otp_to_homeFragment)
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Toast.makeText(requireContext(), "OTP verification failed: $errorBody", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun resendOtp() {
+        lifecycleScope.launch {
+            try {
+                val api = ApiClient.getAuthService(requireContext())
+                val response = api.resendOtp(EmailRequest(email))
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "OTP resent successfully!", Toast.LENGTH_SHORT).show()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Toast.makeText(requireContext(), "Failed to resend OTP: $errorBody", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
