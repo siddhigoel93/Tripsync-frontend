@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.Auth
 
 import android.os.Bundle
 import android.text.Editable
@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.tripsync.R
 
 class fragment_signup : Fragment() {
 

@@ -1,9 +1,10 @@
-package com.example.tripsync
+package com.example.tripsync.Auth
 
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -16,7 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import com.example.tripsync.R
 
 class fragment_otp : Fragment() {
 
@@ -57,7 +58,7 @@ class fragment_otp : Fragment() {
 
         boxes.forEachIndexed { index, et ->
             et.filters = arrayOf(InputFilter.LengthFilter(1))
-            et.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            et.inputType = InputType.TYPE_CLASS_NUMBER
             et.isCursorVisible = false
             et.setTextColor(resources.getColor(android.R.color.black))
             et.addTextChangedListener(object : TextWatcher {

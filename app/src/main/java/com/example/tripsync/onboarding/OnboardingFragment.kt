@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.example.tripsync.LoginFragment
+import com.example.tripsync.Auth.LoginFragment
 import com.example.tripsync.R
 
 class OnboardingFragment : Fragment() {

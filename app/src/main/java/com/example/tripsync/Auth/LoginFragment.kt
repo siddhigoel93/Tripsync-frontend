@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.Auth
 
 import android.graphics.Paint
 import android.os.Bundle
@@ -6,10 +6,15 @@ import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.LoginRequest
 import kotlinx.coroutines.launch
@@ -100,14 +105,14 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
             val password = etPassword.text.toString().trim()
 
             if (email.isEmpty()) {
-                usernameError.text = "Empty field"
+                usernameError.text = "(Empty field)"
                 usernameError.visibility = View.VISIBLE
                 etUsername.setBackgroundResource(R.drawable.wrong_input)
                 return@setOnClickListener
             }
 
             if (password.isEmpty()) {
-                passwordError.text = "Empty field"
+                passwordError.text = "(Empty field)"
                 passwordError.visibility = View.VISIBLE
                 passwordField.setBackgroundResource(R.drawable.wrong_input)
                 return@setOnClickListener
@@ -141,15 +146,19 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
                     }
                     when (e.code()) {
                         400, 401 -> {
-                            passwordError.text = "(Invalid credentials. Please check your email or password)"
+                            passwordError.text = "(Invalid credentials)"
+                            etUsername.setBackgroundResource(R.drawable.wrong_input)
+                            passwordField.setBackgroundResource(R.drawable.wrong_input)
                             passwordError.visibility = View.VISIBLE
                         }
                         403 -> {
                             usernameError.text = "(Invalid or wrong username)"
+                            etUsername.setBackgroundResource(R.drawable.wrong_input)
                             usernameError.visibility = View.VISIBLE
                         }
                         404 -> {
                             usernameError.text = "(No user found with this email)"
+                            etUsername.setBackgroundResource(R.drawable.wrong_input)
                             usernameError.visibility = View.VISIBLE
                         }
                         else -> {

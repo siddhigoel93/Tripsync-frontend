@@ -1,19 +1,25 @@
-package com.example.tripsync
+package com.example.tripsync.Auth
 
 import android.graphics.Paint
 import android.os.Bundle
 import android.util.Patterns
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.tripsync.R
+import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.models.EmailRequest
+import kotlinx.coroutines.launch
 
 class ForgotPasswordFragment : Fragment() {
 
@@ -31,13 +37,11 @@ class ForgotPasswordFragment : Fragment() {
         val verify = view.findViewById<Button>(R.id.btn)
         val backToLogin = view.findViewById<TextView>(R.id.backtologin)
         val usernameError = view.findViewById<TextView>(R.id.usernameError)
-        val usernameError2 = view.findViewById<TextView>(R.id.usernameError2)
 
         backToLogin.paintFlags = backToLogin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         backToLogin.setOnClickListener {
             findNavController().navigate(R.id.action_forgotPasswordFragment_to_loginFragment)
-
         }
 
         email.setOnFocusChangeListener { _, hasFocus ->
@@ -48,7 +52,6 @@ class ForgotPasswordFragment : Fragment() {
 
         verify.setOnClickListener {
             usernameError.visibility = View.GONE
-            usernameError2.visibility = View.GONE
             email.setBackgroundResource(R.drawable.input_border)
 
             val emailText = email.text.toString().trim()
@@ -62,13 +65,38 @@ class ForgotPasswordFragment : Fragment() {
 
             if (!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
                 usernameError.visibility = View.VISIBLE
+                usernameError.text = "(Invalid email format)"
                 email.setBackgroundResource(R.drawable.wrong_input)
                 return@setOnClickListener
             }
-            view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetPasswordFragment)
 
+            // ✅ Call API to send OTP
+            sendResetOtp(emailText, view)
         }
 
         return view
+    }
+
+    private fun sendResetOtp(email: String,  view: View) {
+
+
+        lifecycleScope.launch {
+            try {
+                val authService = ApiClient.getAuthService(requireContext())
+                val response = authService.requestPasswordReset(EmailRequest(email))
+
+
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "OTP sent successfully!", Toast.LENGTH_SHORT).show()
+                    val bundle = Bundle().apply { putString("email", email) }
+                    view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetOTP, bundle)
+                } else {
+                    val error = response.errorBody()?.string()
+                    Toast.makeText(requireContext(), "Failed to send OTP :  $error", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragment_signup"
-        android:name="com.example.tripsync.fragment_signup"
+        android:name="com.example.tripsync.Auth.fragment_signup"
         android:label="Sign Up"
         tools:layout="@layout/fragment_signup" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_otp"
-        android:name="com.example.tripsync.fragment_otp"
+        android:name="com.example.tripsync.Auth.fragment_otp"
         android:label="fragment_otp"
         tools:layout="@layout/fragment_otp" >
         <action
@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.tripsync.LoginFragment"
+        android:name="com.example.tripsync.Auth.LoginFragment"
         android:label="Login">
         <action
             android:id="@+id/action_login_to_forgot"
@@ -50,7 +50,7 @@
 
     <fragment
         android:id="@+id/resetPasswordFragment"
-        android:name="com.example.tripsync.ResetPasswordFragment"
+        android:name="com.example.tripsync.Auth.ResetPasswordFragment"
         android:label="Reset Password" >
         <action
             android:id="@+id/action_resetPasswordFragment_to_loginFragment"
@@ -58,13 +58,24 @@
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
-        android:name="com.example.tripsync.ForgotPasswordFragment"
+        android:name="com.example.tripsync.Auth.ForgotPasswordFragment"
         android:label="Forgot Password" >
         <action
-            android:id="@+id/action_forgotPasswordFragment_to_resetPasswordFragment"
+            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_resetOTP"
+            app:destination="@id/resetOTP" />
+    </fragment>
+    <fragment
+        android:id="@+id/resetOTP"
+        android:name="com.example.tripsync.Auth.ResetOTP"
+        android:label="ResetOTP" >
+        <action
+            android:id="@+id/action_resetOTP_to_resetPasswordFragment"
             app:destination="@id/resetPasswordFragment" />
         <action
-            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            android:id="@+id/action_resetOTP_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

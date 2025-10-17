@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.Auth
 
 import android.app.AlertDialog
 import android.graphics.Paint
@@ -12,8 +12,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.google.android.material.button.MaterialButton
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.tripsync.R
+import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.models.OTPVerifyRequest
+import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.launch
 
 class ResetPasswordFragment : Fragment() {
 
@@ -86,16 +91,15 @@ class ResetPasswordFragment : Fragment() {
             editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             eyeIcon.setImageResource(R.drawable.eyedisable)
         }
-        // Move cursor to end after changing inputType
         editText.setSelection(editText.text.length)
-
-
     }
 
     private fun setupButton() {
         btn.setOnClickListener {
             val pass1 = etPassword.text.toString().trim()
             val pass2 = etPassword2.text.toString().trim()
+            val email = arguments?.getString("email") ?: ""
+            val otp = arguments?.getString("otp") ?: ""
 
             when {
                 pass1.isEmpty() || pass2.isEmpty() -> {
@@ -114,8 +118,27 @@ class ResetPasswordFragment : Fragment() {
                 }
                 else -> {
                     passwordConfirmError.visibility = View.GONE
-                    findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
+                    resetPassword(email, otp, pass1, pass2)
                 }
+            }
+        }
+    }
+
+    private fun resetPassword(email: String, otp: String, newPassword: String, confirmPassword: String) {
+        lifecycleScope.launch {
+            try {
+                val api = ApiClient.getAuthService(requireContext())
+                val request = OTPVerifyRequest(email, otp, newPassword, confirmPassword)
+                val response = api.verifyOtp(request)
+
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Password reset successfully!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
+                } else {
+                    Toast.makeText(requireContext(), "Failed: Invalid OTP or data", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -125,6 +148,7 @@ class ResetPasswordFragment : Fragment() {
             findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
         }
     }
+
     fun showPasswordNoteDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_password_note, null)
         val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
