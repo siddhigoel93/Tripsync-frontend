@@ -1,11 +1,13 @@
 package com.example.tripsync.api
 
-import retrofit2.Call
+import com.example.tripsync.api.models.LoginResponse
+import com.example.tripsync.api.models.LoginRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthService {
 
-// requests to be made
+    @POST("login")
+    suspend fun loginUser(@Body request: LoginRequest): LoginResponse
 
 }

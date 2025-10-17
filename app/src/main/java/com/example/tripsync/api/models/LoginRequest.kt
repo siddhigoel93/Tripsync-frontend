@@ -1,6 +1,6 @@
 package com.example.tripsync.api.models
 
-data class loginRequest(
+data class LoginRequest(
     val email: String,
     val password: String
 )
