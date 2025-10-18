@@ -38,6 +38,7 @@ class fragment_signup : Fragment() {
     private lateinit var etConfirm: EditText
     private lateinit var ivTogglePass: ImageView
     private lateinit var ivToggleConfirm: ImageView
+    private lateinit var ivEmailValid: ImageView
     private lateinit var btnSignUp: TextView
     private var tvConfirmError: TextView? = null
     private lateinit var confirmContainer: View
@@ -84,6 +85,7 @@ class fragment_signup : Fragment() {
         etConfirm = view.findViewById(R.id.etConfirm)
         ivTogglePass = view.findViewById(R.id.ivTogglePass)
         ivToggleConfirm = view.findViewById(R.id.ivToggleConfirm)
+        ivEmailValid = view.findViewById(R.id.ivEmailValid)
         btnSignUp = view.findViewById(R.id.btnSignUp)
         tvConfirmError = view.findViewById(R.id.tvConfirmErrorInline)
         confirmContainer = view.findViewById(R.id.confirmContainer)
@@ -100,6 +102,7 @@ class fragment_signup : Fragment() {
         lblEmail = view.findViewById(R.id.lblEmail)
         cbTerms = view.findViewById(R.id.cbTerms)
         originalEmailLabel = lblEmail.text.toString()
+        ivEmailValid.setImageResource(R.drawable.ic_check_green)
 
         resetRuleColors()
         colorPasswordRules(etPassword.text?.toString() ?: "")
@@ -134,6 +137,18 @@ class fragment_signup : Fragment() {
             }
         }
 
+        val emailWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                clearErrors()
+                val emailStr = s?.toString() ?: ""
+                val matches = isEmailSimpleValid(emailStr)
+                ivEmailValid.visibility = if (matches) View.VISIBLE else View.GONE
+            }
+        }
+
+        etEmail.addTextChangedListener(emailWatcher)
         etEmail.addTextChangedListener(watcher)
         etPassword.addTextChangedListener(watcher)
         etConfirm.addTextChangedListener(watcher)
@@ -145,7 +160,7 @@ class fragment_signup : Fragment() {
             val p1 = etPassword.text?.toString() ?: ""
             val p2 = etConfirm.text?.toString() ?: ""
             colorPasswordRules(p1)
-            if (!isEmailValid(email)) {
+            if (!isEmailSimpleValid(email)) {
                 showEmailInlineError("Invalid email id")
                 return@setOnClickListener
             }
@@ -206,6 +221,7 @@ class fragment_signup : Fragment() {
         confirmContainer.setBackgroundResource(R.drawable.input_border)
         lblEmail.text = originalEmailLabel
         lblEmail.setTextColor(Color.parseColor("#737373"))
+        ivEmailValid.visibility = View.GONE
     }
 
     private fun showEmailInlineError(message: String) {
@@ -226,6 +242,7 @@ class fragment_signup : Fragment() {
         )
         lblEmail.text = spannable
         etEmail.setBackgroundResource(R.drawable.input_border_error)
+        ivEmailValid.visibility = View.GONE
     }
 
     private fun showPasswordError(message: String) {
@@ -236,6 +253,11 @@ class fragment_signup : Fragment() {
 
     private fun isEmailValid(email: String): Boolean {
         val pattern = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
+        return pattern.matches(email)
+    }
+
+    private fun isEmailSimpleValid(email: String): Boolean {
+        val pattern = Regex("^\\S+@\\S+\$")
         return pattern.matches(email)
     }
 
