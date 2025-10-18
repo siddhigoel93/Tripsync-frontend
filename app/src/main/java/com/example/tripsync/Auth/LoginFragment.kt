@@ -1,5 +1,6 @@
 package com.example.tripsync.Auth
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
@@ -14,7 +15,6 @@ import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.LoginRequest
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -32,6 +32,7 @@ class LoginFragment : Fragment() {
         override fun getTransformation(source: CharSequence?, view: View?) = source?.let { AsteriskCharSequence(it) } ?: ""
     }
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
@@ -44,6 +45,7 @@ class LoginFragment : Fragment() {
         val btnNext = view.findViewById<Button>(R.id.btnNext)
         val usernameError = view.findViewById<TextView>(R.id.usernameError)
         val passwordError = view.findViewById<TextView>(R.id.passwordError)
+        val verified = view.findViewById<ImageView>(R.id.verified)
 
         etPassword.transformationMethod = AsteriskPasswordTransformation()
 
@@ -98,31 +100,24 @@ class LoginFragment : Fragment() {
                     val response = authService.loginUser(LoginRequest(emailText, passwordText))
                     val body = response.body()
 
-                    if (response.isSuccessful && body != null) {
-                        if (body.status == "success") {
-                            val tokens = body.data?.tokens
-                            requireContext().getSharedPreferences("auth", 0).edit().apply {
-                                putString("access_token", tokens?.access)
-                                putString("refresh_token", tokens?.refresh)
-                                apply()
-                            }
-                            Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
-                            // Navigate to home
-                        } else {
-                            val fieldError = parseErrorMessageFromBody(body) // parse JSON manually
-                            showFieldError(usernameError, etUsername, "($fieldError)")
-                            showFieldError(passwordError, passwordField, "($fieldError)")
+                    if (response.isSuccessful && body != null && body.status == "success") {
+                        val tokens = body.data?.tokens
+                        requireContext().getSharedPreferences("auth", 0).edit().apply {
+                            putString("access_token", tokens?.access)
+                            putString("refresh_token", tokens?.refresh)
+                            apply()
                         }
+                        verified.visibility = View.VISIBLE
+                        Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
+                        // Navigate to home if needed
                     } else {
-                        val messageFromServer = parseErrorMessageFromString(response.errorBody()?.string())
-                        showFieldError(usernameError, etUsername, "($messageFromServer)")
-                        showFieldError(passwordError, passwordField, "($messageFromServer)")
+                        showFieldError(usernameError, etUsername, "Please check your email or password")
+                        showFieldError(passwordError, passwordField, "")
                     }
 
                 } catch (httpException: HttpException) {
-                    val messageFromServer = parseErrorMessageFromString(httpException.response()?.errorBody()?.string())
-                    showFieldError(usernameError, etUsername, "($messageFromServer)")
-                    showFieldError(passwordError, passwordField, "($messageFromServer)")
+                    showFieldError(usernameError, etUsername, "Please check your email or password")
+                    showFieldError(passwordError, passwordField, "")
                 } catch (ioException: IOException) {
                     Toast.makeText(requireContext(), "Network failure: ${ioException.localizedMessage}", Toast.LENGTH_SHORT).show()
                 } catch (exception: Exception) {
@@ -138,35 +133,5 @@ class LoginFragment : Fragment() {
         errorView.text = message
         errorView.visibility = View.VISIBLE
         field.setBackgroundResource(R.drawable.wrong_input)
-    }
-
-    private fun parseErrorMessageFromBody(body: Any?): String {
-        return try {
-            val json = JSONObject(body.toString())
-            val errorsObject = json.optJSONObject("errors")
-            val nonFieldArray = errorsObject?.optJSONArray("non_field_errors")
-            if (nonFieldArray != null && nonFieldArray.length() > 0) {
-                nonFieldArray.getString(0)
-            } else {
-                json.optString("message", "Invalid credentials")
-            }
-        } catch (exception: Exception) {
-            "Invalid credentials"
-        }
-    }
-
-    private fun parseErrorMessageFromString(errorBodyString: String?): String {
-        return try {
-            val json = JSONObject(errorBodyString ?: "{}")
-            val errorsObject = json.optJSONObject("errors")
-            val nonFieldArray = errorsObject?.optJSONArray("non_field_errors")
-            if (nonFieldArray != null && nonFieldArray.length() > 0) {
-                nonFieldArray.getString(0)
-            } else {
-                json.optString("message", "Invalid credentials")
-            }
-        } catch (exception: Exception) {
-            "Invalid credentials"
-        }
     }
 }
