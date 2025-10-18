@@ -1,22 +1,42 @@
 package com.example.tripsync.api
 
 import android.content.Context
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Properties
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 object ApiClient {
+    private const val DEFAULT_BASE_URL = "https://tripsync-backend-ruak.onrender.com/"
+
     private fun getBaseUrl(context: Context): String {
         val properties = Properties()
-        context.assets.open("local.properties").use { inputStream ->
-            properties.load(inputStream)
+        try {
+            context.assets.open("local.properties").use { inputStream ->
+                properties.load(inputStream)
+                val base = properties.getProperty("BASE_URL")
+                if (!base.isNullOrBlank()) {
+                    return if (base.endsWith("/")) base else "$base/"
+                }
+            }
+        } catch (e: IOException) {
         }
-        return properties.getProperty("BASE_URL") ?: ""
+        return DEFAULT_BASE_URL
     }
 
     private fun createRetrofit(context: Context): Retrofit {
+        val baseUrl = getBaseUrl(context)
+        val client = OkHttpClient.Builder()
+            .connectTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .writeTimeout(1, TimeUnit.MINUTES)
+            .build()
+
         return Retrofit.Builder()
-            .baseUrl(getBaseUrl(context))
+            .baseUrl(baseUrl)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
