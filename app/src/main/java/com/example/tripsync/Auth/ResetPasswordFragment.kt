@@ -1,12 +1,11 @@
 package com.example.tripsync.Auth
 
-import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
+import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,7 @@ class ResetPasswordFragment : Fragment() {
     private lateinit var ivPasswordEye2: ImageView
     private lateinit var passwordConfirmError: TextView
     private lateinit var signInText: TextView
-    private lateinit var passwordField: EditText
+    private lateinit var passwordField: View
     private lateinit var passwordConfirmField: View
 
     private var isPasswordVisible1 = false
@@ -51,16 +50,13 @@ class ResetPasswordFragment : Fragment() {
         ivPasswordEye2 = view.findViewById(R.id.ivPasswordEye)
         passwordConfirmError = view.findViewById(R.id.passwordConfirmError)
         signInText = view.findViewById(R.id.signup)
-        passwordField = view.findViewById(R.id.etPassword)
+        passwordField = view.findViewById(R.id.passwordField)
         passwordConfirmField = view.findViewById(R.id.passwordConfirmField)
 
-        // Password rules icons
         val icon1 = view.findViewById<ImageView>(R.id.icon1)
         val icon2 = view.findViewById<ImageView>(R.id.icon2)
         val icon3 = view.findViewById<ImageView>(R.id.icon3)
         val icon4 = view.findViewById<ImageView>(R.id.icon4)
-
-        // Rules text
         val rule1 = view.findViewById<TextView>(R.id.rule1)
         val rule2 = view.findViewById<TextView>(R.id.rule2)
         val rule3 = view.findViewById<TextView>(R.id.rule3)
@@ -68,19 +64,13 @@ class ResetPasswordFragment : Fragment() {
 
         signInText.paintFlags = signInText.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
-        // Focus change highlighting
-        etPassword2.setOnFocusChangeListener { _, hasFocus ->
-            passwordConfirmField.setBackgroundResource(
-                if (hasFocus) R.drawable.selected_input else R.drawable.input_border
-            )
-        }
         etPassword.setOnFocusChangeListener { _, hasFocus ->
-            passwordField.setBackgroundResource(
-                if (hasFocus) R.drawable.selected_input else R.drawable.input_border
-            )
+            passwordField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+        }
+        etPassword2.setOnFocusChangeListener { _, hasFocus ->
+            passwordConfirmField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
         }
 
-        // Password rules validation
         etPassword.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -113,11 +103,7 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun togglePasswordVisibility(editText: EditText, eyeIcon: ImageView, isVisible: Boolean) {
-        editText.inputType = if (isVisible)
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-        else
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-
+        editText.transformationMethod = if (isVisible) null else PasswordTransformationMethod.getInstance()
         eyeIcon.setImageResource(if (isVisible) R.drawable.eye else R.drawable.eyedisable)
         editText.setSelection(editText.text.length)
     }
@@ -131,15 +117,16 @@ class ResetPasswordFragment : Fragment() {
 
             when {
                 pass1.isEmpty() || pass2.isEmpty() -> {
-                    Toast.makeText(requireContext(), "Please fill in both fields", Toast.LENGTH_SHORT).show()
+                    passwordConfirmError.visibility = View.VISIBLE
+                    passwordConfirmError.text = "Please fill in both fields"
                     passwordField.setBackgroundResource(R.drawable.wrong_input)
                     passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
-                    passwordConfirmError.visibility = View.GONE
                 }
-                pass1.length < 8 -> showPasswordNoteDialog()
                 pass1 != pass2 -> {
-                    passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
                     passwordConfirmError.visibility = View.VISIBLE
+                    passwordConfirmError.text = "Passwords must be the same"
+                    passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
+                    passwordField.setBackgroundResource(R.drawable.input_border)
                 }
                 else -> {
                     passwordConfirmError.visibility = View.GONE
@@ -154,14 +141,14 @@ class ResetPasswordFragment : Fragment() {
             try {
                 val api = ApiClient.getAuthService(requireContext())
                 val request = ResetPasswordOTPRequest(email, otp, newPassword, confirmPassword)
-                val response = api.verifyPasswordResetOtp(request)
+                val response = api.verifyOtp(request)
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Password reset successfully!", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
                 } else {
-                    val errorBody = response.errorBody()?.string()
-                    Toast.makeText(requireContext(), "Failed: $errorBody", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Invalid OTP : Please re-enter ! ", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_resetPasswordFragment_to_resetOTP)
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -175,17 +162,9 @@ class ResetPasswordFragment : Fragment() {
         }
     }
 
-    private fun showPasswordNoteDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_password_note, null)
-        val dialog = AlertDialog.Builder(requireContext()).setView(dialogView).create()
-        dialogView.findViewById<TextView>(R.id.btnCloseNote).setOnClickListener { dialog.dismiss() }
-        dialog.show()
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-    }
-
     private fun updateRule(isValid: Boolean, icon: ImageView, textView: TextView) {
         if (isValid) {
-            icon.setColorFilter(Color.parseColor("#00C896")) // green tick
+            icon.setColorFilter(Color.parseColor("#00C896"))
             textView.setTextColor(Color.parseColor("#00C896"))
         }
     }

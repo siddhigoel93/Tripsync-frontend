@@ -21,6 +21,7 @@ import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 class ResetOTP : Fragment() {
 
@@ -42,9 +43,10 @@ class ResetOTP : Fragment() {
         val tvResend = view.findViewById<TextView>(R.id.tvResendOtp)
 
         headline.text = "Verification"
-        subText.text = "Enter the OTP sent to your registered email"
+        subText.text = "Enter the OTP sent to reset your password"
 
         backToLogin.paintFlags = backToLogin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        tvResend.paintFlags = tvResend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         backToLogin.setOnClickListener {
             view.findNavController().navigate(R.id.action_resetOTP_to_loginFragment)
         }
@@ -83,20 +85,7 @@ class ResetOTP : Fragment() {
 
         val email = arguments?.getString("email") ?: ""
 
-        lifecycleScope.launch {
-            try {
-                val api = ApiClient.getAuthService(requireContext())
-                val response = api.requestPasswordReset(EmailRequest(email))
-                if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "OTP sent successfully", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "Email not registered", Toast.LENGTH_LONG).show()
-                    view.findNavController().navigate(R.id.action_resetOTP_to_loginFragment)
-                }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
+
 
         btnVerify.setOnClickListener {
             val otp = boxes.joinToString("") { it.text.toString().trim() }
@@ -130,19 +119,47 @@ class ResetOTP : Fragment() {
         })
     }
 
+    private suspend fun sendOtp(email: String) {
+        try {
+            val api = ApiClient.getAuthService(requireContext())
+
+            val response = api.requestPasswordReset(EmailRequest(email))
+
+            if (response.isSuccessful) {
+                Toast.makeText(requireContext(), "OTP sent successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                showSimpleError(response.errorBody()?.string())
+            }
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Failed to send OTP", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun resendOtp(email: String) {
         lifecycleScope.launch {
             try {
                 val api = ApiClient.getAuthService(requireContext())
                 val response = api.requestPasswordReset(EmailRequest(email))
+
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP resent successfully", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Failed to send OTP", Toast.LENGTH_LONG).show()
+                    showSimpleError(response.errorBody()?.string())
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Failed to resend OTP", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun showSimpleError(errorBody: String?) {
+        val message = try {
+            val json = JSONObject(errorBody ?: "{}")
+            // Only show a simple message to the user
+            if (json.has("detail")) "No user on this email" else "Failed to send OTP"
+        } catch (ex: Exception) {
+            "Failed to send OTP"
+        }
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
     }
 }

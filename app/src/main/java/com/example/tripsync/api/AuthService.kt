@@ -1,6 +1,15 @@
 package com.example.tripsync.api
 
-import com.example.tripsync.api.models.*
+import com.example.tripsync.api.models.LoginResponse
+import com.example.tripsync.api.models.LoginRequest
+import com.example.tripsync.api.models.EmailRequest
+import com.example.tripsync.api.models.GenericResponse
+import com.example.tripsync.api.models.OTPVerifyRequest
+import com.example.tripsync.api.models.RegisterRequest
+import com.example.tripsync.api.models.RegisterResponse
+import com.example.tripsync.api.models.RegistrationOtpVerifyRequest
+import com.example.tripsync.api.models.ResetPasswordOTPRequest
+import com.example.tripsync.api.models.VerifyOtpResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -26,7 +35,8 @@ interface AuthService {
     suspend fun requestPasswordReset(@Body request: EmailRequest): Response<GenericResponse>
 
     @POST("/api/account/password/reset/verify/")
-    suspend fun verifyPasswordResetOtp(@Body request: ResetPasswordOTPRequest): Response<Any>
+    suspend fun verifyOtp(@Body request: ResetPasswordOTPRequest): Response<Any>
+
 }
 
 

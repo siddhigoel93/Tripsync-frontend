@@ -150,6 +150,17 @@
             app:layout_constraintTop_toBottomOf="@id/signIn"
             app:layout_constraintStart_toStartOf="@id/guideline_left"
             android:layout_marginTop="24dp"/>
+    <ImageView
+        android:id="@+id/verified"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="verified image"
+        android:src="@drawable/verified"
+        app:layout_constraintTop_toTopOf="@id/username"
+        app:layout_constraintStart_toEndOf="@id/username"
+        android:layout_marginStart="2dp"
+        android:visibility="gone"
+        />
 
         <EditText
             android:id="@+id/etUsername"
