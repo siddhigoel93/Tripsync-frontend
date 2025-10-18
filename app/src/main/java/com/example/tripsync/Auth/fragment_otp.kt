@@ -10,7 +10,6 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
@@ -25,7 +24,6 @@ import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
 import com.example.tripsync.api.models.RegistrationOtpVerifyRequest
 import com.example.tripsync.api.models.VerifyOtpResponse
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
@@ -95,6 +93,9 @@ class FragmentOtp : Fragment() {
             }
             insets
         }
+
+        updateFocusVisual(-1)
+        updateUnderlineVisuals()
     }
 
     private fun setupOtpBoxes() {
@@ -103,14 +104,19 @@ class FragmentOtp : Fragment() {
             et.inputType = InputType.TYPE_CLASS_NUMBER
             et.isCursorVisible = false
             et.setTextColor(resources.getColor(android.R.color.black))
+            et.setBackgroundResource(R.drawable.otp_box_bg)
+            et.setPadding(et.paddingLeft, et.paddingTop, et.paddingRight, 0)
+
             et.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
                     if (s?.length == 1 && index < boxes.lastIndex) boxes[index + 1].requestFocus()
                     updateFocusVisual(index)
+                    updateUnderlineVisuals()
                 }
             })
+
             et.setOnKeyListener { _, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
                     if (et.text.isEmpty() && index > 0) {
@@ -118,12 +124,17 @@ class FragmentOtp : Fragment() {
                             requestFocus()
                             setSelection(text.length)
                         }
+                        updateFocusVisual(index - 1)
+                        updateUnderlineVisuals()
                         return@setOnKeyListener true
                     }
                 }
                 false
             }
-            et.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) updateFocusVisual(index) }
+
+            et.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) updateFocusVisual(index)
+            }
         }
     }
 
@@ -131,6 +142,18 @@ class FragmentOtp : Fragment() {
         boxes.forEachIndexed { index, box ->
             box.isSelected = index == activeIndex
             box.isActivated = index == activeIndex
+        }
+    }
+
+    private fun updateUnderlineVisuals() {
+        val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
+        boxes.forEachIndexed { index, box ->
+            if (index == lastFilledIndex && lastFilledIndex != -1) {
+                box.setBackgroundResource(R.drawable.otp_bg_with_underline)
+            } else {
+                box.setBackgroundResource(R.drawable.otp_box_bg)
+            }
+            box.invalidate()
         }
     }
 
@@ -147,13 +170,11 @@ class FragmentOtp : Fragment() {
             try {
                 val api = ApiClient.getAuthService(requireContext())
                 val request = RegistrationOtpVerifyRequest(email, otp)
-                val response = api.verifyOtp(request) // API call
-
+                val response = api.verifyOtp(request)
                 if (response.isSuccessful) {
                     val body: VerifyOtpResponse? = response.body()
                     val accessToken = body?.data?.tokens?.access
                     val refreshToken = body?.data?.tokens?.refresh
-
                     if (accessToken != null && refreshToken != null) {
                         val prefs = requireContext().getSharedPreferences("auth", 0)
                         prefs.edit().apply {
@@ -162,7 +183,6 @@ class FragmentOtp : Fragment() {
                             apply()
                         }
                         Toast.makeText(requireContext(), "Email verified successfully!", Toast.LENGTH_SHORT).show()
-//                        view?.findNavController()?.navigate(R.id.action_fragment_otp_to_homeFragment)
                     }
                 } else {
                     val errorBody = response.errorBody()?.string()
