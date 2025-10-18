@@ -147,7 +147,8 @@ class ResetPasswordFragment : Fragment() {
                     Toast.makeText(requireContext(), "Password reset successfully!", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
                 } else {
-                    Toast.makeText(requireContext(), "Failed: Invalid OTP ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Invalid OTP : Please re-enter ! ", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_resetPasswordFragment_to_resetOTP)
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
