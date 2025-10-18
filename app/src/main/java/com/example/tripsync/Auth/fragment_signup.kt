@@ -49,6 +49,7 @@ class fragment_signup : Fragment() {
     private lateinit var signin: TextView
     private lateinit var pwRulesList: AndroidViewGroup
     private lateinit var tvRuleLen: TextView
+    private lateinit var tvRuleUpper: TextView
     private lateinit var tvRuleSpecial: TextView
     private lateinit var tvRuleDigit: TextView
     private lateinit var lblEmail: TextView
@@ -99,10 +100,13 @@ class fragment_signup : Fragment() {
         tvRuleLen = pwRulesList.getChildAt(0) as TextView
         tvRuleSpecial = pwRulesList.getChildAt(1) as TextView
         tvRuleDigit = pwRulesList.getChildAt(2) as TextView
+        tvRuleUpper = pwRulesList.getChildAt(3) as TextView
         lblEmail = view.findViewById(R.id.lblEmail)
         cbTerms = view.findViewById(R.id.cbTerms)
+        cbTerms.paintFlags = cbTerms.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         originalEmailLabel = lblEmail.text.toString()
         ivEmailValid.setImageResource(R.drawable.ic_check_green)
+
 
         resetRuleColors()
         colorPasswordRules(etPassword.text?.toString() ?: "")
@@ -147,7 +151,6 @@ class fragment_signup : Fragment() {
                 ivEmailValid.visibility = if (matches) View.VISIBLE else View.GONE
             }
         }
-
         etEmail.addTextChangedListener(emailWatcher)
         etEmail.addTextChangedListener(watcher)
         etPassword.addTextChangedListener(watcher)
@@ -203,6 +206,7 @@ class fragment_signup : Fragment() {
         tvRuleLen.setTextColor(COLOR_DIM)
         tvRuleSpecial.setTextColor(COLOR_DIM)
         tvRuleDigit.setTextColor(COLOR_DIM)
+        tvRuleUpper.setTextColor(COLOR_DIM)
     }
 
     private fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
@@ -211,7 +215,7 @@ class fragment_signup : Fragment() {
         editText.transformationMethod =
             if (visible) null else AsteriskPasswordTransformation()
         editText.setSelection(start, end)
-        icon.setImageResource(if (visible) R.drawable.ic_visibility else R.drawable.ic_visibility_off)
+        icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eyedisable)
     }
 
     private fun clearErrors() {
@@ -276,9 +280,11 @@ class fragment_signup : Fragment() {
         val hasLen = p.length >= 8
         val hasSpecial = p.any { !it.isLetterOrDigit() }
         val hasDigit = p.any { it.isDigit() }
+        val hasUpper = p.any {it.isUpperCase()}
         tvRuleLen.setTextColor(if (hasLen) COLOR_OK else COLOR_DIM)
         tvRuleSpecial.setTextColor(if (hasSpecial) COLOR_OK else COLOR_DIM)
         tvRuleDigit.setTextColor(if (hasDigit) COLOR_OK else COLOR_DIM)
+        tvRuleUpper.setTextColor(if (hasUpper) COLOR_OK else COLOR_DIM)
     }
 
     private fun registerUser(email: String, password: String, password2: String, view: View, signUpButton: TextView) {

@@ -21,8 +21,8 @@
 
             <ImageView
                 android:id="@+id/imgTop"
-                android:layout_width="142dp"
-                android:layout_height="142dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:layout_marginStart="246dp"
                 android:layout_marginTop="-30dp"
                 android:layout_marginEnd="-48dp"
@@ -37,7 +37,7 @@
                 android:id="@+id/headline"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-40dp"
+                android:layout_marginTop="-38dp"
                 android:fontFamily="sans-serif-black"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
@@ -149,7 +149,7 @@
                         android:layout_marginTop="20dp"
                         android:text="Enter Password"
                         android:textColor="#737373"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         app:layout_constraintTop_toBottomOf="@id/emailContainer"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -168,7 +168,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:background="@android:color/transparent"
-                            android:hint="12345"
+                            android:hint="Enter password"
                             android:inputType="textPassword"
                             android:paddingStart="16dp"
                             android:paddingTop="12dp"
@@ -185,7 +185,7 @@
                             android:layout_height="24dp"
                             android:layout_gravity="end|center_vertical"
                             android:layout_marginEnd="12dp"
-                            android:src="@drawable/ic_visibility_off"/>
+                            android:src="@drawable/eyedisable"/>
                     </FrameLayout>
 
                     <TextView
@@ -196,7 +196,7 @@
                         android:text="Password must contain at least"
                         android:textColor="#666666"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="12sp"
                         app:layout_constraintTop_toBottomOf="@id/passwordContainer"
                         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -215,7 +215,13 @@
                             android:layout_height="wrap_content"
                             android:text="✓  At least 8 characters"
                             android:textColor="#808080"
-                            android:textSize="15sp"/>
+                            android:textSize="10sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓  an uppercase letter"
+                            android:textColor="#808080"
+                            android:textSize="10sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -223,7 +229,7 @@
                             android:layout_marginTop="4dp"
                             android:text="✓  One Special character"
                             android:textColor="#808080"
-                            android:textSize="15sp"/>
+                            android:textSize="10sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -231,7 +237,7 @@
                             android:layout_marginTop="4dp"
                             android:text="✓  One number"
                             android:textColor="#808080"
-                            android:textSize="15sp"/>
+                            android:textSize="10sp"/>
                     </LinearLayout>
 
                     <TextView
@@ -241,7 +247,7 @@
                         android:layout_marginTop="16dp"
                         android:text="Confirm Password"
                         android:textColor="#737373"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         app:layout_constraintTop_toBottomOf="@id/pwRulesList"
                         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -272,7 +278,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:background="@android:color/transparent"
-                            android:hint="123465"
+                            android:hint="Confirm password"
                             android:inputType="textPassword"
                             android:paddingStart="16dp"
                             android:paddingTop="12dp"
@@ -289,7 +295,7 @@
                             android:layout_height="24dp"
                             android:layout_gravity="end|center_vertical"
                             android:layout_marginEnd="12dp"
-                            android:src="@drawable/ic_visibility_off"/>
+                            android:src="@drawable/eyedisable"/>
                     </FrameLayout>
 
                     <CheckBox
@@ -310,15 +316,16 @@
                         app:layout_constraintStart_toEndOf="@id/cbTerms"
                         app:layout_constraintTop_toTopOf="@id/cbTerms"
                         app:layout_constraintBottom_toBottomOf="@id/cbTerms"
-                        android:layout_marginStart="8dp"/>
+                        android:layout_marginStart="2dp"/>
 
                     <TextView
                         android:id="@+id/tvTerms"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=" Terms and Condition"
+                        android:text="Terms and Condition"
                         android:textColor="#00C896"
                         android:textSize="14sp"
+                        android:layout_marginStart="4dp"
                         app:layout_constraintStart_toEndOf="@id/tvTermsPrefix"
                         app:layout_constraintTop_toTopOf="@id/tvTermsPrefix"
                         app:layout_constraintBottom_toBottomOf="@id/tvTermsPrefix"/>
@@ -330,8 +337,8 @@
                         android:layout_marginTop="20dp"
                         android:background="@drawable/next_button"
                         android:gravity="center"
-                        android:paddingTop="16dp"
-                        android:paddingBottom="16dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
                         android:text="Sign-up"
                         android:textColor="@android:color/white"
                         android:textSize="20sp"
@@ -362,10 +369,11 @@
                             android:id="@+id/tvSignIn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="  Sign In"
+                            android:text="Sign In"
                             android:textColor="#00C896"
                             android:textSize="16sp"
-                            android:textStyle="bold"/>
+                            android:layout_marginStart="4dp"
+                            />
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>

@@ -67,7 +67,7 @@ class LoginFragment : Fragment() {
             val end = editText.selectionEnd
             editText.transformationMethod = if (visible) null else AsteriskPasswordTransformation()
             editText.setSelection(start, end)
-            icon.setImageResource(if (visible) R.drawable.ic_visibility else R.drawable.ic_visibility_off)
+            icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eyedisable)
         }
 
         ivPasswordEye.setOnClickListener {
@@ -84,16 +84,20 @@ class LoginFragment : Fragment() {
             val emailText = etUsername.text.toString().trim()
             val passwordText = etPassword.text.toString().trim()
 
+            var hasError = false
+
+
             if (emailText.isEmpty()) {
                 showFieldError(usernameError, etUsername, "(Empty field)")
-                return@setOnClickListener
+                hasError = true
             }
 
             if (passwordText.isEmpty()) {
                 showFieldError(passwordError, passwordField, "(Empty field)")
-                return@setOnClickListener
+                hasError = true
             }
 
+            if(hasError) return@setOnClickListener
             lifecycleScope.launch {
                 try {
                     val authService = ApiClient.getAuthService(requireContext())
@@ -111,12 +115,12 @@ class LoginFragment : Fragment() {
                         Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
                         // Navigate to home if needed
                     } else {
-                        showFieldError(usernameError, etUsername, "Please check your email or password")
+                        showFieldError(usernameError, etUsername, "(Please check your email or password)")
                         showFieldError(passwordError, passwordField, "")
                     }
 
                 } catch (httpException: HttpException) {
-                    showFieldError(usernameError, etUsername, "Please check your email or password")
+                    showFieldError(usernameError, etUsername, "(Please check your email or password)")
                     showFieldError(passwordError, passwordField, "")
                 } catch (ioException: IOException) {
                     Toast.makeText(requireContext(), "Network failure: ${ioException.localizedMessage}", Toast.LENGTH_SHORT).show()
