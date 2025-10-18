@@ -5,16 +5,11 @@ import com.example.tripsync.api.models.LoginRequest
 import com.example.tripsync.api.models.EmailRequest
 import com.example.tripsync.api.models.GenericResponse
 import com.example.tripsync.api.models.OTPVerifyRequest
-import com.example.tripsync.api.models.RegisterRequest
-import com.example.tripsync.api.models.RegisterResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthService {
-
-    @POST("/api/account/register/")
-    suspend fun registerUser(@Body request: RegisterRequest): Response<RegisterResponse>
 
     @POST("/api/account/login/")
     suspend fun loginUser(@Body request: LoginRequest): Response<LoginResponse>

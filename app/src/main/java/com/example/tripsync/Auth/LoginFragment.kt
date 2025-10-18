@@ -6,11 +6,7 @@ import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -23,25 +19,20 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class LoginFragment : Fragment() {
+
     private var passwordVisible = false
 
     private class AsteriskPasswordTransformation : PasswordTransformationMethod() {
         private class AsteriskCharSequence(private val source: CharSequence) : CharSequence {
-            override val length: Int get() = source.length
-            override fun get(index: Int): Char = '*'
-            override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
-                source.subSequence(startIndex, endIndex)
+            override val length get() = source.length
+            override fun get(index: Int) = '*'
+            override fun subSequence(startIndex: Int, endIndex: Int) = source.subSequence(startIndex, endIndex)
         }
-        override fun getTransformation(source: CharSequence?, view: View?): CharSequence {
-            if (source == null) return ""
-            return AsteriskCharSequence(source)
-        }
+
+        override fun getTransformation(source: CharSequence?, view: View?) = source?.let { AsteriskCharSequence(it) } ?: ""
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
         val etUsername = view.findViewById<EditText>(R.id.etUsername)
@@ -55,45 +46,32 @@ class LoginFragment : Fragment() {
         val passwordError = view.findViewById<TextView>(R.id.passwordError)
 
         etPassword.transformationMethod = AsteriskPasswordTransformation()
+        passwordField.visibility = View.VISIBLE
 
+        // Underline links
         forgotPassword.paintFlags = forgotPassword.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         signup.paintFlags = signup.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
-        forgotPassword.setOnClickListener {
-            it.findNavController().navigate(R.id.action_login_to_forgot)
-        }
-        signup.setOnClickListener {
-            it.findNavController().navigate(R.id.action_login_to_signup)
-        }
+        forgotPassword.setOnClickListener { it.findNavController().navigate(R.id.action_login_to_forgot) }
+        signup.setOnClickListener { it.findNavController().navigate(R.id.action_login_to_signup) }
 
-
-
+        // Focus highlight
         etUsername.setOnFocusChangeListener { _, hasFocus ->
-            etUsername.setBackgroundResource(
-                if (hasFocus) R.drawable.selected_input else R.drawable.input_border
-            )
+            etUsername.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
         }
         etPassword.setOnFocusChangeListener { _, hasFocus ->
-            passwordField.setBackgroundResource(
-                if (hasFocus) R.drawable.selected_input else R.drawable.input_border
-            )
+            passwordField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
         }
 
-fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
-    val start = editText.selectionStart
-    val end = editText.selectionEnd
-    editText.transformationMethod =
-        if (visible) null else AsteriskPasswordTransformation()
-    editText.setSelection(start, end)
-    icon.setImageResource(if (visible) R.drawable.ic_visibility else R.drawable.ic_visibility_off)
-}
-
+        // Toggle password visibility
         ivPasswordEye.setOnClickListener {
             passwordVisible = !passwordVisible
-            setPasswordVisible(etPassword, ivPasswordEye, passwordVisible)
+            val start = etPassword.selectionStart
+            val end = etPassword.selectionEnd
+            etPassword.transformationMethod = if (passwordVisible) null else AsteriskPasswordTransformation()
+            etPassword.setSelection(start, end)
+            ivPasswordEye.setImageResource(if (passwordVisible) R.drawable.eye else R.drawable.eyedisable)
         }
-
-
 
         btnNext.setOnClickListener {
             usernameError.visibility = View.GONE
@@ -104,67 +82,34 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
             val email = etUsername.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
-            if (email.isEmpty()) {
-                usernameError.text = "(Empty field)"
-                usernameError.visibility = View.VISIBLE
-                etUsername.setBackgroundResource(R.drawable.wrong_input)
-                return@setOnClickListener
-            }
-
-            if (password.isEmpty()) {
-                passwordError.text = "(Empty field)"
-                passwordError.visibility = View.VISIBLE
-                passwordField.setBackgroundResource(R.drawable.wrong_input)
-                return@setOnClickListener
-            }
+            if (email.isEmpty()) return@setOnClickListener showFieldError(usernameError, etUsername, "(Empty field)")
+            if (!isEmailFormatValid(email)) return@setOnClickListener showFieldError(usernameError, etUsername, "(Invalid email format)")
+            if (password.isEmpty()) return@setOnClickListener showFieldError(passwordError, passwordField, "(Empty field)")
 
             lifecycleScope.launch {
                 try {
                     val authService = ApiClient.getAuthService(requireContext())
-                    val request = LoginRequest(email, password)
-                    val response = authService.loginUser(request)
+                    val response = authService.loginUser(LoginRequest(email, password))
 
-                    Toast.makeText(requireContext(), "Login Successful!", Toast.LENGTH_SHORT).show()
-                    val responseBody = response.body()
-                    val accessToken = responseBody?.data?.tokens?.access
-                    val refreshToken = responseBody?.data?.tokens?.refresh
-//                    println("Access Token: $accessToken")
-//                    println("Refresh Token: $refreshToken")
-                    val prefs = requireContext().getSharedPreferences("auth", 0)
-                    prefs.edit().apply {
-                        putString("access_token", accessToken)
-                        putString("refresh_token", refreshToken)
-                        apply()
+                    if (response.isSuccessful && response.body()?.status == "success") {
+                        Toast.makeText(requireContext(), "Login Successful!", Toast.LENGTH_SHORT).show()
+                        val tokens = response.body()?.data?.tokens
+                        requireContext().getSharedPreferences("auth", 0).edit().apply {
+                            putString("access_token", tokens?.access)
+                            putString("refresh_token", tokens?.refresh)
+                            apply()
+                        }
+                        // navigate to home
+                    } else {
+                        usernameError.text= "(Invalid email or password)"
+                        usernameError.visibility = View.VISIBLE
+                        etUsername.setBackgroundResource(R.drawable.wrong_input)
+                        passwordField.setBackgroundResource(R.drawable.wrong_input)
                     }
-//                      navigation code
                 } catch (e: HttpException) {
                     val errorBody = e.response()?.errorBody()?.string()
-                    val errorMessage = try {
-                        JSONObject(errorBody ?: "{}").optString("message", "Invalid credentials")
-                    } catch (_: Exception) {
-                        "Invalid credentials"
-                    }
-                    when (e.code()) {
-                        400, 401 -> {
-                            usernameError.text = "(Invalid credentials)"
-                            etUsername.setBackgroundResource(R.drawable.wrong_input)
-                            passwordField.setBackgroundResource(R.drawable.wrong_input)
-                            usernameError.visibility = View.VISIBLE
-                        }
-                        403 -> {
-                            usernameError.text = "(Invalid or wrong username)"
-                            etUsername.setBackgroundResource(R.drawable.wrong_input)
-                            usernameError.visibility = View.VISIBLE
-                        }
-                        404 -> {
-                            usernameError.text = "(No user found with this email)"
-                            etUsername.setBackgroundResource(R.drawable.wrong_input)
-                            usernameError.visibility = View.VISIBLE
-                        }
-                        else -> {
-                            Toast.makeText(requireContext(), "Error : ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
+                    val message = try { JSONObject(errorBody ?: "{}").optString("message", "Invalid credentials") } catch (_: Exception) { "Invalid credentials" }
+                    handleLoginError(message, usernameError, passwordError, etUsername, passwordField)
                 } catch (e: IOException) {
                     Toast.makeText(requireContext(), "Network failure: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
@@ -174,5 +119,27 @@ fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
         }
 
         return view
+    }
+
+    private fun showFieldError(errorView: TextView, field: View, message: String) {
+        errorView.text = message
+        errorView.visibility = View.VISIBLE
+        field.setBackgroundResource(R.drawable.wrong_input)
+    }
+
+    private fun handleLoginError(message: String, usernameError: TextView, passwordError: TextView, etUsername: EditText, passwordField: View) {
+        when {
+            message.contains("email", true) -> showFieldError(usernameError, etUsername, "($message)")
+            message.contains("password", true) -> showFieldError(passwordError, passwordField, "($message)")
+            else -> { // fallback
+                showFieldError(usernameError, etUsername, "($message)")
+                showFieldError(passwordError, passwordField, "($message)")
+            }
+        }
+    }
+
+    private fun isEmailFormatValid(email: String): Boolean {
+        val pattern = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+        return pattern.matches(email)
     }
 }
