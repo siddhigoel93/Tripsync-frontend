@@ -23,7 +23,7 @@ class SplashActivity : AppCompatActivity() {
         val videoView = findViewById<VideoView>(R.id.splashVideo)
         val videoContainer = findViewById<FrameLayout>(R.id.video_container)
 
-        val rawId = resources.getIdentifier("splash", "raw", packageName)
+        val rawId = resources.getIdentifier("splash2", "raw", packageName)
         if (rawId == 0) {
             navigateToMain()
             return
