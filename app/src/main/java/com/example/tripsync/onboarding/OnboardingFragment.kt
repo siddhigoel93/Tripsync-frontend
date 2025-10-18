@@ -16,7 +16,7 @@ class OnboardingFragment : Fragment() {
     private lateinit var adapter: OnboardingAdapter
     private val handler = Handler(Looper.getMainLooper())
     private var slideRunnable: Runnable? = null
-    private val slideInterval = 2000L
+    private val slideInterval = 1800L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

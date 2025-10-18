@@ -115,6 +115,16 @@ class ResetPasswordFragment : Fragment() {
             val email = arguments?.getString("email") ?: ""
             val otp = arguments?.getString("otp") ?: ""
 
+            fun isPasswordStrong(password: String): Boolean {
+                val hasLength = password.length >= 8
+                val hasUpper = password.any { it.isUpperCase() }
+                val hasLower = password.any { it.isLowerCase() }
+                val hasDigit = password.any { it.isDigit() }
+                val hasSpecial = password.any { "!@#$%^&*(),.?\":{}|<>".contains(it) }
+                return hasLength && hasUpper && hasLower && hasDigit && hasSpecial
+            }
+
+
             when {
                 pass1.isEmpty() || pass2.isEmpty() -> {
                     passwordConfirmError.visibility = View.VISIBLE
@@ -127,6 +137,12 @@ class ResetPasswordFragment : Fragment() {
                     passwordConfirmError.text = "Passwords must be the same"
                     passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
                     passwordField.setBackgroundResource(R.drawable.input_border)
+                }
+                !isPasswordStrong(pass1) -> {
+                    passwordConfirmError.visibility = View.VISIBLE
+                    passwordConfirmError.text = "Password must have 8+ chars, 1 upper, 1 lower, 1 number, 1 special symbol"
+                    passwordField.setBackgroundResource(R.drawable.wrong_input)
+                    passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
                 }
                 else -> {
                     passwordConfirmError.visibility = View.GONE
