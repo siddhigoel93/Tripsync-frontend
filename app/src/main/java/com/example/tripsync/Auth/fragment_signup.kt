@@ -1,6 +1,7 @@
 package com.example.tripsync.Auth
 
 import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
@@ -11,6 +12,7 @@ import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup as AndroidViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
@@ -44,7 +46,7 @@ class fragment_signup : Fragment() {
     private lateinit var headline: TextView
     private lateinit var subText: TextView
     private lateinit var signin: TextView
-    private lateinit var pwRulesList: ViewGroup
+    private lateinit var pwRulesList: AndroidViewGroup
     private lateinit var tvRuleLen: TextView
     private lateinit var tvRuleSpecial: TextView
     private lateinit var tvRuleDigit: TextView
@@ -72,7 +74,7 @@ class fragment_signup : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
-        container: ViewGroup?,
+        container: AndroidViewGroup?,
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_signup, container, false)
 
@@ -90,6 +92,7 @@ class fragment_signup : Fragment() {
         headline = view.findViewById(R.id.headline)
         subText = view.findViewById(R.id.subText)
         signin = view.findViewById(R.id.tvSignIn)
+        signin.paintFlags = signin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         pwRulesList = view.findViewById(R.id.pwRulesList)
         tvRuleLen = pwRulesList.getChildAt(0) as TextView
         tvRuleSpecial = pwRulesList.getChildAt(1) as TextView
@@ -99,6 +102,7 @@ class fragment_signup : Fragment() {
         originalEmailLabel = lblEmail.text.toString()
 
         resetRuleColors()
+        colorPasswordRules(etPassword.text?.toString() ?: "")
 
         signin.setOnClickListener {
             view.findNavController().navigate(R.id.action_fragment_signup_to_login)
@@ -122,9 +126,18 @@ class fragment_signup : Fragment() {
             }
         }
 
+        val passwordWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                colorPasswordRules(s?.toString() ?: "")
+            }
+        }
+
         etEmail.addTextChangedListener(watcher)
         etPassword.addTextChangedListener(watcher)
         etConfirm.addTextChangedListener(watcher)
+        etPassword.addTextChangedListener(passwordWatcher)
 
         btnSignUp.setOnClickListener {
             clearErrors()

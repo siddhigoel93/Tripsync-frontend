@@ -29,9 +29,9 @@ object ApiClient {
     private fun createRetrofit(context: Context): Retrofit {
         val baseUrl = getBaseUrl(context)
         val client = OkHttpClient.Builder()
-            .connectTimeout(1, TimeUnit.MINUTES)
-            .readTimeout(1, TimeUnit.MINUTES)
-            .writeTimeout(1, TimeUnit.MINUTES)
+            .connectTimeout(25, TimeUnit.SECONDS)
+            .readTimeout(25, TimeUnit.SECONDS)
+            .writeTimeout(25, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder()
