@@ -48,6 +48,7 @@ class FragmentOtp : Fragment() {
 
     private var isError: Boolean = false
     private var isProgrammaticChange: Boolean = false
+    private var isSuccess: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -155,12 +156,14 @@ class FragmentOtp : Fragment() {
                 if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
                     if (et.text.isNotEmpty()) {
                         et.text.clear()
+                        isSuccess = false
                         updateUnderlineVisuals()
                         return@setOnKeyListener true
                     } else if (index > 0) {
                         val prev = boxes[index - 1]
                         prev.requestFocus()
                         if (prev.text.isNotEmpty()) prev.text.clear()
+                        isSuccess = false
                         updateFocusVisual(index - 1)
                         updateUnderlineVisuals()
                         return@setOnKeyListener true
@@ -189,6 +192,7 @@ class FragmentOtp : Fragment() {
             isError = false
             errorBadge.visibility = View.GONE
         }
+        isSuccess = false
         updateUnderlineVisuals()
     }
 
@@ -200,6 +204,10 @@ class FragmentOtp : Fragment() {
     }
 
     private fun updateUnderlineVisuals() {
+        if (isSuccess) {
+            boxes.forEach { it.setBackgroundResource(R.drawable.otp_bg_with_underline) }
+            return
+        }
         if (isError) {
             boxes.forEach { it.setBackgroundResource(R.drawable.otp_bg_with_red_underline) }
             return
@@ -246,7 +254,15 @@ class FragmentOtp : Fragment() {
 
     private fun showIncorrectOtpUi() {
         isError = true
+        isSuccess = false
         errorBadge.visibility = View.VISIBLE
+        updateUnderlineVisuals()
+    }
+
+    private fun showOtpVerifiedUi() {
+        isSuccess = true
+        isError = false
+        errorBadge.visibility = View.GONE
         updateUnderlineVisuals()
     }
 
@@ -274,6 +290,7 @@ class FragmentOtp : Fragment() {
                             apply()
                         }
                         Toast.makeText(requireContext(), "OTP verified", Toast.LENGTH_SHORT).show()
+                        showOtpVerifiedUi()
                     }
                 } else {
                     val friendly = mapVerifyOtpError(response.code(), response.errorBody().readApiError())
