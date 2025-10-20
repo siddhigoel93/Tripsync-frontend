@@ -137,27 +137,33 @@
                     android:textSize="28sp"
                     android:fontFamily="@font/roboto_bold"
                     android:layout_marginTop="0dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Email"
-                    android:textColor="#737373"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/roboto_medium"
-                    android:layout_marginTop="24dp"/>
-                <TextView
-                    android:id="@+id/usernameError"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#FF0000"
-                    android:text="(Invalid email)"
-                    android:layout_marginStart="5dp"
-                    android:visibility="gone"
-                    android:textSize="12sp"
-                    app:layout_constraintTop_toTopOf="@id/username"
-                    app:layout_constraintStart_toEndOf="@id/username"/>
+                    <TextView
+                        android:id="@+id/username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textColor="#737373"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/roboto_medium"/>
+
+                    <TextView
+                        android:id="@+id/usernameError"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="(Invalid email)"
+                        android:visibility="gone"
+                        android:textColor="#FF0000"
+                        android:layout_marginStart="5dp"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+
 
                 <ImageView
                     android:id="@+id/verified"
@@ -167,6 +173,7 @@
                     android:src="@drawable/verified"
                     android:visibility="gone"
                     android:layout_marginStart="2dp"/>
+
 
                 <EditText
                     android:id="@+id/etUsername"
@@ -181,6 +188,13 @@
                     android:fontFamily="@font/roboto"
                     android:layout_marginTop="8dp"/>
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical">
+
                 <TextView
                     android:id="@+id/password"
                     android:layout_width="wrap_content"
@@ -188,19 +202,18 @@
                     android:text="Password"
                     android:textColor="#737373"
                     android:textSize="16sp"
-                    android:fontFamily="@font/roboto_medium"
-                    android:layout_marginTop="16dp"/>
+                    android:fontFamily="@font/roboto_medium"/>
+
                 <TextView
                     android:id="@+id/passwordError"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#FF0000"
-                    android:text="(Invalid password)"
-                    android:layout_marginStart="5dp"
+                    android:text="(Empty field)"
                     android:visibility="gone"
-                    android:textSize="12sp"
-                    app:layout_constraintTop_toTopOf="@id/password"
-                    app:layout_constraintStart_toEndOf="@id/password"/>
+                    android:textColor="#FF0000"
+                    android:layout_marginStart="5dp"
+                    android:textSize="12sp"/>
+            </LinearLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/passwordField"

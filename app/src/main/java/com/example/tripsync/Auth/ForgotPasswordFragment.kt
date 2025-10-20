@@ -18,11 +18,13 @@ import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
 import kotlinx.coroutines.launch
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 
 class ForgotPasswordFragment : Fragment() {
 
     private lateinit var usernameError: TextView
     private lateinit var email: EditText
+    lateinit var verify: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +35,7 @@ class ForgotPasswordFragment : Fragment() {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         email = view.findViewById(R.id.etEmail)
-        val verify = view.findViewById<Button>(R.id.btn)
+         verify = view.findViewById(R.id.btn)
         val backToLogin = view.findViewById<TextView>(R.id.backtologin)
         usernameError = view.findViewById(R.id.usernameError)
 
@@ -49,6 +51,10 @@ class ForgotPasswordFragment : Fragment() {
         verify.setOnClickListener {
             usernameError.visibility = View.GONE
             email.setBackgroundResource(R.drawable.input_border)
+
+            verify.isEnabled = false
+            verify.text = "Sending OTP..."
+
 
             val emailText = email.text.toString().trim()
             if (emailText.isEmpty()) {
@@ -72,6 +78,7 @@ class ForgotPasswordFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP sent successfully!", Toast.LENGTH_SHORT).show()
+                    verify.text = "OTP sent"
                     val bundle = Bundle().apply { putString("email", emailText) }
                     view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetOTP, bundle)
                 } else {

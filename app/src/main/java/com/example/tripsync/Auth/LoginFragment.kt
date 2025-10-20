@@ -85,7 +85,8 @@ class LoginFragment : Fragment() {
             val passwordText = etPassword.text.toString().trim()
 
             var hasError = false
-
+            btnNext.isEnabled = false
+            btnNext.text = "Logging in..."
 
             if (emailText.isEmpty()) {
                 showFieldError(usernameError, etUsername, "(Empty field)")
@@ -104,6 +105,7 @@ class LoginFragment : Fragment() {
                     val response = authService.loginUser(LoginRequest(emailText, passwordText))
                     val body = response.body()
 
+
                     if (response.isSuccessful && body != null && body.status == "success") {
                         val tokens = body.data?.tokens
                         requireContext().getSharedPreferences("auth", 0).edit().apply {
@@ -115,7 +117,7 @@ class LoginFragment : Fragment() {
                         Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
                         // Navigate to home if needed
                     } else {
-                        showFieldError(usernameError, etUsername, "(Please check your email or password)")
+                        showFieldError(usernameError, etUsername, "(Incorrect email or password)")
                         showFieldError(passwordError, passwordField, "")
                     }
 
@@ -123,9 +125,12 @@ class LoginFragment : Fragment() {
                     showFieldError(usernameError, etUsername, "(Please check your email or password)")
                     showFieldError(passwordError, passwordField, "")
                 } catch (ioException: IOException) {
-                    Toast.makeText(requireContext(), "Network failure: ${ioException.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Please check your internet connection and try again.", Toast.LENGTH_SHORT).show()
                 } catch (exception: Exception) {
-                    Toast.makeText(requireContext(), "Unexpected error: ${exception.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Something went wrong. Please try again later.", Toast.LENGTH_SHORT).show()
+                }finally {
+                    btnNext.isEnabled = true
+                    btnNext.text = "Login"
                 }
             }
         }
