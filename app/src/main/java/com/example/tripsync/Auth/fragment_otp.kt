@@ -26,6 +26,8 @@ import com.example.tripsync.api.models.RegistrationOtpVerifyRequest
 import com.example.tripsync.api.models.VerifyOtpResponse
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import org.json.JSONObject
 
 class FragmentOtp : Fragment() {
 
@@ -40,7 +42,10 @@ class FragmentOtp : Fragment() {
     private lateinit var btnVerify: MaterialTextView
     private lateinit var tvResend: TextView
     private lateinit var backToLogin: TextView
+    private lateinit var errorBadge: TextView
     private lateinit var email: String
+
+    private var isError: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +65,7 @@ class FragmentOtp : Fragment() {
         btnVerify = view.findViewById(R.id.btnVerify)
         tvResend = view.findViewById(R.id.tvResendOtp)
         backToLogin = view.findViewById(R.id.tvBackToLogin)
+        errorBadge = view.findViewById(R.id.verifyOtpError)
 
         val scrollView = view.findViewById<ScrollView>(R.id.scrollViewOtp)
         val otpCard = view.findViewById<View>(R.id.otpCard)
@@ -112,6 +118,10 @@ class FragmentOtp : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
                     if (s?.length == 1 && index < boxes.lastIndex) boxes[index + 1].requestFocus()
+                    if (isError) {
+                        isError = false
+                        errorBadge.visibility = View.GONE
+                    }
                     updateFocusVisual(index)
                     updateUnderlineVisuals()
                 }
@@ -146,6 +156,11 @@ class FragmentOtp : Fragment() {
     }
 
     private fun updateUnderlineVisuals() {
+        if (isError) {
+            boxes.forEach { it.setBackgroundResource(R.drawable.otp_bg_with_red_underline) }
+            return
+        }
+
         val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
         boxes.forEachIndexed { index, box ->
             if (index == lastFilledIndex && lastFilledIndex != -1) {
@@ -158,6 +173,39 @@ class FragmentOtp : Fragment() {
     }
 
     private fun getOtp(): String = boxes.joinToString("") { it.text.toString().trim() }
+
+    private fun ResponseBody?.readApiError(): String? = try {
+        val text = this?.string() ?: return null
+        val obj = JSONObject(text)
+        when {
+            obj.has("message") -> obj.getString("message")
+            obj.has("detail") -> obj.getString("detail")
+            else -> null
+        }
+    } catch (_: Exception) { null }
+
+    private fun mapVerifyOtpError(code: Int, fallback: String?): String = when (code) {
+        400, 401 -> "Verification failed"
+        403 -> "Verification failed"
+        404 -> "Verification failed"
+        429 -> "Verification failed"
+        500, 502, 503 -> "Verification failed"
+        else -> fallback ?: "Verification failed"
+    }
+
+    private fun mapResendError(code: Int, fallback: String?): String = when (code) {
+        400 -> "Verification failed"
+        404 -> "Verification failed"
+        429 -> "Verification failed"
+        500, 502, 503 -> "Verification failed"
+        else -> fallback ?: "Verification failed"
+    }
+
+    private fun showIncorrectOtpUi() {
+        isError = true
+        errorBadge.visibility = View.VISIBLE
+        updateUnderlineVisuals()
+    }
 
     private fun submitOtp() {
         val otp = getOtp()
@@ -182,14 +230,16 @@ class FragmentOtp : Fragment() {
                             putString("refresh_token", refreshToken)
                             apply()
                         }
-                        Toast.makeText(requireContext(), "Email verified successfully!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "OTP verified", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    val errorBody = response.errorBody()?.string()
-                    Toast.makeText(requireContext(), "OTP verification failed: $errorBody", Toast.LENGTH_LONG).show()
+                    val friendly = mapVerifyOtpError(response.code(), response.errorBody().readApiError())
+                    Toast.makeText(requireContext(), friendly, Toast.LENGTH_SHORT).show()
+                    showIncorrectOtpUi()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Verification failed", Toast.LENGTH_SHORT).show()
+                showIncorrectOtpUi()
             }
         }
     }
@@ -202,11 +252,11 @@ class FragmentOtp : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP resent successfully!", Toast.LENGTH_SHORT).show()
                 } else {
-                    val errorBody = response.errorBody()?.string()
-                    Toast.makeText(requireContext(), "Failed to resend OTP: $errorBody", Toast.LENGTH_LONG).show()
+                    val friendly = mapResendError(response.code(), response.errorBody().readApiError())
+                    Toast.makeText(requireContext(), friendly, Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Wrong OTP", Toast.LENGTH_SHORT).show()
             }
         }
     }

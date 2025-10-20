@@ -326,7 +326,12 @@ class fragment_signup : Fragment() {
                     Toast.makeText(requireContext(), "Request failed (code $code)", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                val msg = when {
+                    e is java.net.SocketTimeoutException -> "Network error"
+                    e is java.net.UnknownHostException -> "Network error"
+                    else -> "Network error"
+                }
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
             } finally {
                 signUpButton.isEnabled = true
             }
