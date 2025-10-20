@@ -20,6 +20,7 @@ import androidx.navigation.findNavController
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
+import com.example.tripsync.api.models.ResetPasswordOTPRequest
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -155,7 +156,6 @@ class ResetOTP : Fragment() {
     private fun showSimpleError(errorBody: String?) {
         val message = try {
             val json = JSONObject(errorBody ?: "{}")
-            // Only show a simple message to the user
             if (json.has("detail")) "No user on this email" else "Failed to send OTP"
         } catch (ex: Exception) {
             "Failed to send OTP"

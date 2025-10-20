@@ -162,17 +162,18 @@
                         android:textColor="#FF0000"
                         android:layout_marginStart="5dp"
                         android:textSize="12sp"/>
+                    <ImageView
+                        android:id="@+id/verified"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="verified image"
+                        android:src="@drawable/verified"
+                        android:visibility="gone"
+                        android:layout_marginStart="2dp"/>
                 </LinearLayout>
 
 
-                <ImageView
-                    android:id="@+id/verified"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:contentDescription="verified image"
-                    android:src="@drawable/verified"
-                    android:visibility="gone"
-                    android:layout_marginStart="2dp"/>
+
 
 
                 <EditText

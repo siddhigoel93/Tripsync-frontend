@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
+import android.text.method.ReplacementTransformationMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -50,12 +51,23 @@ class ResetPasswordFragment : Fragment() {
 
     private var isPasswordVisible1 = false
     private var isPasswordVisible2 = false
-    class AsteriskPasswordTransformation : PasswordTransformationMethod() {
-        override fun getTransformation(source: CharSequence?, view: View?): CharSequence {
-            return source?.map { '*' }?.joinToString("") ?: ""
+    class AsteriskPasswordTransformation : ReplacementTransformationMethod() {
+        override fun getOriginal(): CharArray {
+            // All possible characters in password
+            return charArrayOf(
+                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
+                'Q','R','S','T','U','V','W','X','Y','Z',
+                'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',
+                'q','r','s','t','u','v','w','x','y','z',
+                '0','1','2','3','4','5','6','7','8','9',
+                '!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|',';',':','"','\'','<','>',',','.','?','/','`','~',' '
+            )
+        }
+
+        override fun getReplacement(): CharArray {
+            return CharArray(getOriginal().size) { '*' }
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -191,6 +203,7 @@ class ResetPasswordFragment : Fragment() {
                     findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
                 } else {
                     val errorJson = response.errorBody()?.string()
+                    Log.e("ResetPasswordError", "(code ${response.code()}): $errorJson")
                     val message = try {
                         val obj = JSONObject(errorJson ?: "")
                         obj.getString("message") ?: "Something went wrong"
@@ -201,9 +214,13 @@ class ResetPasswordFragment : Fragment() {
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 
                     if (response.code() == 400 || response.code() == 401) {
-                        findNavController().navigate(R.id.action_resetPasswordFragment_to_resetOTP)
+                        val bundle = Bundle().apply {
+                            putString("email", email)
+                        }
+                        findNavController().navigate(R.id.action_resetPasswordFragment_to_resetOTP, bundle)
                     }
                 }
+
             } catch (e: java.net.UnknownHostException) {
                 Toast.makeText(requireContext(), "No internet connection. Please check your network.", Toast.LENGTH_SHORT).show()
             } catch (e: java.net.SocketTimeoutException) {
@@ -213,6 +230,7 @@ class ResetPasswordFragment : Fragment() {
             }
         }
     }
+
 
     private fun setupNavigation() {
         signInText.setOnClickListener {

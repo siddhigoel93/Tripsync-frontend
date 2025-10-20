@@ -83,10 +83,14 @@ class ForgotPasswordFragment : Fragment() {
                     view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetOTP, bundle)
                 } else {
                     showFieldError("No user found with this email")
+                    verify.isEnabled = true
+                    verify.text = "Send OTP"
                 }
 
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Failed to send OTP. Please try again.", Toast.LENGTH_SHORT).show()
+                verify.isEnabled = true
+                verify.text = "Send OTP"
             }
         }
     }
