@@ -3,7 +3,6 @@ package com.example.tripsync.Auth
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -21,17 +20,17 @@ import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 class ResetOTP : Fragment() {
 
-    private lateinit var boxes: List<EditText>
+    private lateinit var hiddenEditText: EditText
+    private lateinit var boxes: List<TextView>
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_otp, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_otp_screen, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val scrollView = view.findViewById<ScrollView>(R.id.scrollViewOtp)
@@ -47,23 +46,27 @@ class ResetOTP : Fragment() {
 
         backToLogin.paintFlags = backToLogin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         tvResend.paintFlags = tvResend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
         backToLogin.setOnClickListener {
             view.findNavController().navigate(R.id.action_resetOTP_to_loginFragment)
         }
 
         boxes = listOf(
-            view.findViewById(R.id.et1),
-            view.findViewById(R.id.et2),
-            view.findViewById(R.id.et3),
-            view.findViewById(R.id.et4),
-            view.findViewById(R.id.et5),
-            view.findViewById(R.id.et6)
+            view.findViewById(R.id.box1),
+            view.findViewById(R.id.box2),
+            view.findViewById(R.id.box3),
+            view.findViewById(R.id.box4),
+            view.findViewById(R.id.box5),
+            view.findViewById(R.id.box6)
         )
+        hiddenEditText = view.findViewById(R.id.hiddenOtpEditText)
+        hiddenEditText.requestFocus()
 
-        boxes.forEach { et ->
-            et.filters = arrayOf(InputFilter.LengthFilter(1))
-            setupOtpMovement(et)
-        }
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.showSoftInput(hiddenEditText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+
+
+        setupOtpInput()
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -85,8 +88,6 @@ class ResetOTP : Fragment() {
 
         val email = arguments?.getString("email") ?: ""
 
-
-
         btnVerify.setOnClickListener {
             val otp = boxes.joinToString("") { it.text.toString().trim() }
             if (otp.length < 6) {
@@ -104,35 +105,32 @@ class ResetOTP : Fragment() {
         tvResend.setOnClickListener {
             resendOtp(email)
         }
+        boxes.forEach { box ->
+            box.setOnClickListener {
+                hiddenEditText.requestFocus()
+                val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.showSoftInput(hiddenEditText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
+
     }
 
-    private fun setupOtpMovement(editText: EditText) {
-        editText.addTextChangedListener(object : TextWatcher {
+    private fun setupOtpInput() {
+        hiddenEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.length == 1) {
-                    val index = boxes.indexOf(editText)
-                    if (index < boxes.size - 1) boxes[index + 1].requestFocus()
+                val text = s.toString()
+                boxes.forEachIndexed { index, box ->
+                    box.text = if (index < text.length) text[index].toString() else ""
                 }
             }
-            override fun afterTextChanged(s: Editable?) {}
-        })
-    }
 
-    private suspend fun sendOtp(email: String) {
-        try {
-            val api = ApiClient.getAuthService(requireContext())
-
-            val response = api.requestPasswordReset(EmailRequest(email))
-
-            if (response.isSuccessful) {
-                Toast.makeText(requireContext(), "OTP sent successfully", Toast.LENGTH_SHORT).show()
-            } else {
-                showSimpleError(response.errorBody()?.string())
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    if (it.length > 6) hiddenEditText.setText(it.take(6))
+                }
             }
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Failed to send OTP", Toast.LENGTH_SHORT).show()
-        }
+        })
     }
 
     private fun resendOtp(email: String) {
@@ -153,13 +151,7 @@ class ResetOTP : Fragment() {
     }
 
     private fun showSimpleError(errorBody: String?) {
-        val message = try {
-            val json = JSONObject(errorBody ?: "{}")
-            // Only show a simple message to the user
-            if (json.has("detail")) "No user on this email" else "Failed to send OTP"
-        } catch (ex: Exception) {
-            "Failed to send OTP"
-        }
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), "Failed to send OTP", Toast.LENGTH_LONG).show()
     }
 }
+
