@@ -204,22 +204,19 @@ class ResetPasswordFragment : Fragment() {
                     findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
                 } else {
                     val errorJson = response.errorBody()?.string()
-                    Log.e("ResetPasswordError", "(code ${response.code()}): $errorJson")
                     val message = try {
                         val obj = JSONObject(errorJson ?: "")
-                        obj.getString("message") ?: "Something went wrong"
+                        val attemptsLeft = obj.optInt("attemptsLeft", -1)
+                        when {
+                            attemptsLeft > 0 -> "Invalid OTP, please re-enter"
+                            attemptsLeft == 0 -> "OTP expired. Please resend OTP"
+                            else -> obj.optString("message", "Something went wrong")
+                        }
                     } catch (e: Exception) {
                         "Something went wrong. Please try again."
                     }
 
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-
-                    if (response.code() == 400 || response.code() == 401) {
-                        val bundle = Bundle().apply {
-                            putString("email", email)
-                        }
-                        findNavController().navigate(R.id.action_resetPasswordFragment_to_resetOTP, bundle)
-                    }
                 }
 
             } catch (e: java.net.UnknownHostException) {
