@@ -133,7 +133,6 @@
                         android:background="@drawable/otp_box_bg"
                         android:gravity="center"
                         android:inputType="number"
-                        android:maxLength="1"
                         android:textColor="#101010"
                         android:textSize="20sp" />
 
@@ -145,7 +144,6 @@
                         android:background="@drawable/otp_box_bg"
                         android:gravity="center"
                         android:inputType="number"
-                        android:maxLength="1"
                         android:textColor="#101010"
                         android:textSize="20sp" />
 
@@ -157,7 +155,6 @@
                         android:background="@drawable/otp_box_bg"
                         android:gravity="center"
                         android:inputType="number"
-                        android:maxLength="1"
                         android:textColor="#101010"
                         android:textSize="20sp" />
 
@@ -169,7 +166,6 @@
                         android:background="@drawable/otp_box_bg"
                         android:gravity="center"
                         android:inputType="number"
-                        android:maxLength="1"
                         android:textColor="#101010"
                         android:textSize="20sp" />
 
@@ -181,7 +177,6 @@
                         android:background="@drawable/otp_box_bg"
                         android:gravity="center"
                         android:inputType="number"
-                        android:maxLength="1"
                         android:textColor="#101010"
                         android:textSize="20sp" />
 
@@ -193,7 +188,6 @@
                         android:background="@drawable/otp_box_bg"
                         android:gravity="center"
                         android:inputType="number"
-                        android:maxLength="1"
                         android:textColor="#101010"
                         android:textSize="20sp" />
                 </LinearLayout>

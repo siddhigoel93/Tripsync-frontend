@@ -28,6 +28,7 @@ import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.json.JSONObject
+import kotlin.math.min
 
 class FragmentOtp : Fragment() {
 
@@ -46,6 +47,7 @@ class FragmentOtp : Fragment() {
     private lateinit var email: String
 
     private var isError: Boolean = false
+    private var isProgrammaticChange: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,8 +107,23 @@ class FragmentOtp : Fragment() {
     }
 
     private fun setupOtpBoxes() {
+        val pasteAwareFilter = InputFilter { source, start, end, dest, dstart, dend ->
+            val incoming = source.subSequence(start, end).toString()
+            if (incoming.length > 1) {
+                val digits = incoming.filter { it.isDigit() }
+                if (digits.isNotEmpty()) {
+                    distributeFromStart(digits)
+                    return@InputFilter ""
+                }
+            }
+            if (dest != null && dest.length >= 1 && incoming.isNotEmpty()) {
+                return@InputFilter ""
+            }
+            null
+        }
+
         boxes.forEachIndexed { index, et ->
-            et.filters = arrayOf(InputFilter.LengthFilter(1))
+            et.filters = arrayOf(pasteAwareFilter)
             et.inputType = InputType.TYPE_CLASS_NUMBER
             et.isCursorVisible = false
             et.setTextColor(resources.getColor(android.R.color.black))
@@ -117,11 +134,18 @@ class FragmentOtp : Fragment() {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
-                    if (s?.length == 1 && index < boxes.lastIndex) boxes[index + 1].requestFocus()
+                    if (isProgrammaticChange) return
+                    val txt = s?.toString() ?: ""
+
+                    if (txt.length == 1 && index < boxes.lastIndex) {
+                        boxes[index + 1].requestFocus()
+                    }
+
                     if (isError) {
                         isError = false
                         errorBadge.visibility = View.GONE
                     }
+
                     updateFocusVisual(index)
                     updateUnderlineVisuals()
                 }
@@ -129,11 +153,14 @@ class FragmentOtp : Fragment() {
 
             et.setOnKeyListener { _, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
-                    if (et.text.isEmpty() && index > 0) {
-                        boxes[index - 1].apply {
-                            requestFocus()
-                            setSelection(text.length)
-                        }
+                    if (et.text.isNotEmpty()) {
+                        et.text.clear()
+                        updateUnderlineVisuals()
+                        return@setOnKeyListener true
+                    } else if (index > 0) {
+                        val prev = boxes[index - 1]
+                        prev.requestFocus()
+                        if (prev.text.isNotEmpty()) prev.text.clear()
                         updateFocusVisual(index - 1)
                         updateUnderlineVisuals()
                         return@setOnKeyListener true
@@ -148,6 +175,23 @@ class FragmentOtp : Fragment() {
         }
     }
 
+    private fun distributeFromStart(digits: String) {
+        isProgrammaticChange = true
+        boxes.forEach { it.setText("") }
+        val take = min(digits.length, boxes.size)
+        for (i in 0 until take) {
+            boxes[i].setText(digits[i].toString())
+        }
+        isProgrammaticChange = false
+        val focusIndex = if (take - 1 >= 0) take - 1 else 0
+        boxes[focusIndex].requestFocus()
+        if (isError) {
+            isError = false
+            errorBadge.visibility = View.GONE
+        }
+        updateUnderlineVisuals()
+    }
+
     private fun updateFocusVisual(activeIndex: Int) {
         boxes.forEachIndexed { index, box ->
             box.isSelected = index == activeIndex
@@ -160,7 +204,6 @@ class FragmentOtp : Fragment() {
             boxes.forEach { it.setBackgroundResource(R.drawable.otp_bg_with_red_underline) }
             return
         }
-
         val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
         boxes.forEachIndexed { index, box ->
             if (index == lastFilledIndex && lastFilledIndex != -1) {
