@@ -186,7 +186,8 @@ class ResetPasswordFragment : Fragment() {
             } else {
                 passwordError.visibility = View.GONE
             }
-
+            btn.isEnabled = false
+            btn.text = "Please wait..."
             resetPassword(email, otp, pass1, pass2)
         }
     }
@@ -227,6 +228,9 @@ class ResetPasswordFragment : Fragment() {
                 Toast.makeText(requireContext(), "Request timed out. Please try again.", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show()
+            }finally {
+                btn.isEnabled = true
+                btn.text = "Reset Password"
             }
         }
     }

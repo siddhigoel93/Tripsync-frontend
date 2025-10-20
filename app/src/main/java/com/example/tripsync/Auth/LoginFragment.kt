@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.LoginRequest
@@ -115,7 +116,7 @@ class LoginFragment : Fragment() {
                         }
                         verified.visibility = View.VISIBLE
                         Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
-                        // Navigate to home if needed
+                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                     } else {
                         showFieldError(usernameError, etUsername, "(Incorrect email or password)")
                         showFieldError(passwordError, passwordField, "")
