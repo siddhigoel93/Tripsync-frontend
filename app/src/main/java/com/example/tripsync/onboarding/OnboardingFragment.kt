@@ -1,5 +1,6 @@
 package com.example.tripsync.onboarding
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.tripsync.R
 
@@ -18,10 +20,23 @@ class OnboardingFragment : Fragment() {
     private var slideRunnable: Runnable? = null
     private val slideInterval = 1800L
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val sharedPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val accessToken = sharedPrefs.getString("access_token", null)
+
+        if (accessToken != null) {
+
+            findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val view = inflater.inflate(R.layout.onboarding_fragment, container, false)
         viewPager = view.findViewById(R.id.viewPager)
 

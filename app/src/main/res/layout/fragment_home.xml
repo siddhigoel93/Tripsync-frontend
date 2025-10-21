@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".HomeFragment">
+    tools:context=".Auth.HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -13,10 +13,22 @@
         android:text="@string/hello_blank_fragment"
         tools:text="Hello Blank Fragment"
         android:textSize="24sp"
+        android:id="@+id/hellotext"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/hellotext"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Logout"
+        android:textSize="30dp"
+        android:clickable="true"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
