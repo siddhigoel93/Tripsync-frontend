@@ -73,7 +73,6 @@ class ForgotPasswordFragment : Fragment() {
             try {
                 val authService = ApiClient.getAuthService(requireContext())
                 val request = EmailRequest(emailText)
-
                 val response = authService.requestPasswordReset(request)
 
                 if (response.isSuccessful) {
@@ -81,8 +80,19 @@ class ForgotPasswordFragment : Fragment() {
                     verify.text = "OTP sent"
                     val bundle = Bundle().apply { putString("email", emailText) }
                     view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetOTP, bundle)
+
+                } else if (response.code() == 400) {
+                    showFieldError("No user found with this email address.")
+                    verify.isEnabled = true
+                    verify.text = "Send OTP"
+
+                } else if (response.code() == 429) {
+                    showFieldError("Too many attempts. Please try again later.")
+                    verify.isEnabled = true
+                    verify.text = "Send OTP"
+
                 } else {
-                    showFieldError("No user found with this email")
+                    showFieldError("Something went wrong. Please try again.")
                     verify.isEnabled = true
                     verify.text = "Send OTP"
                 }
@@ -96,12 +106,13 @@ class ForgotPasswordFragment : Fragment() {
                 verify.isEnabled = true
                 verify.text = "Send OTP"
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "An unexpected error occurred. Please try again.", Toast.LENGTH_LONG).show()
+                showFieldError("An unexpected error occurred. Please try again.")
                 verify.isEnabled = true
                 verify.text = "Send OTP"
             }
         }
     }
+
 
     private fun showFieldError(message: String) {
         usernameError.visibility = View.VISIBLE
