@@ -38,7 +38,7 @@ class ResetOTP : Fragment() {
         val headline = view.findViewById<TextView>(R.id.headline)
         val subText = view.findViewById<TextView>(R.id.subText)
         val backToLogin = view.findViewById<TextView>(R.id.tvBackToLogin)
-        val btnVerify = view.findViewById<TextView>(R.id.btnVerify)
+        val btnVerify = view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn)
         val tvResend = view.findViewById<TextView>(R.id.tvResendOtp)
 
         headline.text = "Verification"
@@ -121,9 +121,17 @@ class ResetOTP : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val text = s.toString()
                 boxes.forEachIndexed { index, box ->
-                    box.text = if (index < text.length) text[index].toString() else ""
+                    if (index < text.length) {
+                        box.text = text[index].toString()
+                        box.setBackgroundResource(R.drawable.otp_box_active)
+                    } else {
+                        box.text = ""
+                        box.setBackgroundResource(R.drawable.otp_box_bg)
+                    }
                 }
             }
+
+
 
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
