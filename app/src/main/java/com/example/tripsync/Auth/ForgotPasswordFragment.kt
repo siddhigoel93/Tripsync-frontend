@@ -87,8 +87,16 @@ class ForgotPasswordFragment : Fragment() {
                     verify.text = "Send OTP"
                 }
 
+            } catch (e: java.net.UnknownHostException) {
+                showFieldError("No internet connection. Please check your network.")
+                verify.isEnabled = true
+                verify.text = "Send OTP"
+            } catch (e: java.net.SocketTimeoutException) {
+                showFieldError("Request timed out. Please try again.")
+                verify.isEnabled = true
+                verify.text = "Send OTP"
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Failed to send OTP. Please try again.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "An unexpected error occurred. Please try again.", Toast.LENGTH_LONG).show()
                 verify.isEnabled = true
                 verify.text = "Send OTP"
             }
