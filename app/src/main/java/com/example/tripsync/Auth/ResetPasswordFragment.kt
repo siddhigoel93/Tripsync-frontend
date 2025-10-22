@@ -215,8 +215,9 @@ class ResetPasswordFragment : Fragment() {
                     } catch (e: Exception) {
                         "Something went wrong. Please try again."
                     }
-
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set("otp_error", true)
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set("otp_error_message", message)
+                    findNavController().popBackStack()
                 }
 
             } catch (e: java.net.UnknownHostException) {

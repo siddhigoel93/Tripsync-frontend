@@ -20,11 +20,13 @@ import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
 import kotlinx.coroutines.launch
+import androidx.navigation.fragment.findNavController
 
 class ResetOTP : Fragment() {
 
     private lateinit var hiddenEditText: EditText
     private lateinit var boxes: List<TextView>
+    lateinit var otpError: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +42,20 @@ class ResetOTP : Fragment() {
         val backToLogin = view.findViewById<TextView>(R.id.tvBackToLogin)
         val btnVerify = view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn)
         val tvResend = view.findViewById<TextView>(R.id.tvResendOtp)
+        otpError = view.findViewById(R.id.otpError)
+        otpError.visibility = View.GONE
+
+        findNavController().currentBackStackEntry?.savedStateHandle
+            ?.getLiveData<Boolean>("otp_error")?.observe(viewLifecycleOwner) { isError ->
+                if (isError) {
+                    val errorMessage = findNavController().currentBackStackEntry?.savedStateHandle?.get<String>("otp_error_message")
+                    showOtpError(errorMessage ?: "Invalid OTP")
+                    // consume event
+                    findNavController().currentBackStackEntry?.savedStateHandle?.remove<Boolean>("otp_error")
+                    findNavController().currentBackStackEntry?.savedStateHandle?.remove<String>("otp_error_message")
+                }
+            }
+
 
         headline.text = "Verification"
         subText.text = "Enter the OTP sent to reset your password"
@@ -114,6 +130,13 @@ class ResetOTP : Fragment() {
         }
 
     }
+
+    private fun showOtpError(message: String) {
+        otpError.text = message
+        otpError.visibility = View.VISIBLE
+        boxes.forEach { it.setBackgroundResource(R.drawable.otp_box_incorrect) }
+    }
+
 
     private fun setupOtpInput() {
         hiddenEditText.addTextChangedListener(object : TextWatcher {
