@@ -244,6 +244,10 @@ class ResetPasswordFragment : Fragment() {
         if (isValid) {
             icon.setColorFilter(Color.parseColor("#00C896"))
             textView.setTextColor(Color.parseColor("#00C896"))
+        } else {
+            icon.setColorFilter(Color.parseColor("#737373"))
+            textView.setTextColor(Color.parseColor("#737373"))
         }
     }
+
 }
