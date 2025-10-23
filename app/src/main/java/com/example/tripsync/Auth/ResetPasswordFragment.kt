@@ -153,6 +153,7 @@ class ResetPasswordFragment : Fragment() {
             val otp = arguments?.getString("otp") ?: ""
 
             var hasError = false
+            btn.isEnabled = false
 
             if (pass1.isEmpty() || pass2.isEmpty()) {
                 passwordConfirmError.visibility = View.VISIBLE
@@ -182,6 +183,7 @@ class ResetPasswordFragment : Fragment() {
             if (hasError) {
                 passwordError.visibility = View.VISIBLE
                 passwordError.text = "Please fix the highlighted rules"
+                btn.isEnabled = true
                 return@setOnClickListener
             } else {
                 passwordError.visibility = View.GONE

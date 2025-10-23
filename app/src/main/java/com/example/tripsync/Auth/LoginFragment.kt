@@ -87,7 +87,7 @@ class LoginFragment : Fragment() {
 
             var hasError = false
             btnNext.isEnabled = false
-            btnNext.text = "Logging in..."
+            btnNext.text = "Signing in..."
 
             if (emailText.isEmpty()) {
                 showFieldError(usernameError, etUsername, "(Empty field)")
@@ -99,7 +99,10 @@ class LoginFragment : Fragment() {
                 hasError = true
             }
 
-            if(hasError) return@setOnClickListener
+            if(hasError){
+                btnNext.text = "Sign In"
+                btnNext.isEnabled = true
+                return@setOnClickListener}
             lifecycleScope.launch {
                 try {
                     val authService = ApiClient.getAuthService(requireContext())

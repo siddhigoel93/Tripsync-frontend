@@ -59,6 +59,8 @@ class ForgotPasswordFragment : Fragment() {
             val emailText = email.text.toString().trim()
             if (emailText.isEmpty()) {
                 showFieldError("Email cannot be empty")
+                verify.isEnabled = true
+                verify.text = "Send OTP"
                 return@setOnClickListener
             }
 
