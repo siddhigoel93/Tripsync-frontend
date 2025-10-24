@@ -1,23 +1,22 @@
-package com.example.tripsync.Auth
+package com.example.tripsync
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.tripsync.R
 import com.google.android.material.button.MaterialButton
 
-class HomeFragment : Fragment() {
+class ExploreFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_explore, container, false)
         val button = view.findViewById<MaterialButton>(R.id.logoutButton)
 
         button.setOnClickListener {
