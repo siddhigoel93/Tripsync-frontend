@@ -1,19 +1,24 @@
 package com.example.tripsync.Auth
 
-import android.graphics.Paint
+import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -39,26 +44,23 @@ class FragmentOtp : Fragment() {
     private lateinit var et5: EditText
     private lateinit var et6: EditText
     private lateinit var boxes: List<EditText>
-
     private lateinit var btnVerify: MaterialTextView
     private lateinit var tvResend: TextView
     private lateinit var backToLogin: TextView
     private lateinit var errorBadge: TextView
     private lateinit var email: String
-
     private var isError: Boolean = false
     private var isProgrammaticChange: Boolean = false
     private var isSuccess: Boolean = false
+    private lateinit var successVideoContainer: View
+    private lateinit var successVideoView: VideoView
+    private lateinit var successVideoInner: FrameLayout
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_otp, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_otp, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         email = arguments?.getString("email") ?: ""
-
         et1 = view.findViewById(R.id.et1)
         et2 = view.findViewById(R.id.et2)
         et3 = view.findViewById(R.id.et3)
@@ -69,21 +71,20 @@ class FragmentOtp : Fragment() {
         tvResend = view.findViewById(R.id.tvResendOtp)
         backToLogin = view.findViewById(R.id.tvBackToLogin)
         errorBadge = view.findViewById(R.id.verifyOtpError)
-
+        successVideoContainer = view.findViewById(R.id.successVideoContainer)
+        successVideoView = view.findViewById(R.id.successVideoView)
+        successVideoInner = view.findViewById(R.id.successVideoInner)
         val scrollView = view.findViewById<ScrollView>(R.id.scrollViewOtp)
         val otpCard = view.findViewById<View>(R.id.otpCard)
         val headline = view.findViewById<TextView>(R.id.headline)
         val subText = view.findViewById<TextView>(R.id.subText)
 
-        backToLogin.paintFlags = backToLogin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-        backToLogin.setOnClickListener {
-            view.findNavController().navigate(R.id.action_fragment_otp_to_login)
-        }
+        backToLogin.paintFlags = backToLogin.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
+        backToLogin.setOnClickListener { view.findNavController().navigate(R.id.action_fragment_otp_to_login) }
 
         boxes = listOf(et1, et2, et3, et4, et5, et6)
         setupOtpBoxes()
         et1.requestFocus()
-
         btnVerify.setOnClickListener { submitOtp() }
         tvResend.setOnClickListener { resendOtp() }
 
@@ -117,12 +118,9 @@ class FragmentOtp : Fragment() {
                     return@InputFilter ""
                 }
             }
-            if (dest != null && dest.length >= 1 && incoming.isNotEmpty()) {
-                return@InputFilter ""
-            }
+            if (dest != null && dest.length >= 1 && incoming.isNotEmpty()) return@InputFilter ""
             null
         }
-
         boxes.forEachIndexed { index, et ->
             et.filters = arrayOf(pasteAwareFilter)
             et.inputType = InputType.TYPE_CLASS_NUMBER
@@ -130,28 +128,21 @@ class FragmentOtp : Fragment() {
             et.setTextColor(resources.getColor(android.R.color.black))
             et.setBackgroundResource(R.drawable.otp_box_bg)
             et.setPadding(et.paddingLeft, et.paddingTop, et.paddingRight, 0)
-
             et.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
                     if (isProgrammaticChange) return
                     val txt = s?.toString() ?: ""
-
-                    if (txt.length == 1 && index < boxes.lastIndex) {
-                        boxes[index + 1].requestFocus()
-                    }
-
+                    if (txt.length == 1 && index < boxes.lastIndex) boxes[index + 1].requestFocus()
                     if (isError) {
                         isError = false
                         errorBadge.visibility = View.GONE
                     }
-
                     updateFocusVisual(index)
                     updateUnderlineVisuals()
                 }
             })
-
             et.setOnKeyListener { _, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
                     if (et.text.isNotEmpty()) {
@@ -171,10 +162,7 @@ class FragmentOtp : Fragment() {
                 }
                 false
             }
-
-            et.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) updateFocusVisual(index)
-            }
+            et.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) updateFocusVisual(index) }
         }
     }
 
@@ -182,9 +170,7 @@ class FragmentOtp : Fragment() {
         isProgrammaticChange = true
         boxes.forEach { it.setText("") }
         val take = min(digits.length, boxes.size)
-        for (i in 0 until take) {
-            boxes[i].setText(digits[i].toString())
-        }
+        for (i in 0 until take) boxes[i].setText(digits[i].toString())
         isProgrammaticChange = false
         val focusIndex = if (take - 1 >= 0) take - 1 else 0
         boxes[focusIndex].requestFocus()
@@ -214,11 +200,9 @@ class FragmentOtp : Fragment() {
         }
         val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
         boxes.forEachIndexed { index, box ->
-            if (index == lastFilledIndex && lastFilledIndex != -1) {
+            if (index == lastFilledIndex && lastFilledIndex != -1)
                 box.setBackgroundResource(R.drawable.otp_bg_with_underline)
-            } else {
-                box.setBackgroundResource(R.drawable.otp_box_bg)
-            }
+            else box.setBackgroundResource(R.drawable.otp_box_bg)
             box.invalidate()
         }
     }
@@ -235,22 +219,9 @@ class FragmentOtp : Fragment() {
         }
     } catch (_: Exception) { null }
 
-    private fun mapVerifyOtpError(code: Int, fallback: String?): String = when (code) {
-        400, 401 -> "Verification failed"
-        403 -> "Verification failed"
-        404 -> "Verification failed"
-        429 -> "Verification failed"
-        500, 502, 503 -> "Verification failed"
-        else -> fallback ?: "Verification failed"
-    }
+    private fun mapVerifyOtpError(code: Int, fallback: String?): String = "Verification failed"
 
-    private fun mapResendError(code: Int, fallback: String?): String = when (code) {
-        400 -> "Verification failed"
-        404 -> "Verification failed"
-        429 -> "Verification failed"
-        500, 502, 503 -> "Verification failed"
-        else -> fallback ?: "Verification failed"
-    }
+    private fun mapResendError(code: Int, fallback: String?): String = "Verification failed"
 
     private fun showIncorrectOtpUi() {
         isError = true
@@ -272,7 +243,6 @@ class FragmentOtp : Fragment() {
             Toast.makeText(requireContext(), "Enter complete OTP", Toast.LENGTH_SHORT).show()
             return
         }
-
         lifecycleScope.launch {
             try {
                 val api = ApiClient.getAuthService(requireContext())
@@ -289,8 +259,8 @@ class FragmentOtp : Fragment() {
                             putString("refresh_token", refreshToken)
                             apply()
                         }
-                        Toast.makeText(requireContext(), "OTP verified", Toast.LENGTH_SHORT).show()
                         showOtpVerifiedUi()
+                        playSuccessVideo()
                     }
                 } else {
                     val friendly = mapVerifyOtpError(response.code(), response.errorBody().readApiError())
@@ -301,6 +271,56 @@ class FragmentOtp : Fragment() {
                 Toast.makeText(requireContext(), "Verification failed", Toast.LENGTH_SHORT).show()
                 showIncorrectOtpUi()
             }
+        }
+    }
+
+    private fun playSuccessVideo() {
+        successVideoContainer.visibility = View.VISIBLE
+        val rawId = resources.getIdentifier("success", "raw", requireContext().packageName)
+        if (rawId == 0) {
+            view?.findNavController()?.navigate(R.id.action_fragment_otp_to_login)
+            return
+        }
+        val videoUri = Uri.parse("android.resource://${requireContext().packageName}/$rawId")
+        successVideoView.setVideoURI(videoUri)
+        successVideoView.setOnPreparedListener { mp ->
+            val rotation = getVideoRotationDegrees(videoUri)
+            val videoW = if (rotation == 90 || rotation == 270) mp.videoHeight else mp.videoWidth
+            val videoH = if (rotation == 90 || rotation == 270) mp.videoWidth else mp.videoHeight
+            successVideoInner.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    successVideoInner.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    sizeVideoToFillScreen(successVideoView, successVideoInner.width, successVideoInner.height)
+                    successVideoView.start()
+                }
+            })
+        }
+        successVideoView.setOnCompletionListener {
+            successVideoContainer.visibility = View.GONE
+            view?.findNavController()?.navigate(R.id.action_fragment_otp_to_login)
+        }
+        successVideoView.setOnErrorListener { _, _, _ ->
+            successVideoContainer.visibility = View.GONE
+            view?.findNavController()?.navigate(R.id.action_fragment_otp_to_login)
+            true
+        }
+    }
+
+    private fun sizeVideoToFillScreen(videoView: VideoView, containerW: Int, containerH: Int) {
+        if (containerW <= 0 || containerH <= 0) return
+        val lp = FrameLayout.LayoutParams(containerW, containerH, Gravity.CENTER)
+        videoView.layoutParams = lp
+    }
+
+    private fun getVideoRotationDegrees(uri: Uri): Int {
+        return try {
+            val retriever = MediaMetadataRetriever()
+            retriever.setDataSource(requireContext(), uri)
+            val degrees = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
+            retriever.release()
+            degrees?.toIntOrNull() ?: 0
+        } catch (_: Exception) {
+            0
         }
     }
 
@@ -319,5 +339,10 @@ class FragmentOtp : Fragment() {
                 Toast.makeText(requireContext(), "Wrong OTP", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        successVideoView.stopPlayback()
     }
 }
