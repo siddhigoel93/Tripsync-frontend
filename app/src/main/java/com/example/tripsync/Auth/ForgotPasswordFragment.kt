@@ -2,6 +2,7 @@ package com.example.tripsync.Auth
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -108,6 +109,7 @@ class ForgotPasswordFragment : Fragment() {
                 verify.isEnabled = true
                 verify.text = "Send OTP"
             } catch (e: Exception) {
+                Log.e("ForgotPasswordFragment", "Error sending OTP", e)
                 showFieldError("An unexpected error occurred. Please try again.")
                 verify.isEnabled = true
                 verify.text = "Send OTP"

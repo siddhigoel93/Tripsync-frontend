@@ -17,11 +17,11 @@ class ExploreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
-        val button = view.findViewById<MaterialButton>(R.id.logoutButton)
-
-        button.setOnClickListener {
-            logoutUser()
-        }
+//        val button = view.findViewById<MaterialButton>(R.id.logoutButton)
+//
+//        button.setOnClickListener {
+//            logoutUser()
+//        }
 
         return view
     }
