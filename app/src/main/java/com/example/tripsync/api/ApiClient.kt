@@ -9,7 +9,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private const val DEFAULT_BASE_URL = "https://tripsync-backend-ruak.onrender.com/"
+    private const val DEFAULT_BASE_URL = "http://51.20.254.52/"
 
     private fun getBaseUrl(context: Context): String {
         val properties = Properties()
