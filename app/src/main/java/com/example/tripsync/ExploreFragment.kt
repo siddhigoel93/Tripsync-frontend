@@ -31,10 +31,8 @@ class ExploreFragment : Fragment() {
         val sharedPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
         sharedPrefs.edit().clear().apply()
 
-        // Optional confirmation message
         Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
 
-        // Navigate back to login screen
         findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
     }
 }
