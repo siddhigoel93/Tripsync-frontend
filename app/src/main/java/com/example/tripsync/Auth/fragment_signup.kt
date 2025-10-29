@@ -42,6 +42,7 @@ class fragment_signup : Fragment() {
     private lateinit var btnSignUp: TextView
     private var tvConfirmError: TextView? = null
     private lateinit var confirmContainer: View
+    private lateinit var passwordContainer: View
     private lateinit var scrollView: ScrollView
     private lateinit var signUpCard: View
     private lateinit var headline: TextView
@@ -89,6 +90,7 @@ class fragment_signup : Fragment() {
         btnSignUp = view.findViewById(R.id.btnSignUp)
         tvConfirmError = view.findViewById(R.id.tvConfirmErrorInline)
         confirmContainer = view.findViewById(R.id.confirmContainer)
+        passwordContainer = view.findViewById(R.id.passwordContainer)
         scrollView = view.findViewById(R.id.scrollView)
         signUpCard = view.findViewById(R.id.signUpCard)
         headline = view.findViewById(R.id.headline)
@@ -171,13 +173,12 @@ class fragment_signup : Fragment() {
             }
             val pwErrors = passwordValidationErrors(p1)
             if (pwErrors.isNotEmpty()) {
-                val msg = pwErrors.joinToString("\n") { "• $it" }
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
-                showPasswordError("Password does not meet requirements")
+                // Show inline invalid password and make both password boxes red
+                showPasswordError("(Invalid Password)")
                 return@setOnClickListener
             }
             if (p1 != p2) {
-                showPasswordError("Both passwords are different")
+                showPasswordError("(Both passwords are different)")
                 return@setOnClickListener
             }
             registerUser(email, p1, p2, view, btnSignUp)
@@ -220,6 +221,7 @@ class fragment_signup : Fragment() {
         tvConfirmError?.visibility = View.GONE
         etEmail.setBackgroundResource(R.drawable.input_border)
         confirmContainer.setBackgroundResource(R.drawable.input_border)
+        passwordContainer.setBackgroundResource(R.drawable.input_border)
         lblEmail.text = originalEmailLabel
         lblEmail.setTextColor(Color.parseColor("#737373"))
     }
@@ -248,6 +250,8 @@ class fragment_signup : Fragment() {
     private fun showPasswordError(message: String) {
         tvConfirmError?.text = message
         tvConfirmError?.visibility = View.VISIBLE
+        // mark both password fields as error (red border)
+        passwordContainer.setBackgroundResource(R.drawable.input_border_error)
         confirmContainer.setBackgroundResource(R.drawable.input_border_error)
     }
 
