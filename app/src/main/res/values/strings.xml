@@ -16,6 +16,7 @@
     <string name="cd_show_password">Show password</string>
     <string name="cd_hide_password">Hide password</string>
     <string name="forgot_password"><![CDATA[<u>Forgot Password</u>]]></string>
+    <string name="empty" translatable="false"></string>
 
 
 </resources>
