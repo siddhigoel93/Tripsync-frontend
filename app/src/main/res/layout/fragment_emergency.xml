@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="@color/white"
-    tools:context=".EmergencyFragment">
+    tools:context=".ProfileDetails.EmergencyFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -43,18 +43,18 @@
             android:layout_marginTop="8dp"
             android:hint="Select"
             android:paddingStart="12dp"
-            android:background="@drawable/bg_edittext_simple"
+            android:textSize="14sp"
+            android:background="@drawable/edittext_simple"
             android:paddingEnd="12dp"
-            android:paddingVertical="14dp"
+            android:paddingVertical="12dp"
             android:drawableEnd="@drawable/arrow_down"
+            android:textColorHint="@color/black"
+            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/inputAllergies"
             app:layout_constraintTop_toBottomOf="@id/bloodGroup"
-            app:layout_constraintHorizontal_weight="1"
             android:layout_marginEnd="8dp"
-            android:focusable="false"
-            android:clickable="true"
-             />
+            android:focusable="false" />
 
         <EditText
             android:id="@+id/inputAllergies"
@@ -65,12 +65,14 @@
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:paddingVertical="14dp"
-            android:background="@drawable/bg_edittext_simple"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textColorHint="#BFBFBF"
+            android:background="@drawable/edittext_simple"
             app:layout_constraintStart_toEndOf="@id/inputBloodGroup"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/allergies"
-            app:layout_constraintHorizontal_weight="1"
-            android:inputType="textCapSentences"
+            android:inputType="text"
              />
 
         <TextView
@@ -94,11 +96,13 @@
             android:gravity="top|start"
             android:padding="12dp"
             android:textSize="14sp"
-            android:background="@drawable/bg_edittext_simple"
+            android:textColor="@color/black"
+            android:textColorHint="#BFBFBF"
+            android:background="@drawable/edittext_simple"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/labelMedicalHistory"
-            android:inputType="textMultiLine|textCapSentences" />
+            android:inputType="textMultiLine" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -107,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:padding="24dp"
-            android:background="@drawable/bg_emergency_card"
+            android:background="@drawable/emergency_card"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/inputMedicalHistory">
@@ -139,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Contact Name"
-                android:textColor="@android:color/black"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/titleEmergencyContact" />
@@ -152,11 +156,14 @@
                 android:hint="Emergency Contact name"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
-                android:background="@drawable/bg_edittext_white"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:textColorHint="#BFBFBF"
+                android:background="@drawable/edittext_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/labelContactName"
-                android:inputType="textPersonName|textCapWords"
+                android:inputType="textPersonName"
                 />
 
             <TextView
@@ -178,7 +185,10 @@
                 android:hint="Emergency contact number"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
-                android:background="@drawable/bg_edittext_white"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:textColorHint="#BFBFBF"
+                android:background="@drawable/edittext_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/labelContactPhone"
@@ -203,14 +213,16 @@
                 android:hint="Select Relationship"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
-                android:background="@drawable/bg_edittext_simple"
+                android:textSize="14sp"
+                android:background="@drawable/edittext_simple"
                 android:drawableEnd="@drawable/arrow_down"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
                 app:layout_constraintTop_toBottomOf="@id/labelRelationship"
                 android:layout_marginBottom="8dp"
-                android:focusable="false"
-                android:clickable="true" />
+                android:focusable="false" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -229,13 +241,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/emergencyCard"
-            android:layout_marginTop="40dp"/>
+            android:layout_marginTop="40dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPrevious"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Next"
+            android:text="Previous"
             android:textSize="18sp"
             android:textColor="#00C896"
             android:background="@drawable/button_previous"
@@ -247,6 +259,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn"
             android:layout_marginBottom="16dp"
+            android:layout_marginTop="15dp"
             app:layout_constraintBottom_toBottomOf="parent" />
 
 

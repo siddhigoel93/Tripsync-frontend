@@ -101,7 +101,20 @@
     </fragment>
     <fragment
         android:id="@+id/emergencyFragment"
-        android:name="com.example.tripsync.EmergencyFragment"
+        android:name="com.example.tripsync.ProfileDetails.EmergencyFragment"
         android:label="fragment_emergency"
-        tools:layout="@layout/fragment_emergency" />
+        tools:layout="@layout/fragment_emergency" >
+        <action
+            android:id="@+id/action_emergencyFragment_to_preferencesFragment"
+            app:destination="@id/preferencesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="com.example.tripsync.ProfileDetails.PreferencesFragment"
+        android:label="fragment_preferences"
+        tools:layout="@layout/fragment_preferences" >
+        <action
+            android:id="@+id/action_preferencesFragment_to_emergencyFragment"
+            app:destination="@id/emergencyFragment" />
+    </fragment>
 </navigation>

@@ -1,6 +1,7 @@
 package com.example.tripsync
 
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -15,6 +16,7 @@ import com.google.android.material.appbar.AppBarLayout
 class MainActivity : AppCompatActivity() {
     lateinit var progressLayout: View
     lateinit var app_bar_layout: AppBarLayout
+    lateinit var gradient: GradientDrawable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,9 @@ class MainActivity : AppCompatActivity() {
         progressLayout = findViewById(R.id.profileProgressLayout)
         app_bar_layout = findViewById(R.id.app_bar_layout)
 
+        gradient = GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT , intArrayOf(Color.parseColor("#00B487"),
+            Color.parseColor("#00AEEF")))
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
@@ -38,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
 //                R.id.personalDetailsFragment,
                 R.id.emergencyFragment,
-//                R.id.preferencesFragment,
+                R.id.preferencesFragment,
 //                R.id.verificationFragment
              -> {
                     progressLayout.visibility = View.VISIBLE
@@ -48,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
                 else -> {
                     progressLayout.visibility = View.GONE
+                    app_bar_layout.visibility = View.GONE
                 }
             }
         }
@@ -71,33 +77,28 @@ class MainActivity : AppCompatActivity() {
             findViewById<View>(R.id.view2),
             findViewById<View>(R.id.view3),
         )
-
-        // Identify which index is current
         val currentIndex = when (fragmentId) {
 //            R.id.personalDetailsFragment -> 0
             R.id.emergencyFragment -> 1
-//            R.id.preferencesFragment -> 2
+            R.id.preferencesFragment -> 2
 //            R.id.verificationFragment -> 3
             else -> -1
         }
-
-        // Reset all
         circles.forEach { circle ->
             circle.setBackgroundResource(R.drawable.incompleted_circle)
             circle.foreground = null
         }
-        texts.forEach { it.setTextColor(Color.parseColor("#999999")) } // gray text
+        texts.forEach { it.setTextColor(Color.parseColor("#999999")) }
         views.forEach { it.setBackgroundColor(Color.parseColor("#CCCCCC")) }
 
         if (currentIndex >= 0) {
-            // Set completed ones
             for (i in 0 until currentIndex) {
                 circles[i].setBackgroundResource(R.drawable.complete_circle)
                 circles[i].text = "✓"
                 circles[i].setTextColor(Color.WHITE)
 
                 if (i < views.size) {
-                    views[i].setBackgroundColor(Color.parseColor("#00C896")) // green line
+                    views[i].background = gradient
                 }
             }
 
