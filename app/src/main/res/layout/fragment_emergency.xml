@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white"
+    tools:context=".EmergencyFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/bloodGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Blood Group"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/roboto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/allergies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Allergies"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/roboto"
+            app:layout_constraintStart_toStartOf="@+id/inputAllergies"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/inputBloodGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Select"
+            android:paddingStart="12dp"
+            android:background="@drawable/bg_edittext_simple"
+            android:paddingEnd="12dp"
+            android:paddingVertical="14dp"
+            android:drawableEnd="@drawable/arrow_down"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/inputAllergies"
+            app:layout_constraintTop_toBottomOf="@id/bloodGroup"
+            app:layout_constraintHorizontal_weight="1"
+            android:layout_marginEnd="8dp"
+            android:focusable="false"
+            android:clickable="true"
+             />
+
+        <EditText
+            android:id="@+id/inputAllergies"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="None"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingVertical="14dp"
+            android:background="@drawable/bg_edittext_simple"
+            app:layout_constraintStart_toEndOf="@id/inputBloodGroup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/allergies"
+            app:layout_constraintHorizontal_weight="1"
+            android:inputType="textCapSentences"
+             />
+
+        <TextView
+            android:id="@+id/labelMedicalHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Medical History"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/roboto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inputBloodGroup" />
+
+        <EditText
+            android:id="@+id/inputMedicalHistory"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:hint="Tell us bit about your health and your different \nhealth experience."
+            android:gravity="top|start"
+            android:padding="12dp"
+            android:textSize="14sp"
+            android:background="@drawable/bg_edittext_simple"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelMedicalHistory"
+            android:inputType="textMultiLine|textCapSentences" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/emergencyCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:padding="24dp"
+            android:background="@drawable/bg_emergency_card"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/inputMedicalHistory">
+
+            <TextView
+                android:id="@+id/titleEmergencyContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Emergency Contact"
+                android:textStyle="bold"
+                android:textColor="#D00D0D"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/iconAddContact" />
+
+            <ImageView
+                android:id="@+id/iconAddContact"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/red_plus"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="Add new contact" />
+
+            <TextView
+                android:id="@+id/labelContactName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Contact Name"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/titleEmergencyContact" />
+
+            <EditText
+                android:id="@+id/inputContactName"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:hint="Emergency Contact name"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:background="@drawable/bg_edittext_white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/labelContactName"
+                android:inputType="textPersonName|textCapWords"
+                />
+
+            <TextView
+                android:id="@+id/labelContactPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Contact Phone"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/inputContactName" />
+
+            <EditText
+                android:id="@+id/inputContactPhone"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:hint="Emergency contact number"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:background="@drawable/bg_edittext_white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/labelContactPhone"
+                android:inputType="phone" />
+
+            <TextView
+                android:id="@+id/labelRelationship"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Relationship"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/inputContactPhone" />
+
+            <EditText
+                android:id="@+id/inputRelationship"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
+                android:hint="Select Relationship"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:background="@drawable/bg_edittext_simple"
+                android:drawableEnd="@drawable/arrow_down"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/labelRelationship"
+                android:layout_marginBottom="8dp"
+                android:focusable="false"
+                android:clickable="true" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/next_button"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            app:backgroundTint="#00B487"
+            android:paddingVertical="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/emergencyCard"
+            android:layout_marginTop="40dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPrevious"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:textSize="18sp"
+            android:textColor="#00C896"
+            android:background="@drawable/button_previous"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            app:backgroundTint="@null"
+            android:paddingVertical="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

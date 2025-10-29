@@ -95,5 +95,13 @@
         <action
             android:id="@+id/action_homeFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_emergencyFragment"
+            app:destination="@id/emergencyFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/emergencyFragment"
+        android:name="com.example.tripsync.EmergencyFragment"
+        android:label="fragment_emergency"
+        tools:layout="@layout/fragment_emergency" />
 </navigation>

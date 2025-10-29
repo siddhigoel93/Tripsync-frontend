@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -23,6 +24,8 @@ class ExploreFragment : Fragment() {
 //            logoutUser()
 //        }
 
+        val emergency = view.findViewById<CardView>(R.id.card_sos_emergency)
+        emergency.setOnClickListener { findNavController().navigate(R.id.action_homeFragment_to_emergencyFragment) }
         return view
     }
 
