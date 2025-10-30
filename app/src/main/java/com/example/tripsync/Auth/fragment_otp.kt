@@ -2,6 +2,7 @@ package com.example.tripsync.Auth
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
@@ -55,6 +56,9 @@ class FragmentOtp : Fragment() {
     private lateinit var successVideoView: VideoView
     private lateinit var successVideoInner: FrameLayout
 
+    // ⬅️ added cooldown timestamp
+    private var resendCooldownUntil: Long = 0L
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_otp, container, false)
 
@@ -85,7 +89,17 @@ class FragmentOtp : Fragment() {
         setupOtpBoxes()
         et1.requestFocus()
         btnVerify.setOnClickListener { submitOtp() }
-        tvResend.setOnClickListener { resendOtp() }
+
+        // ⬅️ updated click with cooldown check + start
+        tvResend.setOnClickListener {
+            val now = SystemClock.elapsedRealtime()
+            if (now < resendCooldownUntil) {
+                Toast.makeText(requireContext(), "please wait...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            startResendCooldown()
+            resendOtp()
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -105,6 +119,11 @@ class FragmentOtp : Fragment() {
 
         updateFocusVisual(-1)
         updateUnderlineVisuals()
+    }
+
+    // ⬅️ added helper to start 10s window
+    private fun startResendCooldown() {
+        resendCooldownUntil = SystemClock.elapsedRealtime() + 10_000L
     }
 
     private fun setupOtpBoxes() {
