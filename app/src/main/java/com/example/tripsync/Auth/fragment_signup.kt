@@ -213,7 +213,7 @@ class fragment_signup : Fragment() {
         editText.transformationMethod =
             if (visible) null else AsteriskPasswordTransformation()
         editText.setSelection(start, end)
-        icon.setImageResource(if (visible) R.drawable.ic_visibility else R.drawable.ic_visibility_off)
+        icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eye)
     }
 
     private fun clearErrors() {
