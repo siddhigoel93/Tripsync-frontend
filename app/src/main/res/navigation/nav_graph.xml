@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_fragment_otp_to_login"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_fragment_otp_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
@@ -96,4 +99,8 @@
             android:id="@+id/action_homeFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.example.tripsync.fragment_tripsync_welcome"
+        android:label="WelcomeFragment" />
 </navigation>

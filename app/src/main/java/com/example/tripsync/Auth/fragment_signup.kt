@@ -16,11 +16,8 @@ import android.view.ViewGroup as AndroidViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -43,7 +40,6 @@ class fragment_signup : Fragment() {
     private var tvConfirmError: TextView? = null
     private lateinit var confirmContainer: View
     private lateinit var passwordContainer: View
-    private lateinit var scrollView: ScrollView
     private lateinit var signUpCard: View
     private lateinit var headline: TextView
     private lateinit var subText: TextView
@@ -91,7 +87,6 @@ class fragment_signup : Fragment() {
         tvConfirmError = view.findViewById(R.id.tvConfirmErrorInline)
         confirmContainer = view.findViewById(R.id.confirmContainer)
         passwordContainer = view.findViewById(R.id.passwordContainer)
-        scrollView = view.findViewById(R.id.scrollView)
         signUpCard = view.findViewById(R.id.signUpCard)
         headline = view.findViewById(R.id.headline)
         subText = view.findViewById(R.id.subText)
@@ -106,24 +101,23 @@ class fragment_signup : Fragment() {
         originalEmailLabel = lblEmail.text.toString()
         ivEmailValid.setImageResource(R.drawable.ic_check_green)
         ivEmailValid.visibility = View.GONE
-
+        ivTogglePass.setImageResource(R.drawable.ic_visibility_off)
+        ivTogglePass.contentDescription = "Show password"
+        ivToggleConfirm.setImageResource(R.drawable.ic_visibility_off)
+        ivToggleConfirm.contentDescription = "Show password"
         resetRuleColors()
         colorPasswordRules(etPassword.text?.toString() ?: "")
-
         signin.setOnClickListener {
             view.findNavController().navigate(R.id.action_fragment_signup_to_login)
         }
-
         ivTogglePass.setOnClickListener {
             passVisible = !passVisible
             setPasswordVisible(etPassword, ivTogglePass, passVisible)
         }
-
         ivToggleConfirm.setOnClickListener {
             confirmVisible = !confirmVisible
             setPasswordVisible(etConfirm, ivToggleConfirm, confirmVisible)
         }
-
         val watcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -131,7 +125,6 @@ class fragment_signup : Fragment() {
                 clearErrors()
             }
         }
-
         val passwordWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -139,7 +132,6 @@ class fragment_signup : Fragment() {
                 colorPasswordRules(s?.toString() ?: "")
             }
         }
-
         val emailWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -150,13 +142,11 @@ class fragment_signup : Fragment() {
                 ivEmailValid.visibility = if (matches) View.VISIBLE else View.GONE
             }
         }
-
         etEmail.addTextChangedListener(emailWatcher)
         etEmail.addTextChangedListener(watcher)
         etPassword.addTextChangedListener(watcher)
         etConfirm.addTextChangedListener(watcher)
         etPassword.addTextChangedListener(passwordWatcher)
-
         btnSignUp.setOnClickListener {
             clearErrors()
             val email = etEmail.text?.toString()?.trim() ?: ""
@@ -173,7 +163,6 @@ class fragment_signup : Fragment() {
             }
             val pwErrors = passwordValidationErrors(p1)
             if (pwErrors.isNotEmpty()) {
-                // Show inline invalid password and make both password boxes red
                 showPasswordError("(Invalid Password)")
                 return@setOnClickListener
             }
@@ -184,20 +173,14 @@ class fragment_signup : Fragment() {
             registerUser(email, p1, p2, view, btnSignUp)
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-            val keyboardHeight = ime.bottom
-            if (keyboardHeight > 0) {
-                signUpCard.animate().translationY(-keyboardHeight * 0.6f).setDuration(200).start()
-                headline.animate().translationY(-keyboardHeight * 0.28f).scaleX(0.88f).scaleY(0.88f).setDuration(200).start()
-                subText.animate().alpha(0.0f).setDuration(200).start()
-                scrollView.postDelayed({ scrollView.smoothScrollTo(0, signUpCard.top) }, 160)
-            } else {
-                signUpCard.animate().translationY(0f).setDuration(200).start()
-                headline.animate().translationY(0f).scaleX(1f).scaleY(1f).setDuration(200).start()
-                subText.animate().alpha(1.0f).setDuration(200).start()
-            }
-            insets
+        etEmail.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            etEmail.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+        }
+        etPassword.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            passwordContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+        }
+        etConfirm.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            confirmContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
         }
     }
 
@@ -212,8 +195,18 @@ class fragment_signup : Fragment() {
         val end = editText.selectionEnd
         editText.transformationMethod =
             if (visible) null else AsteriskPasswordTransformation()
-        editText.setSelection(start, end)
-        icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eye)
+        if (start >= 0 && end >= 0 && start <= editText.text.length && end <= editText.text.length) {
+            editText.setSelection(start, end)
+        } else {
+            editText.setSelection(editText.text.length)
+        }
+        if (visible) {
+            icon.setImageResource(R.drawable.ic_visibility)
+            icon.contentDescription = "Hide password"
+        } else {
+            icon.setImageResource(R.drawable.ic_visibility_off)
+            icon.contentDescription = "Show password"
+        }
     }
 
     private fun clearErrors() {
@@ -250,7 +243,6 @@ class fragment_signup : Fragment() {
     private fun showPasswordError(message: String) {
         tvConfirmError?.text = message
         tvConfirmError?.visibility = View.VISIBLE
-        // mark both password fields as error (red border)
         passwordContainer.setBackgroundResource(R.drawable.input_border_error)
         confirmContainer.setBackgroundResource(R.drawable.input_border_error)
     }
