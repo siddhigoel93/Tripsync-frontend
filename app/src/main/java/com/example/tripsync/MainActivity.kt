@@ -77,37 +77,60 @@ class MainActivity : AppCompatActivity() {
             findViewById<View>(R.id.view2),
             findViewById<View>(R.id.view3),
         )
+
         val currentIndex = when (fragmentId) {
-//            R.id.personalDetailsFragment -> 0
+//        R.id.personalDetailsFragment -> 0
             R.id.emergencyFragment -> 1
             R.id.preferencesFragment -> 2
-//            R.id.verificationFragment -> 3
+//        R.id.verificationFragment -> 3
             else -> -1
         }
+
+        // Reset all
         circles.forEach { circle ->
             circle.setBackgroundResource(R.drawable.incompleted_circle)
-            circle.foreground = null
+            circle.text = ""
+            circle.scaleX = 1f
+            circle.scaleY = 1f
         }
-        texts.forEach { it.setTextColor(Color.parseColor("#999999")) }
+        texts.forEach { it.setTextColor(Color.parseColor("#000000")) }
         views.forEach { it.setBackgroundColor(Color.parseColor("#CCCCCC")) }
 
         if (currentIndex >= 0) {
+            // Completed ones
             for (i in 0 until currentIndex) {
-                circles[i].setBackgroundResource(R.drawable.complete_circle)
-                circles[i].text = "✓"
-                circles[i].setTextColor(Color.WHITE)
+                val circle = circles[i]
+                circle.setBackgroundResource(R.drawable.complete_circle)
+                circle.text = "✓"
+                circle.setTextColor(Color.WHITE)
+
+                circle.animate().scaleX(1.1f).scaleY(1.1f).setDuration(150)
+                    .withEndAction { circle.animate().scaleX(1f).scaleY(1f).setDuration(1000) }
 
                 if (i < views.size) {
-                    views[i].background = gradient
+                    val view = views[i]
+                    view.animate().alpha(0f).setDuration(0).withEndAction {
+                        view.background = gradient
+                        view.animate().alpha(1f).setDuration(200).start()
+                    }
                 }
             }
 
-
-            circles[currentIndex].setBackgroundResource(R.drawable.complete_circle)
-            circles[currentIndex].text = (currentIndex + 1).toString()
-            circles[currentIndex].setTextColor(Color.WHITE)
+            val currentCircle = circles[currentIndex]
+            currentCircle.setBackgroundResource(R.drawable.complete_circle)
+            currentCircle.text = (currentIndex + 1).toString()
+            currentCircle.setTextColor(Color.WHITE)
 
             texts[currentIndex].setTextColor(Color.parseColor("#00C896"))
+
+            currentCircle.animate()
+                .scaleX(1.15f)
+                .scaleY(1.15f)
+                .setDuration(200)
+                .withEndAction {
+                    currentCircle.animate().scaleX(1f).scaleY(1f).setDuration(150)
+                }
         }
     }
+
 }
