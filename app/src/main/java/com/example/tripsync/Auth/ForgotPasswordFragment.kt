@@ -2,6 +2,7 @@ package com.example.tripsync.Auth
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +37,7 @@ class ForgotPasswordFragment : Fragment() {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         email = view.findViewById(R.id.etEmail)
+        email.filters = arrayOf(EMAIL_EMOJI_FILTER)
          verify = view.findViewById(R.id.btn)
         val backToLogin = view.findViewById<TextView>(R.id.backtologin)
         usernameError = view.findViewById(R.id.usernameError)
@@ -117,6 +119,18 @@ class ForgotPasswordFragment : Fragment() {
         }
     }
 
+    val EMAIL_EMOJI_FILTER = InputFilter { source, start, end, dest, dstart, dend ->
+        for (i in start until end) {
+            val type = Character.getType(source[i])
+            if (type == Character.SURROGATE.toInt() ||
+                type == Character.OTHER_SYMBOL.toInt() ||
+                type == Character.NON_SPACING_MARK.toInt()
+            ) {
+                return@InputFilter ""
+            }
+        }
+        return@InputFilter null
+    }
 
     private fun showFieldError(message: String) {
         usernameError.visibility = View.VISIBLE
