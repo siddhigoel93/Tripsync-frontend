@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
@@ -16,11 +17,8 @@ import android.view.ViewGroup as AndroidViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -28,8 +26,6 @@ import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.RegisterRequest
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
 
 class fragment_signup : Fragment() {
 
@@ -43,17 +39,30 @@ class fragment_signup : Fragment() {
     private var tvConfirmError: TextView? = null
     private lateinit var confirmContainer: View
     private lateinit var passwordContainer: View
-    private lateinit var scrollView: ScrollView
     private lateinit var signUpCard: View
     private lateinit var headline: TextView
     private lateinit var subText: TextView
     private lateinit var signin: TextView
-    private lateinit var pwRulesList: ViewGroup
-    private lateinit var tvRuleLen: TextView
-    private lateinit var tvRuleSpecial: TextView
-    private lateinit var tvRuleDigit: TextView
     private lateinit var lblEmail: TextView
     private lateinit var cbTerms: CheckBox
+    private lateinit var tvTerms: TextView
+
+    private lateinit var pwRulesTitlePass: TextView
+    private lateinit var pwRulesListPass: ViewGroup
+    private lateinit var tvRuleLenPass: TextView
+    private lateinit var tvRuleUpperPass: TextView
+    private lateinit var tvRuleLowerPass: TextView
+    private lateinit var tvRuleSpecialPass: TextView
+    private lateinit var tvRuleDigitPass: TextView
+
+    private lateinit var pwRulesTitleConfirm: TextView
+    private lateinit var pwRulesListConfirm: ViewGroup
+    private lateinit var tvRuleLenConfirm: TextView
+    private lateinit var tvRuleUpperConfirm: TextView
+    private lateinit var tvRuleLowerConfirm: TextView
+    private lateinit var tvRuleSpecialConfirm: TextView
+    private lateinit var tvRuleDigitConfirm: TextView
+
     private var originalEmailLabel: String = ""
     private val COLOR_OK = Color.parseColor("#00C896")
     private val COLOR_DIM = Color.parseColor("#808080")
@@ -61,24 +70,8 @@ class fragment_signup : Fragment() {
     private var passVisible = false
     private var confirmVisible = false
 
-    private class AsteriskPasswordTransformation : PasswordTransformationMethod() {
-        private class AsteriskCharSequence(private val source: CharSequence) : CharSequence {
-            override val length: Int get() = source.length
-            override fun get(index: Int): Char = '*'
-            override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
-                source.subSequence(startIndex, endIndex)
-        }
-        override fun getTransformation(source: CharSequence?, view: View?): CharSequence {
-            if (source == null) return ""
-            return AsteriskCharSequence(source)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: AndroidViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_signup, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: AndroidViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_signup, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         etEmail = view.findViewById(R.id.etEmail)
@@ -91,78 +84,111 @@ class fragment_signup : Fragment() {
         tvConfirmError = view.findViewById(R.id.tvConfirmErrorInline)
         confirmContainer = view.findViewById(R.id.confirmContainer)
         passwordContainer = view.findViewById(R.id.passwordContainer)
-        scrollView = view.findViewById(R.id.scrollView)
         signUpCard = view.findViewById(R.id.signUpCard)
         headline = view.findViewById(R.id.headline)
         subText = view.findViewById(R.id.subText)
         signin = view.findViewById(R.id.tvSignIn)
-        signin.paintFlags = signin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-        pwRulesList = view.findViewById(R.id.pwRulesList)
-        tvRuleLen = pwRulesList.getChildAt(0) as TextView
-        tvRuleSpecial = pwRulesList.getChildAt(1) as TextView
-        tvRuleDigit = pwRulesList.getChildAt(2) as TextView
+        tvTerms = view.findViewById(R.id.tvTerms)
         lblEmail = view.findViewById(R.id.lblEmail)
         cbTerms = view.findViewById(R.id.cbTerms)
         originalEmailLabel = lblEmail.text.toString()
+
+        pwRulesTitlePass = view.findViewById(R.id.pwRulesTitlePass)
+        pwRulesListPass = view.findViewById(R.id.pwRulesListPass)
+        tvRuleLenPass = view.findViewById(R.id.pwRuleLenPass)
+        tvRuleUpperPass = view.findViewById(R.id.pwRuleUpperPass)
+        tvRuleLowerPass = view.findViewById(R.id.pwRuleLowerPass)
+        tvRuleSpecialPass = view.findViewById(R.id.pwRuleSpecialPass)
+        tvRuleDigitPass = view.findViewById(R.id.pwRuleDigitPass)
+
+        pwRulesTitleConfirm = view.findViewById(R.id.pwRulesTitleConfirm)
+        pwRulesListConfirm = view.findViewById(R.id.pwRulesListConfirm)
+        tvRuleLenConfirm = view.findViewById(R.id.pwRuleLenConfirm)
+        tvRuleUpperConfirm = view.findViewById(R.id.pwRuleUpperConfirm)
+        tvRuleLowerConfirm = view.findViewById(R.id.pwRuleLowerConfirm)
+        tvRuleSpecialConfirm = view.findViewById(R.id.pwRuleSpecialConfirm)
+        tvRuleDigitConfirm = view.findViewById(R.id.pwRuleDigitConfirm)
+
+        val blockEmojiAndSpaces = InputFilter { source, _, _, _, _, _ ->
+            if (source.any { Character.getType(it) == Character.SURROGATE.toInt() ||
+                        Character.getType(it) == Character.OTHER_SYMBOL.toInt() ||
+                        it.isWhitespace() }) "" else source
+        }
+        val limit20 = InputFilter.LengthFilter(20)
+
+        etEmail.filters = arrayOf(blockEmojiAndSpaces)
+        etPassword.filters = arrayOf(blockEmojiAndSpaces, limit20)
+        etConfirm.filters = arrayOf(blockEmojiAndSpaces, limit20)
+
+        signin.paintFlags = signin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         ivEmailValid.setImageResource(R.drawable.ic_check_green)
         ivEmailValid.visibility = View.GONE
 
-        resetRuleColors()
-        colorPasswordRules(etPassword.text?.toString() ?: "")
-
-        signin.setOnClickListener {
-            view.findNavController().navigate(R.id.action_fragment_signup_to_login)
+        tvTerms.setOnClickListener {
+            val dlg = TermsDialogFragment()
+            dlg.show(parentFragmentManager, "terms_dialog")
         }
 
         ivTogglePass.setOnClickListener {
             passVisible = !passVisible
             setPasswordVisible(etPassword, ivTogglePass, passVisible)
         }
-
         ivToggleConfirm.setOnClickListener {
             confirmVisible = !confirmVisible
             setPasswordVisible(etConfirm, ivToggleConfirm, confirmVisible)
         }
 
-        val watcher = object : TextWatcher {
+        etPassword.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                clearErrors()
+                colorPasswordRulesFor(s?.toString() ?: "", true)
             }
-        }
+        })
 
-        val passwordWatcher = object : TextWatcher {
+        etConfirm.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                colorPasswordRules(s?.toString() ?: "")
+                colorPasswordRulesFor(s?.toString() ?: "", false)
+            }
+        })
+
+        etPassword.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            passwordContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+            if (hasFocus) showPwRulesForPassword() else hidePwRulesPass()
+        }
+
+        etConfirm.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            confirmContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+            if (hasFocus) showPwRulesForConfirm() else hidePwRulesConfirm()
+        }
+
+        etEmail.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            etEmail.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+            if (!hasFocus) {
+                val email = etEmail.text?.toString()?.trim() ?: ""
+                ivEmailValid.visibility = if (isEmailSimpleValid(email)) View.VISIBLE else View.GONE
+            } else {
+                ivEmailValid.visibility = View.GONE
             }
         }
 
-        val emailWatcher = object : TextWatcher {
+        etEmail.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                clearErrors()
-                val emailStr = s?.toString() ?: ""
-                val matches = isEmailSimpleValid(emailStr)
-                ivEmailValid.visibility = if (matches) View.VISIBLE else View.GONE
+                val email = s?.toString()?.trim() ?: ""
+                ivEmailValid.visibility = if (isEmailSimpleValid(email)) View.VISIBLE else View.GONE
             }
-        }
-
-        etEmail.addTextChangedListener(emailWatcher)
-        etEmail.addTextChangedListener(watcher)
-        etPassword.addTextChangedListener(watcher)
-        etConfirm.addTextChangedListener(watcher)
-        etPassword.addTextChangedListener(passwordWatcher)
+        })
 
         btnSignUp.setOnClickListener {
             clearErrors()
             val email = etEmail.text?.toString()?.trim() ?: ""
             val p1 = etPassword.text?.toString() ?: ""
             val p2 = etConfirm.text?.toString() ?: ""
-            colorPasswordRules(p1)
+            val pwErrors = passwordValidationErrors(p1)
             if (!isEmailSimpleValid(email)) {
                 showEmailInlineError("Invalid email id")
                 return@setOnClickListener
@@ -171,9 +197,7 @@ class fragment_signup : Fragment() {
                 Toast.makeText(requireContext(), "please accept terms and conditions", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            val pwErrors = passwordValidationErrors(p1)
             if (pwErrors.isNotEmpty()) {
-                // Show inline invalid password and make both password boxes red
                 showPasswordError("(Invalid Password)")
                 return@setOnClickListener
             }
@@ -183,37 +207,60 @@ class fragment_signup : Fragment() {
             }
             registerUser(email, p1, p2, view, btnSignUp)
         }
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-            val keyboardHeight = ime.bottom
-            if (keyboardHeight > 0) {
-                signUpCard.animate().translationY(-keyboardHeight * 0.6f).setDuration(200).start()
-                headline.animate().translationY(-keyboardHeight * 0.28f).scaleX(0.88f).scaleY(0.88f).setDuration(200).start()
-                subText.animate().alpha(0.0f).setDuration(200).start()
-                scrollView.postDelayed({ scrollView.smoothScrollTo(0, signUpCard.top) }, 160)
-            } else {
-                signUpCard.animate().translationY(0f).setDuration(200).start()
-                headline.animate().translationY(0f).scaleX(1f).scaleY(1f).setDuration(200).start()
-                subText.animate().alpha(1.0f).setDuration(200).start()
-            }
-            insets
-        }
     }
 
-    private fun resetRuleColors() {
-        tvRuleLen.setTextColor(COLOR_DIM)
-        tvRuleSpecial.setTextColor(COLOR_DIM)
-        tvRuleDigit.setTextColor(COLOR_DIM)
+    private fun showPwRulesForPassword() {
+        hidePwRulesConfirm()
+        pwRulesTitlePass.visibility = View.VISIBLE
+        pwRulesListPass.visibility = View.VISIBLE
+        colorPasswordRulesFor(etPassword.text?.toString() ?: "", true)
+    }
+
+    private fun showPwRulesForConfirm() {
+        hidePwRulesPass()
+        pwRulesTitleConfirm.visibility = View.VISIBLE
+        pwRulesListConfirm.visibility = View.VISIBLE
+        colorPasswordRulesFor(etConfirm.text?.toString() ?: "", false)
+    }
+
+    private fun hidePwRulesPass() {
+        pwRulesTitlePass.visibility = View.GONE
+        pwRulesListPass.visibility = View.GONE
+    }
+
+    private fun hidePwRulesConfirm() {
+        pwRulesTitleConfirm.visibility = View.GONE
+        pwRulesListConfirm.visibility = View.GONE
+    }
+
+    private fun colorPasswordRulesFor(p: String, forPasswordField: Boolean) {
+        val hasLen = p.length >= 8
+        val hasUpper = p.any { it.isUpperCase() }
+        val hasLower = p.any { it.isLowerCase() }
+        val hasSpecial = p.any { !it.isLetterOrDigit() }
+        val hasDigit = p.any { it.isDigit() }
+
+        if (forPasswordField) {
+            tvRuleLenPass.setTextColor(if (hasLen) COLOR_OK else COLOR_DIM)
+            tvRuleUpperPass.setTextColor(if (hasUpper) COLOR_OK else COLOR_DIM)
+            tvRuleLowerPass.setTextColor(if (hasLower) COLOR_OK else COLOR_DIM)
+            tvRuleSpecialPass.setTextColor(if (hasSpecial) COLOR_OK else COLOR_DIM)
+            tvRuleDigitPass.setTextColor(if (hasDigit) COLOR_OK else COLOR_DIM)
+        } else {
+            tvRuleLenConfirm.setTextColor(if (hasLen) COLOR_OK else COLOR_DIM)
+            tvRuleUpperConfirm.setTextColor(if (hasUpper) COLOR_OK else COLOR_DIM)
+            tvRuleLowerConfirm.setTextColor(if (hasLower) COLOR_OK else COLOR_DIM)
+            tvRuleSpecialConfirm.setTextColor(if (hasSpecial) COLOR_OK else COLOR_DIM)
+            tvRuleDigitConfirm.setTextColor(if (hasDigit) COLOR_OK else COLOR_DIM)
+        }
     }
 
     private fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
         val start = editText.selectionStart
         val end = editText.selectionEnd
-        editText.transformationMethod =
-            if (visible) null else AsteriskPasswordTransformation()
-        editText.setSelection(start, end)
-        icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eye)
+        editText.transformationMethod = if (visible) null else PasswordTransformationMethod.getInstance()
+        editText.setSelection(if (start >= 0 && end >= 0) start else editText.text.length)
+        icon.setImageResource(if (visible) R.drawable.ic_visibility else R.drawable.ic_visibility_off)
     }
 
     private fun clearErrors() {
@@ -230,18 +277,8 @@ class fragment_signup : Fragment() {
         val suffix = " (${message.trim()})"
         val combined = originalEmailLabel + suffix
         val spannable = SpannableString(combined)
-        spannable.setSpan(
-            ForegroundColorSpan(EMAIL_ERROR_COLOR),
-            originalEmailLabel.length,
-            combined.length,
-            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        spannable.setSpan(
-            RelativeSizeSpan(0.75f),
-            originalEmailLabel.length,
-            combined.length,
-            SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
+        spannable.setSpan(ForegroundColorSpan(EMAIL_ERROR_COLOR), originalEmailLabel.length, combined.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(RelativeSizeSpan(0.75f), originalEmailLabel.length, combined.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
         lblEmail.text = spannable
         etEmail.setBackgroundResource(R.drawable.input_border_error)
         ivEmailValid.visibility = View.GONE
@@ -250,14 +287,8 @@ class fragment_signup : Fragment() {
     private fun showPasswordError(message: String) {
         tvConfirmError?.text = message
         tvConfirmError?.visibility = View.VISIBLE
-        // mark both password fields as error (red border)
         passwordContainer.setBackgroundResource(R.drawable.input_border_error)
         confirmContainer.setBackgroundResource(R.drawable.input_border_error)
-    }
-
-    private fun isEmailValid(email: String): Boolean {
-        val pattern = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
-        return pattern.matches(email)
     }
 
     private fun isEmailSimpleValid(email: String): Boolean {
@@ -268,21 +299,12 @@ class fragment_signup : Fragment() {
     private fun passwordValidationErrors(p: String): List<String> {
         val errors = mutableListOf<String>()
         if (p.length < 8) errors.add("At least 8 characters")
-        if (!p.any { it.isLowerCase() }) errors.add("At least one lowercase letter")
         if (!p.any { it.isUpperCase() }) errors.add("At least one uppercase letter")
+        if (!p.any { it.isLowerCase() }) errors.add("At least one lowercase letter")
         if (!p.any { !it.isLetterOrDigit() }) errors.add("At least one special character")
         if (!p.any { it.isDigit() }) errors.add("At least one number")
         if (p.contains(" ")) errors.add("Password must not contain spaces")
         return errors
-    }
-
-    private fun colorPasswordRules(p: String) {
-        val hasLen = p.length >= 8
-        val hasSpecial = p.any { !it.isLetterOrDigit() }
-        val hasDigit = p.any { it.isDigit() }
-        tvRuleLen.setTextColor(if (hasLen) COLOR_OK else COLOR_DIM)
-        tvRuleSpecial.setTextColor(if (hasSpecial) COLOR_OK else COLOR_DIM)
-        tvRuleDigit.setTextColor(if (hasDigit) COLOR_OK else COLOR_DIM)
     }
 
     private fun registerUser(email: String, password: String, password2: String, view: View, signUpButton: TextView) {
@@ -295,47 +317,22 @@ class fragment_signup : Fragment() {
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body != null && body.status.equals("success", ignoreCase = true)) {
-                        Toast.makeText(requireContext(), "OTP sent to $email. Expires in: ${body.data?.otp_expires_in ?: "unknown"}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "OTP sent to $email", Toast.LENGTH_LONG).show()
                         val bundle = Bundle().apply { putString("email", email) }
                         view.findNavController().navigate(R.id.action_fragment_signup_to_fragment_otp, bundle)
                     } else {
                         Toast.makeText(requireContext(), body?.message ?: "Registration failed", Toast.LENGTH_LONG).show()
                     }
                 } else {
-                    val code = response.code()
                     val rawError = response.errorBody()?.string()
-                    if (!rawError.isNullOrBlank()) {
-                        val lowered = rawError.lowercase()
-                        if (lowered.contains("email") && lowered.contains("already exists")) {
-                            showEmailInlineError("Account already exists")
-                            return@launch
-                        }
-                        try {
-                            val j = JSONObject(rawError)
-                            if (j.has("email")) {
-                                val emailObj = j.get("email")
-                                val msg = when (emailObj) {
-                                    is JSONArray -> {
-                                        val arr = mutableListOf<String>()
-                                        for (i in 0 until emailObj.length()) arr.add(emailObj.optString(i))
-                                        arr.joinToString(", ")
-                                    }
-                                    else -> emailObj.toString()
-                                }
-                                showEmailInlineError(msg)
-                                return@launch
-                            }
-                        } catch (_: Exception) {}
+                    if (!rawError.isNullOrBlank() && rawError.lowercase().contains("already exists")) {
+                        showEmailInlineError("Account already exists")
+                        return@launch
                     }
-                    Toast.makeText(requireContext(), "Request failed (code $code)", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Request failed", Toast.LENGTH_LONG).show()
                 }
-            } catch (e: Exception) {
-                val msg = when {
-                    e is java.net.SocketTimeoutException -> "Network error"
-                    e is java.net.UnknownHostException -> "Network error"
-                    else -> "Network error"
-                }
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+            } catch (_: Exception) {
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_LONG).show()
             } finally {
                 signUpButton.isEnabled = true
             }

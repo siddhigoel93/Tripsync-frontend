@@ -1,8 +1,8 @@
 package com.example.tripsync.Auth
 
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
@@ -23,7 +23,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
@@ -56,6 +56,9 @@ class FragmentOtp : Fragment() {
     private lateinit var successVideoView: VideoView
     private lateinit var successVideoInner: FrameLayout
 
+    // ⬅️ added cooldown timestamp
+    private var resendCooldownUntil: Long = 0L
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_otp, container, false)
 
@@ -80,13 +83,23 @@ class FragmentOtp : Fragment() {
         val subText = view.findViewById<TextView>(R.id.subText)
 
         backToLogin.paintFlags = backToLogin.paintFlags or android.graphics.Paint.UNDERLINE_TEXT_FLAG
-        backToLogin.setOnClickListener { view.findNavController().navigate(R.id.action_fragment_otp_to_login) }
+        backToLogin.setOnClickListener { findNavController().navigate(R.id.action_fragment_otp_to_login) }
 
         boxes = listOf(et1, et2, et3, et4, et5, et6)
         setupOtpBoxes()
         et1.requestFocus()
         btnVerify.setOnClickListener { submitOtp() }
-        tvResend.setOnClickListener { resendOtp() }
+
+        // ⬅️ updated click with cooldown check + start
+        tvResend.setOnClickListener {
+            val now = SystemClock.elapsedRealtime()
+            if (now < resendCooldownUntil) {
+                Toast.makeText(requireContext(), "please wait...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            startResendCooldown()
+            resendOtp()
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -106,6 +119,11 @@ class FragmentOtp : Fragment() {
 
         updateFocusVisual(-1)
         updateUnderlineVisuals()
+    }
+
+    // ⬅️ added helper to start 10s window
+    private fun startResendCooldown() {
+        resendCooldownUntil = SystemClock.elapsedRealtime() + 10_000L
     }
 
     private fun setupOtpBoxes() {
@@ -191,17 +209,17 @@ class FragmentOtp : Fragment() {
 
     private fun updateUnderlineVisuals() {
         if (isSuccess) {
-            boxes.forEach { it.setBackgroundResource(R.drawable.otp_bg_with_underline) }
+            boxes.forEach { it.setBackgroundResource(R.drawable.otp_box_active) }
             return
         }
         if (isError) {
-            boxes.forEach { it.setBackgroundResource(R.drawable.otp_bg_with_red_underline) }
+            boxes.forEach { it.setBackgroundResource(R.drawable.otp_box_incorrect) }
             return
         }
         val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
         boxes.forEachIndexed { index, box ->
             if (index == lastFilledIndex && lastFilledIndex != -1)
-                box.setBackgroundResource(R.drawable.otp_bg_with_underline)
+                box.setBackgroundResource(R.drawable.otp_box_active)
             else box.setBackgroundResource(R.drawable.otp_box_bg)
             box.invalidate()
         }
@@ -218,10 +236,6 @@ class FragmentOtp : Fragment() {
             else -> null
         }
     } catch (_: Exception) { null }
-
-    private fun mapVerifyOtpError(code: Int, fallback: String?): String = "Verification failed"
-
-    private fun mapResendError(code: Int, fallback: String?): String = "Verification failed"
 
     private fun showIncorrectOtpUi() {
         isError = true
@@ -263,8 +277,7 @@ class FragmentOtp : Fragment() {
                         playSuccessVideo()
                     }
                 } else {
-                    val friendly = mapVerifyOtpError(response.code(), response.errorBody().readApiError())
-                    Toast.makeText(requireContext(), friendly, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Verification failed", Toast.LENGTH_SHORT).show()
                     showIncorrectOtpUi()
                 }
             } catch (e: Exception) {
@@ -278,15 +291,12 @@ class FragmentOtp : Fragment() {
         successVideoContainer.visibility = View.VISIBLE
         val rawId = resources.getIdentifier("success", "raw", requireContext().packageName)
         if (rawId == 0) {
-            view?.findNavController()?.navigate(R.id.action_fragment_otp_to_login)
+            navigateToWelcome()
             return
         }
         val videoUri = Uri.parse("android.resource://${requireContext().packageName}/$rawId")
         successVideoView.setVideoURI(videoUri)
-        successVideoView.setOnPreparedListener { mp ->
-            val rotation = getVideoRotationDegrees(videoUri)
-            val videoW = if (rotation == 90 || rotation == 270) mp.videoHeight else mp.videoWidth
-            val videoH = if (rotation == 90 || rotation == 270) mp.videoWidth else mp.videoHeight
+        successVideoView.setOnPreparedListener {
             successVideoInner.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     successVideoInner.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -297,31 +307,30 @@ class FragmentOtp : Fragment() {
         }
         successVideoView.setOnCompletionListener {
             successVideoContainer.visibility = View.GONE
-            view?.findNavController()?.navigate(R.id.action_fragment_otp_to_login)
+            navigateToWelcome()
         }
         successVideoView.setOnErrorListener { _, _, _ ->
             successVideoContainer.visibility = View.GONE
-            view?.findNavController()?.navigate(R.id.action_fragment_otp_to_login)
+            navigateToWelcome()
             true
         }
+    }
+
+    private fun navigateToWelcome() {
+        findNavController().navigate(
+            R.id.welcomeFragment,
+            null,
+            androidx.navigation.navOptions {
+                popUpTo(R.id.nav_graph) { inclusive = true }
+                launchSingleTop = true
+            }
+        )
     }
 
     private fun sizeVideoToFillScreen(videoView: VideoView, containerW: Int, containerH: Int) {
         if (containerW <= 0 || containerH <= 0) return
         val lp = FrameLayout.LayoutParams(containerW, containerH, Gravity.CENTER)
         videoView.layoutParams = lp
-    }
-
-    private fun getVideoRotationDegrees(uri: Uri): Int {
-        return try {
-            val retriever = MediaMetadataRetriever()
-            retriever.setDataSource(requireContext(), uri)
-            val degrees = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
-            retriever.release()
-            degrees?.toIntOrNull() ?: 0
-        } catch (_: Exception) {
-            0
-        }
     }
 
     private fun resendOtp() {
@@ -332,8 +341,7 @@ class FragmentOtp : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP resent successfully!", Toast.LENGTH_SHORT).show()
                 } else {
-                    val friendly = mapResendError(response.code(), response.errorBody().readApiError())
-                    Toast.makeText(requireContext(), friendly, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Verification failed", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Wrong OTP", Toast.LENGTH_SHORT).show()
