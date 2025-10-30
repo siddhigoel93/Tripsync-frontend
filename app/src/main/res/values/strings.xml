@@ -27,11 +27,10 @@
         <item>O-</item>
     </string-array>
     <string-array name="relationship_options">
-        <item>Parent</item>
         <item>Spouse</item>
-        <item>Sibling</item>
+        <item>Parents</item>
         <item>Friend</item>
-        <item>Other</item>
+        <item>Sibling</item>
     </string-array>
 
 

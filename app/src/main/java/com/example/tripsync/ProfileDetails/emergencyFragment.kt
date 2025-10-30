@@ -2,12 +2,15 @@ package com.example.tripsync.ProfileDetails
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
 
@@ -44,12 +47,37 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
         targetView: EditText
     ) {
         val options = resources.getStringArray(optionsArrayId)
-        val currentSelectionIndex = options.indexOf(targetView.text.toString())
-        AlertDialog.Builder(requireContext())
-            .setSingleChoiceItems(options, currentSelectionIndex) { dialog, which ->
-                targetView.setText(options[which])
-                dialog.dismiss()
+        val currentSelection = targetView.text.toString()
+
+        val builder = MaterialAlertDialogBuilder(requireContext())
+
+        val listView = ListView(requireContext()).apply {
+            adapter = ArrayAdapter(
+                requireContext(),
+                R.layout.list_choice,
+                android.R.id.text1,
+                options
+            )
+            choiceMode = ListView.CHOICE_MODE_SINGLE
+
+            setBackgroundColor(resources.getColor(android.R.color.white, null))
+            val currentSelectionIndex = options.indexOf(currentSelection)
+            if (currentSelectionIndex != -1) {
+                setItemChecked(currentSelectionIndex, true)
             }
-            .show()
+        }
+
+        val dialog = builder.setView(listView).create()
+        listView.setOnItemClickListener { _, view, position, _ ->
+
+            targetView.setText(options[position])
+
+            for (i in 0 until listView.childCount) {
+                listView.getChildAt(i).isActivated = (i == position)
+            }
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 }
