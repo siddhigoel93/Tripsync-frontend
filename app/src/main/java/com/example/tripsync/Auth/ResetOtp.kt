@@ -21,12 +21,15 @@ import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.EmailRequest
 import kotlinx.coroutines.launch
 import androidx.navigation.fragment.findNavController
+import com.example.tripsync.api.models.ResetPasswordOTPRequest
+import org.json.JSONObject
 
 class ResetOTP : Fragment() {
 
     private lateinit var hiddenEditText: EditText
     private lateinit var boxes: List<TextView>
     lateinit var otpError: TextView
+    lateinit var btnVerify : com.google.android.material.button.MaterialButton
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +43,7 @@ class ResetOTP : Fragment() {
         val headline = view.findViewById<TextView>(R.id.headline)
         val subText = view.findViewById<TextView>(R.id.subText)
         val backToLogin = view.findViewById<TextView>(R.id.tvBackToLogin)
-        val btnVerify = view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn)
+        btnVerify = view.findViewById(R.id.btn)
         val tvResend = view.findViewById<TextView>(R.id.tvResendOtp)
         otpError = view.findViewById(R.id.otpError)
         otpError.visibility = View.GONE
@@ -110,12 +113,18 @@ class ResetOTP : Fragment() {
                 Toast.makeText(requireContext(), "Please enter the full 6-digit OTP", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            val email = arguments?.getString("email") ?: ""
+            val pass1 = arguments?.getString("new_password") ?: ""
+            val pass2 = arguments?.getString("confirm_password")?: ""
 
-            val bundle = Bundle().apply {
-                putString("email", email)
-                putString("otp", otp)
-            }
-            view.findNavController().navigate(R.id.action_resetOTP_to_resetPasswordFragment, bundle)
+
+//            val bundle = Bundle().apply {
+//                putString("email", email)
+//                putString("otp", otp)
+//            }
+            btnVerify.isEnabled = false
+            btnVerify.text = "Verifying..."
+            resetPassword(email, otp, pass1, pass2)
         }
 
         tvResend.setOnClickListener {
@@ -129,6 +138,44 @@ class ResetOTP : Fragment() {
             }
         }
 
+    }
+        private fun resetPassword(email: String, otp: String, newPassword: String, confirmPassword: String) {
+        lifecycleScope.launch {
+            try {
+                val api = ApiClient.getAuthService(requireContext())
+                val request = ResetPasswordOTPRequest(email, otp, newPassword, confirmPassword)
+                val response = api.verifyOtp(request)
+
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Password reset successfully!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_resetOTP_to_loginFragment)
+                } else {
+                    val errorJson = response.errorBody()?.string()
+                    val message = try {
+                        val obj = JSONObject(errorJson ?: "")
+                        val attemptsLeft = obj.optInt("attemptsLeft", -1)
+                        when {
+                            attemptsLeft > 0 -> "Invalid OTP, please re-enter"
+                            attemptsLeft == 0 -> "OTP expired. Please resend OTP"
+                            else -> obj.optString("message", "Something went wrong")
+                        }
+                    } catch (e: Exception) {
+                        "Something went wrong. Please try again."
+                    }
+                    showOtpError(message)
+                }
+
+            } catch (e: java.net.UnknownHostException) {
+                Toast.makeText(requireContext(), "No internet connection. Please check your network.", Toast.LENGTH_SHORT).show()
+            } catch (e: java.net.SocketTimeoutException) {
+                Toast.makeText(requireContext(), "Request timed out. Please try again.", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show()
+            }finally {
+                btnVerify.isEnabled = true
+                btnVerify.text = "Verify"
+            }
+        }
     }
 
     private fun showOtpError(message: String) {

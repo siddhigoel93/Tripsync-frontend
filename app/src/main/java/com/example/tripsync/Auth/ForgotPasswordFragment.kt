@@ -55,18 +55,15 @@ class ForgotPasswordFragment : Fragment() {
             usernameError.visibility = View.GONE
             email.setBackgroundResource(R.drawable.input_border)
 
-            verify.isEnabled = false
-            verify.text = "Sending OTP..."
-
 
             val emailText = email.text.toString().trim()
             if (emailText.isEmpty()) {
                 showFieldError("Email cannot be empty")
-                verify.isEnabled = true
-                verify.text = "Send OTP"
                 return@setOnClickListener
             }
 
+            verify.isEnabled = false
+            verify.text = "Sending OTP..."
             sendResetOtp(emailText, view)
         }
 
@@ -81,10 +78,9 @@ class ForgotPasswordFragment : Fragment() {
                 val response = authService.requestPasswordReset(request)
 
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "OTP sent successfully!", Toast.LENGTH_SHORT).show()
-                    verify.text = "OTP sent"
+//                    Toast.makeText(requireContext(), "OTP sent successfully!", Toast.LENGTH_SHORT).show()
                     val bundle = Bundle().apply { putString("email", emailText) }
-                    view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetOTP, bundle)
+                    view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetPasswordFragment, bundle)
 
                 } else if (response.code() == 400) {
                     showFieldError("No user found with this email address.")
