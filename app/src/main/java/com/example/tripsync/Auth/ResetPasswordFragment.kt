@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -51,23 +52,23 @@ class ResetPasswordFragment : Fragment() {
 
     private var isPasswordVisible1 = false
     private var isPasswordVisible2 = false
-    class AsteriskPasswordTransformation : ReplacementTransformationMethod() {
-        override fun getOriginal(): CharArray {
-            // All possible characters in password
-            return charArrayOf(
-                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
-                'Q','R','S','T','U','V','W','X','Y','Z',
-                'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',
-                'q','r','s','t','u','v','w','x','y','z',
-                '0','1','2','3','4','5','6','7','8','9',
-                '!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|',';',':','"','\'','<','>',',','.','?','/','`','~',' '
-            )
-        }
-
-        override fun getReplacement(): CharArray {
-            return CharArray(getOriginal().size) { '*' }
-        }
-    }
+//    class AsteriskPasswordTransformation : ReplacementTransformationMethod() {
+//        override fun getOriginal(): CharArray {
+//            // All possible characters in password
+//            return charArrayOf(
+//                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
+//                'Q','R','S','T','U','V','W','X','Y','Z',
+//                'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',
+//                'q','r','s','t','u','v','w','x','y','z',
+//                '0','1','2','3','4','5','6','7','8','9',
+//                '!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|',';',':','"','\'','<','>',',','.','?','/','`','~',' '
+//            )
+//        }
+//
+//        override fun getReplacement(): CharArray {
+//            return CharArray(getOriginal().size) { '*' }
+//        }
+//    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -84,6 +85,7 @@ class ResetPasswordFragment : Fragment() {
         signInText = view.findViewById(R.id.signup)
         passwordField = view.findViewById(R.id.passwordField)
         passwordConfirmField = view.findViewById(R.id.passwordConfirmField)
+        val passwordRules = view.findViewById<LinearLayout>(R.id.passwordRules)
 
         icon1 = view.findViewById(R.id.icon1)
         icon2 = view.findViewById(R.id.icon2)
@@ -97,12 +99,13 @@ class ResetPasswordFragment : Fragment() {
         rule5 = view.findViewById(R.id.rule5)
 
         signInText.paintFlags = signInText.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
-        etPassword.transformationMethod = AsteriskPasswordTransformation()
-        etPassword2.transformationMethod = AsteriskPasswordTransformation()
+//
+//        etPassword.transformationMethod = AsteriskPasswordTransformation()
+//        etPassword2.transformationMethod = AsteriskPasswordTransformation()
 
         etPassword.setOnFocusChangeListener { _, hasFocus ->
             passwordField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+            passwordRules.visibility = if (hasFocus) View.VISIBLE else View.GONE
         }
         etPassword2.setOnFocusChangeListener { _, hasFocus ->
             passwordConfirmField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
@@ -140,7 +143,7 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun togglePasswordVisibility(editText: EditText, eyeIcon: ImageView, isVisible: Boolean) {
-        editText.transformationMethod = if (isVisible) null else AsteriskPasswordTransformation()
+        editText.transformationMethod = if (isVisible) null else PasswordTransformationMethod.getInstance()
         eyeIcon.setImageResource(if (isVisible) R.drawable.eye else R.drawable.eyedisable)
         editText.setSelection(editText.text.length)
     }
