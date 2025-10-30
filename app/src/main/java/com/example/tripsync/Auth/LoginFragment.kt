@@ -3,6 +3,7 @@ package com.example.tripsync.Auth
 import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -23,21 +24,22 @@ class LoginFragment : Fragment() {
 
     private var passwordVisible = false
 
-    private class AsteriskPasswordTransformation : PasswordTransformationMethod() {
-        private class AsteriskCharSequence(private val source: CharSequence) : CharSequence {
-            override val length get() = source.length
-            override fun get(index: Int) = '*'
-            override fun subSequence(startIndex: Int, endIndex: Int) = source.subSequence(startIndex, endIndex)
-        }
-
-        override fun getTransformation(source: CharSequence?, view: View?) = source?.let { AsteriskCharSequence(it) } ?: ""
-    }
+//    private class AsteriskPasswordTransformation : PasswordTransformationMethod() {
+//        private class AsteriskCharSequence(private val source: CharSequence) : CharSequence {
+//            override val length get() = source.length
+//            override fun get(index: Int) = '*'
+//            override fun subSequence(startIndex: Int, endIndex: Int) = source.subSequence(startIndex, endIndex)
+//        }
+//
+//        override fun getTransformation(source: CharSequence?, view: View?) = source?.let { AsteriskCharSequence(it) } ?: ""
+//    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
         val etUsername = view.findViewById<EditText>(R.id.etUsername)
+        etUsername.filters = arrayOf(EMAIL_EMOJI_FILTER)
         val etPassword = view.findViewById<EditText>(R.id.etPassword)
         val passwordField = view.findViewById<View>(R.id.passwordField)
         val ivPasswordEye = view.findViewById<ImageView>(R.id.ivPasswordEye)
@@ -48,7 +50,7 @@ class LoginFragment : Fragment() {
         val passwordError = view.findViewById<TextView>(R.id.passwordError)
         val verified = view.findViewById<ImageView>(R.id.verified)
 
-        etPassword.transformationMethod = AsteriskPasswordTransformation()
+//        etPassword.transformationMethod = AsteriskPasswordTransformation()
 
         forgotPassword.paintFlags = forgotPassword.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         signup.paintFlags = signup.paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -66,7 +68,8 @@ class LoginFragment : Fragment() {
         fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
             val start = editText.selectionStart
             val end = editText.selectionEnd
-            editText.transformationMethod = if (visible) null else AsteriskPasswordTransformation()
+//            editText.transformationMethod = if (visible) null else AsteriskPasswordTransformation()
+            editText.transformationMethod = if (visible) null else PasswordTransformationMethod.getInstance()
             editText.setSelection(start, end)
             icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eyedisable)
         }
@@ -142,6 +145,18 @@ class LoginFragment : Fragment() {
         return view
     }
 
+    val EMAIL_EMOJI_FILTER = InputFilter { source, start, end, dest, dstart, dend ->
+        for (i in start until end) {
+            val type = Character.getType(source[i])
+            if (type == Character.SURROGATE.toInt() ||
+                type == Character.OTHER_SYMBOL.toInt() ||
+                type == Character.NON_SPACING_MARK.toInt()
+            ) {
+                return@InputFilter ""
+            }
+        }
+        return@InputFilter null
+    }
     private fun showFieldError(errorView: TextView, field: View, message: String) {
         errorView.text = message
         errorView.visibility = View.VISIBLE

@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -51,23 +52,23 @@ class ResetPasswordFragment : Fragment() {
 
     private var isPasswordVisible1 = false
     private var isPasswordVisible2 = false
-    class AsteriskPasswordTransformation : ReplacementTransformationMethod() {
-        override fun getOriginal(): CharArray {
-            // All possible characters in password
-            return charArrayOf(
-                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
-                'Q','R','S','T','U','V','W','X','Y','Z',
-                'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',
-                'q','r','s','t','u','v','w','x','y','z',
-                '0','1','2','3','4','5','6','7','8','9',
-                '!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|',';',':','"','\'','<','>',',','.','?','/','`','~',' '
-            )
-        }
-
-        override fun getReplacement(): CharArray {
-            return CharArray(getOriginal().size) { '*' }
-        }
-    }
+//    class AsteriskPasswordTransformation : ReplacementTransformationMethod() {
+//        override fun getOriginal(): CharArray {
+//            // All possible characters in password
+//            return charArrayOf(
+//                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
+//                'Q','R','S','T','U','V','W','X','Y','Z',
+//                'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p',
+//                'q','r','s','t','u','v','w','x','y','z',
+//                '0','1','2','3','4','5','6','7','8','9',
+//                '!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|',';',':','"','\'','<','>',',','.','?','/','`','~',' '
+//            )
+//        }
+//
+//        override fun getReplacement(): CharArray {
+//            return CharArray(getOriginal().size) { '*' }
+//        }
+//    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -84,6 +85,7 @@ class ResetPasswordFragment : Fragment() {
         signInText = view.findViewById(R.id.signup)
         passwordField = view.findViewById(R.id.passwordField)
         passwordConfirmField = view.findViewById(R.id.passwordConfirmField)
+        val passwordRules = view.findViewById<LinearLayout>(R.id.passwordRules)
 
         icon1 = view.findViewById(R.id.icon1)
         icon2 = view.findViewById(R.id.icon2)
@@ -97,12 +99,13 @@ class ResetPasswordFragment : Fragment() {
         rule5 = view.findViewById(R.id.rule5)
 
         signInText.paintFlags = signInText.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
-        etPassword.transformationMethod = AsteriskPasswordTransformation()
-        etPassword2.transformationMethod = AsteriskPasswordTransformation()
+//
+//        etPassword.transformationMethod = AsteriskPasswordTransformation()
+//        etPassword2.transformationMethod = AsteriskPasswordTransformation()
 
         etPassword.setOnFocusChangeListener { _, hasFocus ->
             passwordField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+            passwordRules.visibility = if (hasFocus) View.VISIBLE else View.GONE
         }
         etPassword2.setOnFocusChangeListener { _, hasFocus ->
             passwordConfirmField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
@@ -140,7 +143,7 @@ class ResetPasswordFragment : Fragment() {
     }
 
     private fun togglePasswordVisibility(editText: EditText, eyeIcon: ImageView, isVisible: Boolean) {
-        editText.transformationMethod = if (isVisible) null else AsteriskPasswordTransformation()
+        editText.transformationMethod = if (isVisible) null else PasswordTransformationMethod.getInstance()
         eyeIcon.setImageResource(if (isVisible) R.drawable.eye else R.drawable.eyedisable)
         editText.setSelection(editText.text.length)
     }
@@ -150,7 +153,6 @@ class ResetPasswordFragment : Fragment() {
             val pass1 = etPassword.text.toString().trim()
             val pass2 = etPassword2.text.toString().trim()
             val email = arguments?.getString("email") ?: ""
-            val otp = arguments?.getString("otp") ?: ""
 
             var hasError = false
             btn.isEnabled = false
@@ -188,52 +190,59 @@ class ResetPasswordFragment : Fragment() {
             } else {
                 passwordError.visibility = View.GONE
             }
-            btn.isEnabled = false
-            btn.text = "Please wait..."
-            resetPassword(email, otp, pass1, pass2)
-        }
-    }
-
-    private fun resetPassword(email: String, otp: String, newPassword: String, confirmPassword: String) {
-        lifecycleScope.launch {
-            try {
-                val api = ApiClient.getAuthService(requireContext())
-                val request = ResetPasswordOTPRequest(email, otp, newPassword, confirmPassword)
-                val response = api.verifyOtp(request)
-
-                if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Password reset successfully!", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
-                } else {
-                    val errorJson = response.errorBody()?.string()
-                    val message = try {
-                        val obj = JSONObject(errorJson ?: "")
-                        val attemptsLeft = obj.optInt("attemptsLeft", -1)
-                        when {
-                            attemptsLeft > 0 -> "Invalid OTP, please re-enter"
-                            attemptsLeft == 0 -> "OTP expired. Please resend OTP"
-                            else -> obj.optString("message", "Something went wrong")
-                        }
-                    } catch (e: Exception) {
-                        "Something went wrong. Please try again."
-                    }
-                    findNavController().previousBackStackEntry?.savedStateHandle?.set("otp_error", true)
-                    findNavController().previousBackStackEntry?.savedStateHandle?.set("otp_error_message", message)
-                    findNavController().popBackStack()
-                }
-
-            } catch (e: java.net.UnknownHostException) {
-                Toast.makeText(requireContext(), "No internet connection. Please check your network.", Toast.LENGTH_SHORT).show()
-            } catch (e: java.net.SocketTimeoutException) {
-                Toast.makeText(requireContext(), "Request timed out. Please try again.", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show()
-            }finally {
-                btn.isEnabled = true
-                btn.text = "Reset Password"
+//            btn.isEnabled = false
+//            btn.text = "Please wait..."
+//            resetPassword(email, otp, pass1, pass2)
+            val bundle = Bundle().apply {
+                putString("email", email)
+                putString("new_password" , pass1)
+                putString("confirm_password" , pass2)
             }
+            Toast.makeText(requireContext(), "Please verify OTP !", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_resetPasswordFragment_to_resetOTP , bundle)
         }
     }
+
+//    private fun resetPassword(email: String, otp: String, newPassword: String, confirmPassword: String) {
+//        lifecycleScope.launch {
+//            try {
+//                val api = ApiClient.getAuthService(requireContext())
+//                val request = ResetPasswordOTPRequest(email, otp, newPassword, confirmPassword)
+//                val response = api.verifyOtp(request)
+//
+//                if (response.isSuccessful) {
+//                    Toast.makeText(requireContext(), "Password reset successfully!", Toast.LENGTH_SHORT).show()
+//                    findNavController().navigate(R.id.action_resetPasswordFragment_to_loginFragment)
+//                } else {
+//                    val errorJson = response.errorBody()?.string()
+//                    val message = try {
+//                        val obj = JSONObject(errorJson ?: "")
+//                        val attemptsLeft = obj.optInt("attemptsLeft", -1)
+//                        when {
+//                            attemptsLeft > 0 -> "Invalid OTP, please re-enter"
+//                            attemptsLeft == 0 -> "OTP expired. Please resend OTP"
+//                            else -> obj.optString("message", "Something went wrong")
+//                        }
+//                    } catch (e: Exception) {
+//                        "Something went wrong. Please try again."
+//                    }
+//                    findNavController().previousBackStackEntry?.savedStateHandle?.set("otp_error", true)
+//                    findNavController().previousBackStackEntry?.savedStateHandle?.set("otp_error_message", message)
+//                    findNavController().popBackStack()
+//                }
+//
+//            } catch (e: java.net.UnknownHostException) {
+//                Toast.makeText(requireContext(), "No internet connection. Please check your network.", Toast.LENGTH_SHORT).show()
+//            } catch (e: java.net.SocketTimeoutException) {
+//                Toast.makeText(requireContext(), "Request timed out. Please try again.", Toast.LENGTH_SHORT).show()
+//            } catch (e: Exception) {
+//                Toast.makeText(requireContext(), "An unexpected error occurred. Please try again.", Toast.LENGTH_SHORT).show()
+//            }finally {
+//                btn.isEnabled = true
+//                btn.text = "Reset Password"
+//            }
+//        }
+//    }
 
 
     private fun setupNavigation() {

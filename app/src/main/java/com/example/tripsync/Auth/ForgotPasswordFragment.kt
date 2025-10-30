@@ -2,6 +2,8 @@ package com.example.tripsync.Auth
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.InputFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,9 +37,11 @@ class ForgotPasswordFragment : Fragment() {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         email = view.findViewById(R.id.etEmail)
+        email.filters = arrayOf(EMAIL_EMOJI_FILTER)
          verify = view.findViewById(R.id.btn)
         val backToLogin = view.findViewById<TextView>(R.id.backtologin)
         usernameError = view.findViewById(R.id.usernameError)
+        verify.text = "Next"
 
         backToLogin.paintFlags = backToLogin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         backToLogin.setOnClickListener {
@@ -52,18 +56,15 @@ class ForgotPasswordFragment : Fragment() {
             usernameError.visibility = View.GONE
             email.setBackgroundResource(R.drawable.input_border)
 
-            verify.isEnabled = false
-            verify.text = "Sending OTP..."
-
 
             val emailText = email.text.toString().trim()
             if (emailText.isEmpty()) {
                 showFieldError("Email cannot be empty")
-                verify.isEnabled = true
-                verify.text = "Send OTP"
                 return@setOnClickListener
             }
 
+            verify.isEnabled = false
+            verify.text = "Please wait..."
             sendResetOtp(emailText, view)
         }
 
@@ -78,43 +79,55 @@ class ForgotPasswordFragment : Fragment() {
                 val response = authService.requestPasswordReset(request)
 
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "OTP sent successfully!", Toast.LENGTH_SHORT).show()
-                    verify.text = "OTP sent"
+//                    Toast.makeText(requireContext(), "OTP sent successfully!", Toast.LENGTH_SHORT).show()
                     val bundle = Bundle().apply { putString("email", emailText) }
-                    view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetOTP, bundle)
+                    view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetPasswordFragment, bundle)
 
                 } else if (response.code() == 400) {
                     showFieldError("No user found with this email address.")
                     verify.isEnabled = true
-                    verify.text = "Send OTP"
+                    verify.text = "Next"
 
                 } else if (response.code() == 429) {
                     showFieldError("Too many attempts. Please try again later.")
                     verify.isEnabled = true
-                    verify.text = "Send OTP"
+                    verify.text = "Next"
 
                 } else {
                     showFieldError("Something went wrong. Please try again.")
                     verify.isEnabled = true
-                    verify.text = "Send OTP"
+                    verify.text = "Next"
                 }
 
             } catch (e: java.net.UnknownHostException) {
                 showFieldError("No internet connection. Please check your network.")
                 verify.isEnabled = true
-                verify.text = "Send OTP"
+                verify.text = "Next"
             } catch (e: java.net.SocketTimeoutException) {
                 showFieldError("Request timed out. Please try again.")
                 verify.isEnabled = true
-                verify.text = "Send OTP"
+                verify.text = "Next"
             } catch (e: Exception) {
+                Log.e("ForgotPasswordFragment", "Error sending OTP", e)
                 showFieldError("An unexpected error occurred. Please try again.")
                 verify.isEnabled = true
-                verify.text = "Send OTP"
+                verify.text = "Next"
             }
         }
     }
 
+    val EMAIL_EMOJI_FILTER = InputFilter { source, start, end, dest, dstart, dend ->
+        for (i in start until end) {
+            val type = Character.getType(source[i])
+            if (type == Character.SURROGATE.toInt() ||
+                type == Character.OTHER_SYMBOL.toInt() ||
+                type == Character.NON_SPACING_MARK.toInt()
+            ) {
+                return@InputFilter ""
+            }
+        }
+        return@InputFilter null
+    }
 
     private fun showFieldError(message: String) {
         usernameError.visibility = View.VISIBLE

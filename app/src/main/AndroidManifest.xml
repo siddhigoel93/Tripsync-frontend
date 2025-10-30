@@ -29,7 +29,7 @@
             android:resizeableActivity="true"
             android:launchMode="singleTop"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:windowSoftInputMode="adjustPan|stateHidden" />
 
         <meta-data
             android:name="android.max_aspect"

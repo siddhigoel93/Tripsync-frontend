@@ -76,16 +76,13 @@
             android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
         <action
-            android:id="@+id/action_forgotPasswordFragment_to_resetOTP"
-            app:destination="@id/resetOTP" />
+            android:id="@+id/action_forgotPasswordFragment_to_resetPasswordFragment"
+            app:destination="@id/resetPasswordFragment" />
     </fragment>
     <fragment
         android:id="@+id/resetOTP"
         android:name="com.example.tripsync.Auth.ResetOTP"
         android:label="ResetOTP" >
-        <action
-            android:id="@+id/action_resetOTP_to_resetPasswordFragment"
-            app:destination="@id/resetPasswordFragment" />
         <action
             android:id="@+id/action_resetOTP_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -98,9 +95,34 @@
         <action
             android:id="@+id/action_homeFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_emergencyFragment"
+            app:destination="@id/emergencyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/emergencyFragment"
+        android:name="com.example.tripsync.ProfileDetails.EmergencyFragment"
+        android:label="fragment_emergency"
+        tools:layout="@layout/fragment_emergency" >
+        <action
+            android:id="@+id/action_emergencyFragment_to_preferencesFragment"
+            app:destination="@id/preferencesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="com.example.tripsync.ProfileDetails.PreferencesFragment"
+        android:label="fragment_preferences"
+        tools:layout="@layout/fragment_preferences" >
+        <action
+            android:id="@+id/action_preferencesFragment_to_emergencyFragment"
+            app:destination="@id/emergencyFragment" />
     </fragment>
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="com.example.tripsync.fragment_tripsync_welcome"
         android:label="WelcomeFragment" />
+    <fragment
+        android:id="@+id/fragment_personal_details"
+        android:name="com.example.tripsync.fragment_personal_details"
+        android:label="fragment_personal_details" />
 </navigation>

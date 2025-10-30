@@ -1,6 +1,7 @@
 package com.example.tripsync.api
 
 import android.content.Context
+import android.util.Log
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -22,6 +23,7 @@ object ApiClient {
                 }
             }
         } catch (e: IOException) {
+            Log.e("ApiClient", "Error loading BASE_URL", e)
         }
         return DEFAULT_BASE_URL
     }

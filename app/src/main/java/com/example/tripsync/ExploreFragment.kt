@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
@@ -17,12 +18,14 @@ class ExploreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
-        val button = view.findViewById<MaterialButton>(R.id.logoutButton)
+//        val button = view.findViewById<MaterialButton>(R.id.logoutButton)
+//
+//        button.setOnClickListener {
+//            logoutUser()
+//        }
 
-        button.setOnClickListener {
-            logoutUser()
-        }
-
+        val emergency = view.findViewById<CardView>(R.id.card_sos_emergency)
+        emergency.setOnClickListener { findNavController().navigate(R.id.action_homeFragment_to_emergencyFragment) }
         return view
     }
 
@@ -31,10 +34,8 @@ class ExploreFragment : Fragment() {
         val sharedPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
         sharedPrefs.edit().clear().apply()
 
-        // Optional confirmation message
         Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
 
-        // Navigate back to login screen
         findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
     }
 }
