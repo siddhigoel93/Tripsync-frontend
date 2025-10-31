@@ -1,10 +1,12 @@
-package com.example.tripsync
+package com.example.tripsync.ProfileDetails
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.tripsync.R
 import com.example.tripsync.databinding.FragmentPersonalDetailsBinding
 
 class fragment_personal_details : Fragment() {
@@ -23,7 +25,9 @@ class fragment_personal_details : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rkl8eel5bzb.setOnClickListener { }
+        binding.btnNext.setOnClickListener {
+            findNavController().navigate(R.id.emergencyFragment)
+        }
     }
 
     override fun onDestroyView() {

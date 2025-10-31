@@ -28,7 +28,7 @@ class OnboardingFragment : Fragment() {
 
         if (accessToken != null) {
 
-            findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
+           findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
         }
     }
 

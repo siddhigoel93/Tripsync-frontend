@@ -91,14 +91,7 @@
         android:id="@+id/homeFragment"
         android:name="com.example.tripsync.ExploreFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_explore" >
-        <action
-            android:id="@+id/action_homeFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_emergencyFragment"
-            app:destination="@id/emergencyFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_explore" />
     <fragment
         android:id="@+id/emergencyFragment"
         android:name="com.example.tripsync.ProfileDetails.EmergencyFragment"
@@ -107,6 +100,9 @@
         <action
             android:id="@+id/action_emergencyFragment_to_preferencesFragment"
             app:destination="@id/preferencesFragment" />
+        <action
+            android:id="@+id/action_emergencyFragment_to_fragment_personal_details"
+            app:destination="@id/fragment_personal_details" />
     </fragment>
     <fragment
         android:id="@+id/preferencesFragment"
@@ -119,10 +115,18 @@
     </fragment>
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.example.tripsync.fragment_tripsync_welcome"
-        android:label="WelcomeFragment" />
+        android:name="com.example.tripsync.ProfileDetails.fragment_tripsync_welcome"
+        android:label="WelcomeFragment" >
+        <action
+            android:id="@+id/action_welcomeFragment_to_fragment_personal_details"
+            app:destination="@id/fragment_personal_details" />
+    </fragment>
     <fragment
         android:id="@+id/fragment_personal_details"
-        android:name="com.example.tripsync.fragment_personal_details"
-        android:label="fragment_personal_details" />
+        android:name="com.example.tripsync.ProfileDetails.fragment_personal_details"
+        android:label="fragment_personal_details" >
+        <action
+            android:id="@+id/action_fragment_personal_details_to_emergencyFragment"
+            app:destination="@id/emergencyFragment" />
+    </fragment>
 </navigation>

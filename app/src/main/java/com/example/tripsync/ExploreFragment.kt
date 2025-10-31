@@ -24,18 +24,18 @@ class ExploreFragment : Fragment() {
 //            logoutUser()
 //        }
 
-        val emergency = view.findViewById<CardView>(R.id.card_sos_emergency)
-        emergency.setOnClickListener { findNavController().navigate(R.id.action_homeFragment_to_emergencyFragment) }
+//        val emergency = view.findViewById<CardView>(R.id.card_sos_emergency)
+//        emergency.setOnClickListener { findNavController().navigate(R.id.action_homeFragment_to_emergencyFragment) }
         return view
     }
-
-    private fun logoutUser() {
-        // Clear stored tokens
-        val sharedPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
-        sharedPrefs.edit().clear().apply()
-
-        Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
-
-        findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-    }
+//
+//    private fun logoutUser() {
+//        // Clear stored tokens
+//        val sharedPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+//        sharedPrefs.edit().clear().apply()
+//
+//        Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
+//
+//        findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+//    }
 }

@@ -19,10 +19,14 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
         val inputBloodGroup = view.findViewById<EditText>(R.id.inputBloodGroup)
         val inputRelationship = view.findViewById<EditText>(R.id.inputRelationship)
         val btn = view.findViewById<MaterialButton>(R.id.btn)
+        val btnPrev = view.findViewById<MaterialButton>(R.id.btnPrevious)
         val allergies = view.findViewById<EditText>(R.id.inputAllergies)
 
         btn.setOnClickListener {
             findNavController().navigate(R.id.action_emergencyFragment_to_preferencesFragment)
+        }
+        btnPrev.setOnClickListener {
+            findNavController().navigate(R.id.action_emergencyFragment_to_fragment_personal_details)
         }
 
         allergies.setOnClickListener {
