@@ -121,8 +121,14 @@ class fragment_signup : Fragment() {
         etConfirm.filters = arrayOf(blockEmojiAndSpaces, limit20)
 
         signin.paintFlags = signin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        tvTerms.paintFlags = tvTerms.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         ivEmailValid.setImageResource(R.drawable.ic_check_green)
         ivEmailValid.visibility = View.GONE
+
+        signin.setOnClickListener {
+            view.findNavController().navigate(R.id.action_fragment_signup_to_login)
+        }
+
 
         tvTerms.setOnClickListener {
             val dlg = TermsDialogFragment()
@@ -159,10 +165,10 @@ class fragment_signup : Fragment() {
             if (hasFocus) showPwRulesForPassword() else hidePwRulesPass()
         }
 
-        etConfirm.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            confirmContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
-            if (hasFocus) showPwRulesForConfirm() else hidePwRulesConfirm()
-        }
+//        etConfirm.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+//            confirmContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+//            if (hasFocus) showPwRulesForConfirm() else hidePwRulesConfirm()
+//        }
 
         etEmail.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             etEmail.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
@@ -260,7 +266,7 @@ class fragment_signup : Fragment() {
         val end = editText.selectionEnd
         editText.transformationMethod = if (visible) null else PasswordTransformationMethod.getInstance()
         editText.setSelection(if (start >= 0 && end >= 0) start else editText.text.length)
-        icon.setImageResource(if (visible) R.drawable.ic_visibility else R.drawable.ic_visibility_off)
+        icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eyedisable)
     }
 
     private fun clearErrors() {

@@ -216,12 +216,20 @@ class FragmentOtp : Fragment() {
             boxes.forEach { it.setBackgroundResource(R.drawable.otp_box_incorrect) }
             return
         }
-        val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
-        boxes.forEachIndexed { index, box ->
-            if (index == lastFilledIndex && lastFilledIndex != -1)
+//        val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
+//        boxes.forEachIndexed { index, box ->
+//            if (index == lastFilledIndex && lastFilledIndex != -1)
+//                box.setBackgroundResource(R.drawable.otp_box_active)
+//            else box.setBackgroundResource(R.drawable.otp_box_bg)
+//            box.invalidate()
+//        }
+        boxes.forEach { box ->
+            val filled = box.text.toString().trim().isNotEmpty()
+            if (filled) {
                 box.setBackgroundResource(R.drawable.otp_box_active)
-            else box.setBackgroundResource(R.drawable.otp_box_bg)
-            box.invalidate()
+            } else {
+                box.setBackgroundResource(R.drawable.otp_box_bg)
+            }
         }
     }
 
