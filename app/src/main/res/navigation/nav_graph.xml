@@ -27,7 +27,9 @@
             app:destination="@id/loginFragment" />
         <action
             android:id="@+id/action_fragment_otp_to_welcomeFragment"
-            app:destination="@id/welcomeFragment" />
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/fragment_signup"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
@@ -35,7 +37,9 @@
         android:label="Onboarding">
         <action
             android:id="@+id/action_onboarding_to_login"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_onboardingFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -56,7 +60,9 @@
             app:destination="@id/fragment_signup" />
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -87,7 +93,9 @@
         android:label="ResetOTP" >
         <action
             android:id="@+id/action_resetOTP_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/forgotPasswordFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -114,6 +122,9 @@
         <action
             android:id="@+id/action_preferencesFragment_to_emergencyFragment"
             app:destination="@id/emergencyFragment" />
+        <action
+            android:id="@+id/action_preferencesFragment_to_contactVerifyFragment"
+            app:destination="@id/contactVerifyFragment" />
     </fragment>
     <fragment
         android:id="@+id/welcomeFragment"
@@ -131,4 +142,8 @@
             android:id="@+id/action_fragment_personal_details_to_emergencyFragment"
             app:destination="@id/emergencyFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/contactVerifyFragment"
+        android:name="com.example.tripsync.Auth.ContactVerifyFragment"
+        android:label="ContactVerifyFragment" />
 </navigation>

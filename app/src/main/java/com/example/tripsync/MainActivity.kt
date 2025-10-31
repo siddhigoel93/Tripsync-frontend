@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.fragment_personal_details,
                 R.id.emergencyFragment,
                 R.id.preferencesFragment,
-//                R.id.verificationFragment
+                R.id.contactVerifyFragment
              -> {
                     progressLayout.visibility = View.VISIBLE
                     app_bar_layout.visibility = View.VISIBLE
@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
             R.id.fragment_personal_details -> 0
             R.id.emergencyFragment -> 1
             R.id.preferencesFragment -> 2
-//        R.id.verificationFragment -> 3
+            R.id.contactVerifyFragment -> 3
             else -> -1
         }
 
