@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="0dp"
+    android:gravity="center"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/dialog_white_rounded"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="16dp"
+        android:elevation="8dp">
+
+        <TextView
+            android:id="@+id/restn1rzqddw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TERMS &amp; CONDITIONS"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="10dp" />
+
+        <ScrollView
+            android:id="@+id/rbio29byuup6"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scrollbars="vertical"
+            android:overScrollMode="ifContentScrolls"
+            android:fadingEdge="none">
+
+            <TextView
+                android:id="@+id/rfiymz12ure7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#222222"
+                android:textSize="14sp"
+                android:lineSpacingExtra="3dp"
+                android:text="1. Acceptance of Terms - By creating an account or using TripSync, you agree to comply with these Terms. If you do not agree, please do not use the app.\n\n2. Account Registration - You must provide accurate information during sign-up. You are responsible for maintaining the confidentiality of your account credentials. Any activity under your account is your responsibility.\n\n3. Use of Services - TripSync allows you to:\n• Plan trips, manage expenses, and collaborate with tripmates.\n• Access AI recommendations, reminders, emergency SOS, and other travel tools.\n• Use communication features such as chat and friend-finding tools.\n\nYou agree to use these services only for lawful purposes and not to misuse any features.\n\n4. User Responsibilities - Do not upload harmful, misleading, or offensive content. Respect the privacy and permissions of other users. Use the SOS and emergency features only in genuine situations.\n\n5. Data &amp; Privacy - We collect and store certain user data to provide and improve our services. By using TripSync, you consent to our Privacy Policy.\n\n6. Third-Party Services - TripSync may provide links or integrate with third-party services. We are not responsible for their content, policies, or actions.\n\n7. Limitation of Liability - TripSync is provided “as is” without any warranties. We are not liable for any loss, damage, or delay resulting from the use of the app or travel arrangements.\n\n8. Termination - We may suspend or terminate accounts that violate these Terms without prior notice.\n\n9. Changes to Terms - We may update these Terms occasionally. Continued use of the app after changes means you accept the updated Terms.\n\n10. Contact - For any queries, contact us at: support@tripsync.app" />
+        </ScrollView>
+
+        <Button
+            android:id="@+id/rv7ihwjdcgfb"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:paddingHorizontal="40dp"
+            android:paddingVertical="10dp"
+            android:backgroundTint="#B0E6FA"
+            android:text="Close"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:cornerRadius="15dp"
+            android:fontFamily="@font/roboto_bold" />
+
+    </LinearLayout>
+</LinearLayout>

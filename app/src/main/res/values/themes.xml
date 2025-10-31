@@ -1,9 +1,19 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.TripSync" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
 
-    <style name="Theme.TripSync" parent="Base.Theme.TripSync" />
+<resources xmlns:tools="http://schemas.android.com/tools" >
+    <style name="Base.Theme.TripSync" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:colorControlHighlight">@android:color/transparent</item>
+        <item name="rippleColor">@android:color/transparent</item>
+
+        <item name="android:textCursorDrawable">@drawable/custom_cursor</item>
+
+
+    </style>
 </resources>
+
