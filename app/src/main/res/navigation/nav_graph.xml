@@ -136,7 +136,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragment_personal_details"
-        android:name="com.example.tripsync.ProfileDetails.fragment_personal_details"
+        android:name="com.example.tripsync.ui.FragmentPersonalDetails"
         android:label="fragment_personal_details" >
         <action
             android:id="@+id/action_fragment_personal_details_to_emergencyFragment"
