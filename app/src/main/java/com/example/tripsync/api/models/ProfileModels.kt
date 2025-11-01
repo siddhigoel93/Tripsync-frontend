@@ -1,4 +1,5 @@
 package com.example.tripsync.api.models
+import com.google.gson.annotations.SerializedName
 
 data class CreateProfileRequest(
     val fname: String,
@@ -13,8 +14,13 @@ data class CreateProfileRequest(
     val ename: String,
     val enumber: String,
     val erelation: String,
-    val preference: String
+    @SerializedName("prefrence") val preference: String
 )
+
+//data class RegisterRequest(
+//    val email: String,
+//    val preference: String
+//)
 
 data class CreateProfileResponse(
     val success: Boolean,

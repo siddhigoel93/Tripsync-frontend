@@ -10,6 +10,7 @@ import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -211,6 +212,11 @@ class FragmentPersonalDetails : Fragment() {
             try {
                 val service = ApiClient.getAuthService(requireContext())
                 val created = withContext(Dispatchers.IO) { service.createProfile(bearer, req) }
+                Log.d("CreateProfile", "Code: ${created.code()}")
+                Log.d("CreateProfile", "Success: ${created.isSuccessful}")
+                Log.d("CreateProfile", "Body: ${created.body()}")
+                Log.d("CreateProfile", "Error: ${created.errorBody()?.string()}")
+
                 if (created.isSuccessful) {
                     pickedImageUri?.let { uri ->
                         toMultipart(uri)?.let { part ->

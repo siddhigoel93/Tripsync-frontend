@@ -37,17 +37,6 @@ interface AuthService {
         @Body request: CreateProfileRequest
     ): Response<CreateProfileResponse>
 
-    @POST("/api/personal/verify-otp/")
-    suspend fun verifyPhoneOtp(
-        @Header("Authorization") bearer: String,
-        @Body request: OtpCodeRequest
-    ): Response<VerifyPhoneResponse>
-
-    @POST("/api/personal/resend-otp/")
-    suspend fun resendPersonalOtp(
-        @Header("Authorization") bearer: String,
-        @Body body: EmptyJsonBody = EmptyJsonBody()
-    ): Response<ResendOtpResponse>
 
     @GET("/api/personal/profile/")
     suspend fun getProfile(
