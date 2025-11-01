@@ -25,7 +25,7 @@ class TokenInterceptor(private val context: Context) : Interceptor {
     }
 
     private fun getTokenFromPrefs(context: Context): String? {
-        val prefs = context.getSharedPreferences("TripSyncPrefs", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
         return prefs.getString("access_token", null)
     }
 }

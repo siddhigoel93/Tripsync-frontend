@@ -7,12 +7,11 @@ import retrofit2.http.*
 
 interface ProfileService {
 
-    // Create profile (requires token)
-//    @POST("/api/personal/profile/")
-//    suspend fun createProfile(
-//        @Header("Authorization") bearer: String,
-//        @Body request: CreateProfileRequest
-//    ): Response<CreateProfileResponse>
+    @POST("api/personal/profile/")
+    suspend fun createProfile(
+        @Body request: CreateProfileRequest
+    ): Response<CreateProfileResponse>
+
 
     @POST("api/personal/verify-otp/")
     suspend fun verifyPhoneOtp(
@@ -22,24 +21,18 @@ interface ProfileService {
     @POST("api/personal/resend-otp/")
     suspend fun resendPersonalOtp(): Response<ResendOtpResponse>
 
-    // Get profile info (requires token)
-//    @GET("/api/personal/profile/")
-//    suspend fun getProfile(
-//        @Header("Authorization") bearer: String
-//    ): Response<GetProfileResponse>
+    @GET("api/personal/profile/")
+    suspend fun getProfile(): Response<GetProfileResponse>
 
-    // Update profile info (requires token)
-//    @PATCH("/api/personal/profile/")
-//    suspend fun updateProfile(
-//        @Header("Authorization") bearer: String,
-//        @Body request: UpdateProfileRequest
-//    ): Response<UpdateProfileResponse>
+    @PATCH("api/personal/profile/")
+    suspend fun updateProfile(
+        @Body request: UpdateProfileRequest
+    ): Response<UpdateProfileResponse>
 
-    // Upload profile picture (requires token)
-//    @Multipart
-//    @POST("/api/personal/profile/picture/")
-//    suspend fun uploadProfileImage(
-//        @Header("Authorization") bearer: String,
-//        @Part image: MultipartBody.Part
-//    ): Response<GenericResponse>
+
+    @Multipart
+    @POST("api/personal/profile/picture/")
+    suspend fun uploadProfileImage(
+        @Part image: MultipartBody.Part
+    ): Response<GenericResponse>
 }

@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.SecureApiClient
 import com.example.tripsync.api.models.CreateProfileRequest
 import com.example.tripsync.databinding.FragmentPersonalDetailsBinding
 import kotlinx.coroutines.CancellationException
@@ -130,11 +131,11 @@ class FragmentPersonalDetails : Fragment() {
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
     }
 
-    private fun getToken(): String? {
-        val ctx = context ?: return null
-        val sp: SharedPreferences = ctx.getSharedPreferences("auth", Context.MODE_PRIVATE)
-        return sp.getString("access_token", null)
-    }
+//    private fun getToken(): String? {
+//        val ctx = context ?: return null
+//        val sp: SharedPreferences = ctx.getSharedPreferences("auth", Context.MODE_PRIVATE)
+//        return sp.getString("access_token", null)
+//    }
 
     private suspend fun toMultipart(uri: Uri): MultipartBody.Part? = withContext(Dispatchers.IO) {
         try {
@@ -187,8 +188,8 @@ class FragmentPersonalDetails : Fragment() {
         if (!phone.startsWith("+")) return
         if (!dob.matches(Regex("""\d{4}-\d{2}-\d{2}"""))) return
 
-        val token = getToken() ?: return
-        val bearer = "Bearer $token"
+//        val token = getToken() ?: return
+//        val bearer = "Bearer $token"
 
         val req = CreateProfileRequest(
             fname = first,
@@ -210,17 +211,16 @@ class FragmentPersonalDetails : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val service = ApiClient.getAuthService(requireContext())
-                val created = withContext(Dispatchers.IO) { service.createProfile(bearer, req) }
+//                val service = ApiClient.getAuthService(requireContext())
+                val service = SecureApiClient.getSecureProfileService(requireContext())
+                val created = withContext(Dispatchers.IO) { service.createProfile( req) }
                 Log.d("CreateProfile", "Code: ${created.code()}")
-                Log.d("CreateProfile", "Success: ${created.isSuccessful}")
                 Log.d("CreateProfile", "Body: ${created.body()}")
-                Log.d("CreateProfile", "Error: ${created.errorBody()?.string()}")
 
                 if (created.isSuccessful) {
                     pickedImageUri?.let { uri ->
                         toMultipart(uri)?.let { part ->
-                            withContext(Dispatchers.IO) { service.uploadProfileImage(bearer, part) }
+                            withContext(Dispatchers.IO) { service.uploadProfileImage( part) }
                         }
                     }
                 }
