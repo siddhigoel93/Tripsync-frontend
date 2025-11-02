@@ -18,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
-import com.example.tripsync.api.SecureApiClient
 import com.example.tripsync.api.models.EmailRequest
 import com.example.tripsync.api.models.OtpCodeRequest
 import com.google.android.material.button.MaterialButton
@@ -120,8 +119,9 @@ class ContactVerifyFragment : Fragment() {
     private fun verifyProfileOtp(otp: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val api = SecureApiClient.getSecureProfileService(requireContext())
+                val api = ApiClient.getTokenService(requireContext())
                 val response = api.verifyPhoneOtp(OtpCodeRequest(otp))
+
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show()
@@ -134,6 +134,9 @@ class ContactVerifyFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e("VerifyProfileOtp", "Exception: ${e.message}")
                 Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
+            }finally {
+                btnVerifyOtp.isEnabled = true
+                btnVerifyOtp.text = "Verify OTP"
             }
         }
     }
@@ -141,7 +144,7 @@ class ContactVerifyFragment : Fragment() {
     private fun resendProfileOtp() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val api = SecureApiClient.getSecureProfileService(requireContext())
+                val api = ApiClient.getTokenService(requireContext())
                 val response = api.resendPersonalOtp()
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP resent successfully!", Toast.LENGTH_SHORT).show()
