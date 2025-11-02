@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.appbar.AppBarLayout
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 
@@ -18,6 +20,12 @@ class ExploreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
+
+        val complete_profile_button = view.findViewById<MaterialButton>(R.id.complete_profile_button)
+
+        complete_profile_button.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
+        }
 //        val button = view.findViewById<MaterialButton>(R.id.logoutButton)
 //
 //        button.setOnClickListener {
@@ -38,4 +46,21 @@ class ExploreFragment : Fragment() {
 //
 //        findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
 //    }
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+
+    val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
+
+    if (appBarLayout != null) {
+
+        val elevationInPixels = 4f * resources.displayMetrics.density
+
+        ViewCompat.setElevation(appBarLayout, elevationInPixels)
+        appBarLayout.translationZ = elevationInPixels
+
+        appBarLayout.bringToFront()
+    }
+
+}
 }

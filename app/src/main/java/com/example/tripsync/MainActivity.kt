@@ -36,10 +36,6 @@ class MainActivity : AppCompatActivity() {
 
         progressLayout = findViewById(R.id.profileProgressLayout)
         app_bar_layout = findViewById(R.id.app_bar_layout)
-
-        gradient = GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT , intArrayOf(Color.parseColor("#00B487"),
-            Color.parseColor("#00AEEF")))
-
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
@@ -99,16 +95,18 @@ class MainActivity : AppCompatActivity() {
             findViewById<View>(R.id.view3),
         )
 
+        views.forEach {
+            it.setBackgroundResource(R.drawable.rounded_progress_line)
+            it.scaleX = 1f
+        }
+
+
         val currentIndex = when (fragmentId) {
             R.id.fragment_personal_details -> 0
             R.id.emergencyFragment -> 1
             R.id.preferencesFragment -> 2
             R.id.contactVerifyFragment -> 3
             else -> -1
-        }
-
-        views.forEach {
-            it.setBackgroundColor(Color.parseColor("#CCCCCC"))
         }
 
         circles.forEachIndexed { index, circle ->
@@ -121,29 +119,33 @@ class MainActivity : AppCompatActivity() {
 
             if (currentIndex >= 0) {
                 if (index < currentIndex) {
-                    circle.setBackgroundResource(R.drawable.complete_circle)
-                    circle.text = "✓"
-                    circle.setTextColor(Color.WHITE)
+                    circle.setBackgroundResource(R.drawable.complete_circle_tick)
+                    circle.text = ""
                 } else if (index == currentIndex) {
                     circle.setBackgroundResource(R.drawable.complete_circle)
                     circle.text = (index + 1).toString()
                     circle.setTextColor(Color.WHITE)
                     texts[index].setTextColor(Color.parseColor("#00C896"))
 
-                    circle.animate().scaleX(1.15f).scaleY(1.15f).setDuration(200).start()
+                }
+            }
+        }
+        if (currentIndex > 0) {
+            for (i in 0 until currentIndex) {
+                views[i].post {
+                    val gradientDrawable = GradientDrawable(
+                        GradientDrawable.Orientation.LEFT_RIGHT,
+                        intArrayOf(
+                            Color.parseColor("#00B487"),
+                            Color.parseColor("#00AEEF")
+                        )
+                    )
+                    gradientDrawable.cornerRadius = 3f * resources.displayMetrics.density
+                    views[i].background = gradientDrawable
                 }
             }
         }
 
-        if (currentIndex > 0) {
-            for (i in 0 until currentIndex) {
-                if (i < views.size) {
-                    val view = views[i]
-                    view.background = gradient
-                    view.animate().alpha(1f).setDuration(200).start()
-                }
-            }
-        }
     }
 
 

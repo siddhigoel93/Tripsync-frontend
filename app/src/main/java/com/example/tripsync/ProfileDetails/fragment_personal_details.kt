@@ -17,6 +17,8 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.tripsync.R
+import androidx.navigation.fragment.findNavController
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.SecureApiClient
 import com.example.tripsync.api.models.CreateProfileRequest
@@ -107,7 +109,10 @@ class FragmentPersonalDetails : Fragment() {
         binding.rawr3vr06wif.setOnClickListener { selectGender("female") }
         binding.rk3dh7nhmde.setOnClickListener { selectGender("others") }
 
-        binding.btnNext.setOnClickListener { submitProfile() }
+        binding.btnNext.setOnClickListener {
+//            submitProfile()
+            findNavController().navigate(R.id.action_fragment_personal_details_to_emergencyFragment)
+        }
 
         return binding.root
     }
