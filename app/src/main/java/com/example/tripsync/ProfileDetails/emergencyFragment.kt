@@ -53,7 +53,8 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         override fun afterTextChanged(s: Editable?) {
             if (s == null) return
-            val digits = s.filter { it.isDigit() }.toString()
+            var digits = s.filter { it.isDigit() }.toString()
+            if (digits.length > 15) digits = digits.substring(0, 15)
             if (digits != s.toString()) {
                 inputContactPhone.removeTextChangedListener(this)
                 inputContactPhone.setText(digits)
@@ -93,19 +94,13 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
             }
         })
 
-        inputBloodGroup.setOnClickListener {
-            showSelectionDialog(R.array.blood_group_options, inputBloodGroup)
-        }
-        inputRelationship.setOnClickListener {
-            showSelectionDialog(R.array.relationship_options, inputRelationship)
-        }
+        inputBloodGroup.setOnClickListener { showSelectionDialog(R.array.blood_group_options, inputBloodGroup) }
+        inputRelationship.setOnClickListener { showSelectionDialog(R.array.relationship_options, inputRelationship) }
 
         restoreFromViewModel()
 
         btnNext.setOnClickListener { onNextClicked() }
-        btnPrev.setOnClickListener {
-            findNavController().navigate(R.id.action_emergencyFragment_to_fragment_personal_details)
-        }
+        btnPrev.setOnClickListener { findNavController().navigate(R.id.action_emergencyFragment_to_fragment_personal_details) }
     }
 
     private fun onNextClicked() {
@@ -137,9 +132,7 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
             return
         }
 
-        val selfDigits = requireContext()
-            .getSharedPreferences("profile_local", 0)
-            .getString("self_phone_digits", "")?.filter { it.isDigit() }.orEmpty()
+        val selfDigits = vm.personalPhoneDigits
         if (selfDigits.isNotEmpty() && selfDigits == enumberDigits) {
             toast("Emergency number cannot be same as your own")
             return
@@ -159,12 +152,7 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
         val options = resources.getStringArray(optionsArrayId)
         val builder = MaterialAlertDialogBuilder(requireContext())
         val listView = ListView(requireContext()).apply {
-            adapter = ArrayAdapter(
-                requireContext(),
-                R.layout.list_choice,
-                android.R.id.text1,
-                options
-            )
+            adapter = ArrayAdapter(requireContext(), R.layout.list_choice, android.R.id.text1, options)
             choiceMode = ListView.CHOICE_MODE_SINGLE
             val idx = options.indexOf(targetView.text.toString())
             if (idx != -1) setItemChecked(idx, true)

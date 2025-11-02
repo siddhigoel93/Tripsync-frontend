@@ -37,9 +37,7 @@ class PreferencesFragment : Fragment() {
         R.id.cardHistoric to "Historic"
     )
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_preferences, container, false)
         val btnPrev = view.findViewById<MaterialButton>(R.id.btnPrevious)
         val btnNext = view.findViewById<MaterialButton>(R.id.btn)
@@ -77,10 +75,7 @@ class PreferencesFragment : Fragment() {
             submitProfile()
         }
 
-        btnPrev.setOnClickListener {
-            findNavController().navigate(R.id.action_preferencesFragment_to_emergencyFragment)
-        }
-
+        btnPrev.setOnClickListener { findNavController().navigate(R.id.action_preferencesFragment_to_emergencyFragment) }
         return view
     }
 
@@ -118,34 +113,20 @@ class PreferencesFragment : Fragment() {
 
         val service = ApiClient.getAuthService(requireContext())
 
-        val safeBgroup = (vm.bgroup?.trim().orEmpty()).ifEmpty { "O+" }
-        val safeEname = vm.ename.trim().ifEmpty { "NA" }
-        val safeERelation = when (vm.erelation.trim()) {
-            "Parent", "Parents" -> "Parent"
-            "Sibling" -> "Sibling"
-            "Friend" -> "Friend"
-            "Spouse" -> "Spouse"
-            "Other" -> "Other"
-            else -> "Other"
-        }
-        val safePhone = normalizeToIndiaE164(vm.phoneNumber)
-        val safeENumber = normalizeToIndiaE164(vm.enumberRaw)
-        val safePref = vm.preference
-
         val req = CreateProfileRequest(
             fname = vm.firstName,
             lname = vm.lastName,
-            phone_number = safePhone,
+            phone_number = normalizeToIndiaE164(vm.phoneNumber),
             date = vm.dob,
             gender = vm.gender,
             bio = vm.aboutMe,
-            bgroup = safeBgroup,
+            bgroup = vm.bgroup,
             allergies = vm.allergies,
             medical = vm.medical,
-            ename = safeEname,
-            enumber = safeENumber,
-            erelation = safeERelation,
-            preference = safePref
+            ename = vm.ename,
+            enumber = normalizeToIndiaE164(vm.enumberRaw),
+            erelation = vm.erelation,
+            preference = vm.preference
         )
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -163,9 +144,23 @@ class PreferencesFragment : Fragment() {
                 )
             } else {
                 val code = createResp.code()
-                val body = createResp.errorBody()?.string()
+                val body = createResp.errorBody()?.string()?.trim().orEmpty()
                 android.util.Log.e("ProfileCreate", "Error: $body")
-                Toast.makeText(context, "failed to upload details ($code)", Toast.LENGTH_SHORT).show()
+
+                when {
+                    body.contains("phone_number") && body.contains("already registered", true) -> {
+                        Toast.makeText(context, "This phone number is already registered", Toast.LENGTH_LONG).show()
+                    }
+                    body.contains("bio") && body.contains("blank", true) -> {
+                        Toast.makeText(context, "Please fill the 'About Me' field", Toast.LENGTH_LONG).show()
+                    }
+                    body.contains("Invalid Phone Number", true) -> {
+                        Toast.makeText(context, "Make sure the number has 10 digits", Toast.LENGTH_LONG).show()
+                    }
+                    else -> {
+                        Toast.makeText(context, "Failed to upload details ($code)", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
