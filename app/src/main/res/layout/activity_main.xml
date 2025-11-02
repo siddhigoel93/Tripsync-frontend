@@ -106,7 +106,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:gravity="center_horizontal"
             android:paddingHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:paddingTop="10dp"
@@ -118,8 +118,8 @@
                 android:id="@+id/step1_layout"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="60dp"
+                android:layout_height="80dp">
 
                 <TextView
                     android:id="@+id/circle1"
@@ -136,7 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Personal\nDetails"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:textColor="#00C896"
                     android:gravity="center"
                     android:layout_marginTop="4dp" />
@@ -155,8 +155,8 @@
                 android:id="@+id/step2_layout"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="60dp"
+                android:layout_height="80dp">
 
                 <TextView
                     android:id="@+id/circle2"
@@ -177,7 +177,7 @@
                     android:text="Emergency"
                     android:lines="2"
                     android:textColor="@color/black"
-                    android:textSize="12sp" />
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <View
@@ -193,8 +193,8 @@
                 android:id="@+id/step3_layout"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="60dp"
+                android:layout_height="80dp">
 
                 <TextView
                     android:id="@+id/circle3"
@@ -211,7 +211,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Preferences"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:textColor="@color/black"
                     android:gravity="center"
                     android:lines="2"
@@ -231,8 +231,8 @@
                 android:id="@+id/step4_layout"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="60dp"
+                android:layout_height="80dp">
 
                 <TextView
                     android:id="@+id/circle4"
@@ -249,7 +249,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Verification"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:textColor="@color/black"
                     android:gravity="center"
                     android:lines="2"

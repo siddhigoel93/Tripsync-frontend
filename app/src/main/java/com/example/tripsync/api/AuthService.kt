@@ -6,6 +6,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -37,17 +38,15 @@ interface AuthService {
         @Body request: CreateProfileRequest
     ): Response<CreateProfileResponse>
 
-    @POST("/api/personal/verify-otp/")
+    @Headers("Content-Type: application/json")
+    @POST("api/personal/verify-otp/")
     suspend fun verifyPhoneOtp(
-        @Header("Authorization") bearer: String,
-        @Body request: OTPVerifyRequest
-    ): Response<VerifyOtpResponse>
+        @Body body: OtpCodeRequest
+    ): Response<VerifyPhoneResponse>
 
-    @POST("/api/personal/resend-otp/")
-    suspend fun resendPersonalOtp(
-        @Header("Authorization") bearer: String,
-        @Body body: EmptyJsonBody = EmptyJsonBody()
-    ): Response<ResendOtpResponse>
+    @Headers("Content-Type: application/json")
+    @POST("api/personal/resend-otp/")
+    suspend fun resendPersonalOtp(): Response<ResendOtpResponse>
 
     @GET("/api/personal/profile/")
     suspend fun getProfile(

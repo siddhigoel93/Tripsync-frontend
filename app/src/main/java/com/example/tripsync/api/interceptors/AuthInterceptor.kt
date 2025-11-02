@@ -1,4 +1,4 @@
-package com.example.tripsync.api
+package com.example.tripsync.api.interceptors
 
 import android.content.Context
 import okhttp3.Interceptor

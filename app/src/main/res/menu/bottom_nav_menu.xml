@@ -6,15 +6,15 @@
         android:title="Home" />
     <item
         android:id="@+id/nav_search"
-        android:icon="@drawable/search"
-        android:title="Search" />
+        android:icon="@drawable/chat"
+        android:title="Chat" />
     <item
         android:id="@+id/nav_store_placeholder"
         android:title=""
         android:enabled="false" /> <item
     android:id="@+id/nav_cart"
-    android:icon="@drawable/cart"
-    android:title="Cart" />
+    android:icon="@drawable/community"
+    android:title="Community" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/profile"

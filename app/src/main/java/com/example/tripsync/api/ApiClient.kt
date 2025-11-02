@@ -2,6 +2,7 @@ package com.example.tripsync.api
 
 import android.content.Context
 import android.util.Log
+import com.example.tripsync.api.interceptors.AuthInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -30,16 +31,22 @@ object ApiClient {
         return DEFAULT_BASE_URL
     }
 
-    private fun buildRetrofit(context: Context): Retrofit {
+    private fun buildRetrofit(context: Context , secure : Boolean): Retrofit {
         val baseUrl = getBaseUrl(context)
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        val client = OkHttpClient.Builder()
+        val clientBuilder = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(context.applicationContext))
             .addInterceptor(logging)
             .connectTimeout(25, TimeUnit.SECONDS)
             .readTimeout(25, TimeUnit.SECONDS)
             .writeTimeout(25, TimeUnit.SECONDS)
-            .build()
+
+
+        if (secure) {
+            clientBuilder.addInterceptor(AuthInterceptor(context.applicationContext))
+        }
+
+        val client = clientBuilder.build()
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(client)
@@ -47,10 +54,16 @@ object ApiClient {
             .build()
     }
 
-    fun getAuthService(context: Context): AuthService {
-        val r = retrofit ?: synchronized(this) {
-            retrofit ?: buildRetrofit(context).also { retrofit = it }
+    private fun getRetrofitInstance(context: Context, secure: Boolean): Retrofit {
+        return retrofit ?: synchronized(this) {
+            retrofit ?: buildRetrofit(context, secure).also { retrofit = it }
         }
-        return r.create(AuthService::class.java)
+    }
+
+    fun getAuthService(context: Context): AuthService {
+        return getRetrofitInstance(context, secure = false).create(AuthService::class.java)
+    }
+    fun getTokenService(context: Context): AuthService {
+        return getRetrofitInstance(context, secure = true).create(AuthService::class.java)
     }
 }
