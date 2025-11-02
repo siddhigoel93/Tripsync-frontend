@@ -149,5 +149,12 @@
     <fragment
         android:id="@+id/contactVerifyFragment"
         android:name="com.example.tripsync.Auth.ContactVerifyFragment"
-        android:label="ContactVerifyFragment" />
+        android:label="ContactVerifyFragment" >
+        <action
+            android:id="@+id/action_contactVerifyFragment_to_preferencesFragment"
+            app:destination="@id/preferencesFragment" />
+        <action
+            android:id="@+id/action_contactVerifyFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

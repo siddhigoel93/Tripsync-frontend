@@ -2,6 +2,7 @@ package com.example.tripsync.ProfileDetails
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 
@@ -150,24 +152,50 @@ class PreferencesFragment : Fragment() {
                 )
             } else {
                 val code = createResp.code()
-                val body = createResp.errorBody()?.string()?.trim().orEmpty()
-                android.util.Log.e("ProfileCreate", "Error: $body")
+                val errorBody = createResp.errorBody()?.string()?.trim().orEmpty()
+                Log.e("ProfileCreate", "Error ($code): $errorBody")
 
-                when {
-                    body.contains("phone_number") && body.contains("already registered", true) -> {
-                        Toast.makeText(context, "This phone number is already registered", Toast.LENGTH_LONG).show()
+                try {
+                    val json = JSONObject(errorBody)
+                    val message = json.optString("message", "Unknown error")
+                    val errorCode = json.optString("error_code", "")
+                    val errors = json.optJSONObject("errors")
+
+                    when {
+                        errorCode.equals("PROFILE_EXISTS", true) -> {
+                            Toast.makeText(context, "Profile already exists", Toast.LENGTH_LONG).show()
+                        }
+
+                        errorCode.equals("SMS_FAILED", true) -> {
+                            Toast.makeText(context, "Failed to send OTP. Try again later.", Toast.LENGTH_LONG).show()
+                        }
+
+                        errorCode.equals("OTP_LOCKED", true) -> {
+                            Toast.makeText(context, "Too many attempts. Please try again later.", Toast.LENGTH_LONG).show()
+                        }
+
+                        errors?.has("phone_number") == true -> {
+                            Toast.makeText(context, "This phone number is already registered", Toast.LENGTH_LONG).show()
+                        }
+
+                        errors?.has("date") == true -> {
+                            Toast.makeText(context, "Please fill your date of birth", Toast.LENGTH_LONG).show()
+                        }
+
+                        errors?.has("enumber") == true -> {
+                            Toast.makeText(context, "Emergency number must be in international format", Toast.LENGTH_LONG).show()
+                        }
+
+                        else -> {
+                            Toast.makeText(context, message.ifEmpty { "Failed to upload details ($code)" }, Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    body.contains("bio") && body.contains("blank", true) -> {
-                        Toast.makeText(context, "Please fill the 'About Me' field", Toast.LENGTH_LONG).show()
-                    }
-                    body.contains("Invalid Phone Number", true) -> {
-                        Toast.makeText(context, "Make sure the number has 10 digits", Toast.LENGTH_LONG).show()
-                    }
-                    else -> {
-                        Toast.makeText(context, "Failed to upload details ($code)", Toast.LENGTH_SHORT).show()
-                    }
+                } catch (e: Exception) {
+                    Log.e("ProfileCreate", "Error parsing JSON: ${e.message}")
+                    Toast.makeText(context, "Unexpected error ($code)", Toast.LENGTH_SHORT).show()
                 }
             }
+
         }
     }
 }

@@ -125,7 +125,7 @@ class ContactVerifyFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show()
-                    // Navigate or update UI
+                    findNavController().navigate(R.id.action_contactVerifyFragment_to_homeFragment)
                 } else {
                     val error = response.errorBody()?.string()
                     Log.e("VerifyProfileOtp", "Error: $error")

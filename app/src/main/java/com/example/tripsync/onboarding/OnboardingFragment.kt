@@ -42,6 +42,14 @@ class OnboardingFragment : Fragment() {
 
         adapter = OnboardingAdapter(requireActivity(), OnboardingSlides.slides)
         viewPager.adapter = adapter
+        viewPager.offscreenPageLimit = 1
+        viewPager.clipToPadding = true
+        viewPager.clipChildren = true
+
+        viewPager.setPageTransformer { page, position ->
+            page.translationX = -position * page.width
+            page.alpha = 1 - kotlin.math.abs(position)
+        }
 
         startAutoSlide()
 
