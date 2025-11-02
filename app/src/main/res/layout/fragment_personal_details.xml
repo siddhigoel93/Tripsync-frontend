@@ -6,11 +6,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <ScrollView
         android:id="@+id/rlpnl49dl9rm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -24,6 +26,7 @@
                 android:gravity="center_horizontal"
                 android:background="#FFFFFF"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:id="@+id/rzfya04igz7"
                     android:layout_width="wrap_content"
@@ -32,19 +35,21 @@
                     android:layout_marginTop="6dp"
                     android:layout_marginBottom="28dp"
                     android:orientation="vertical">
+
                     <ImageView
                         android:id="@+id/r56rex9ns33d"
                         android:layout_width="101dp"
                         android:layout_height="101dp"
                         android:layout_marginBottom="8dp"
                         android:src="@drawable/camera"
-                        android:scaleType="fitXY"
-                        />
+                        android:scaleType="fitXY" />
+
                     <LinearLayout
                         android:id="@+id/rd23risn7v8f"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/r6hfxpjw2gfw"
                             android:textColor="#000000"
@@ -53,19 +58,19 @@
                             android:layout_marginEnd="57dp"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
-                            android:text="Add Your Photo"
-                            />
+                            android:text="Add Your Photo" />
+
                         <TextView
                             android:id="@+id/ruusr0nwhven"
                             android:textColor="#000000"
                             android:textSize="12sp"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
-                            android:text="Help your tripmates recognize you"
-                            />
+                            android:text="Help your tripmates recognize you" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/rbqifq72tpmj"
                 android:layout_width="match_parent"
@@ -74,12 +79,14 @@
                 android:paddingVertical="26dp"
                 android:paddingHorizontal="20dp"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:id="@+id/r7u70iszfshp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="18dp"
                     android:orientation="horizontal">
+
                     <LinearLayout
                         android:id="@+id/rn2ei6r0ugm"
                         android:layout_width="0dp"
@@ -87,6 +94,7 @@
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/r1peih9bctkb"
                             android:textColor="#000000"
@@ -94,8 +102,8 @@
                             android:layout_marginBottom="7dp"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
-                            android:text="First Name"
-                            />
+                            android:text="First Name" />
+
                         <EditText
                             android:inputType="text"
                             android:hint="Sam"
@@ -105,15 +113,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/pdetailsroundedwhite2"
-                            android:padding="14dp"
-                            />
+                            android:padding="14dp" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/rl3jphj8lz99"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/recjwdlg3nbi"
                             android:textColor="#000000"
@@ -121,8 +130,8 @@
                             android:layout_marginBottom="7dp"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
-                            android:text="Last Name"
-                            />
+                            android:text="Last Name" />
+
                         <EditText
                             android:inputType="text"
                             android:hint="Smith"
@@ -132,16 +141,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/pdetailsroundedwhite2"
-                            android:padding="14dp"
-                            />
+                            android:padding="14dp" />
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/rxpb4zobhsre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="18dp"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/rbyyce0977vp"
                         android:textColor="#000000"
@@ -149,13 +159,14 @@
                         android:layout_marginBottom="10dp"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:text="Phone Number"
-                        />
+                        android:text="Phone Number" />
+
                     <LinearLayout
                         android:id="@+id/rd5mfw0f4fw5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
                         <LinearLayout
                             android:id="@+id/rne86n712sxi"
                             android:layout_width="wrap_content"
@@ -168,14 +179,15 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:orientation="horizontal">
+
                             <ImageView
                                 android:id="@+id/r7q2wwnyasv"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginEnd="2dp"
                                 android:src="@drawable/indiaflag"
-                                android:scaleType="fitXY"
-                                />
+                                android:scaleType="fitXY" />
+
                             <TextView
                                 android:id="@+id/rky6hlaitpeg"
                                 android:textColor="#000000"
@@ -183,37 +195,38 @@
                                 android:layout_marginEnd="6dp"
                                 android:layout_height="wrap_content"
                                 android:layout_width="wrap_content"
-                                android:text="+91"
-                                />
+                                android:text="+91" />
+
                             <ImageView
                                 android:id="@+id/rixe2dqp03se"
                                 android:layout_width="17dp"
                                 android:layout_height="17dp"
                                 android:src="@drawable/downarrow"
-                                android:scaleType="fitXY"
-                                />
+                                android:scaleType="fitXY" />
                         </LinearLayout>
+
                         <EditText
-                            android:inputType="text"
-                            android:hint="9XXXXXXXX"
                             android:id="@+id/r74p8jg2m2qd"
-                            android:textColor="#999999"
-                            android:textSize="14sp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@drawable/pdetailsroundedwhite2"
                             android:paddingVertical="14dp"
                             android:paddingHorizontal="12dp"
-                            />
+                            android:textColor="#999999"
+                            android:textSize="14sp"
+                            android:hint="9XXXXXXXX"
+                            android:inputType="phone" />
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/r9vp9p77ss2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="18dp"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/rlbmvk0l8v59"
                         android:textColor="#000000"
@@ -221,8 +234,8 @@
                         android:layout_marginBottom="10dp"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:text="Date of Birth"
-                        />
+                        android:text="Date of Birth" />
+
                     <LinearLayout
                         android:id="@+id/rhn9qxexskx9"
                         android:layout_width="match_parent"
@@ -231,35 +244,37 @@
                         android:background="@drawable/pdetailsroundedwhite2"
                         android:paddingRight="13dp"
                         android:orientation="horizontal">
+
                         <EditText
-                            android:inputType="text"
-                            android:hint="DD/MM/YYYY"
-                            android:background="@null"
                             android:id="@+id/rcousyd38th8"
-                            android:textColor="#999999"
-                            android:textSize="14sp"
-                            android:layout_marginEnd="4dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:paddingVertical="15dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@null"
+                            android:hint="YYYY-MM-DD"
                             android:paddingLeft="13dp"
-                            />
+                            android:paddingVertical="15dp"
+                            android:textColor="#999999"
+                            android:textSize="14sp"
+                            android:focusable="false" />
+
                         <ImageView
                             android:id="@+id/rl365qb5wb4"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/suitcase"
-                            android:scaleType="fitXY"
-                            />
+                            android:scaleType="fitXY" />
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/rotttmm73by"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="18dp"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/raak14y58hao"
                         android:textColor="#000000"
@@ -267,13 +282,14 @@
                         android:layout_marginBottom="11dp"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:text="Gender"
-                        />
+                        android:text="Gender" />
+
                     <LinearLayout
                         android:id="@+id/ryv5g3njve8"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
                         <LinearLayout
                             android:id="@+id/rfcvab5pvu3c"
                             android:layout_width="0dp"
@@ -287,23 +303,24 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:orientation="horizontal">
+
                             <ImageView
                                 android:id="@+id/rxm96cod05ui"
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_marginEnd="2dp"
                                 android:src="@drawable/malesign"
-                                android:scaleType="fitXY"
-                                />
+                                android:scaleType="fitXY" />
+
                             <TextView
                                 android:id="@+id/rad4eo3qxvhc"
                                 android:textColor="#000000"
                                 android:textSize="14sp"
                                 android:layout_height="wrap_content"
                                 android:layout_width="wrap_content"
-                                android:text="Male"
-                                />
+                                android:text="Male" />
                         </LinearLayout>
+
                         <LinearLayout
                             android:id="@+id/rawr3vr06wif"
                             android:layout_width="0dp"
@@ -317,14 +334,15 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:orientation="horizontal">
+
                             <ImageView
                                 android:id="@+id/raxgutgmnp79"
                                 android:layout_width="19dp"
                                 android:layout_height="19dp"
                                 android:layout_marginEnd="4dp"
                                 android:src="@drawable/femalesign"
-                                android:scaleType="fitXY"
-                                />
+                                android:scaleType="fitXY" />
+
                             <TextView
                                 android:id="@+id/rxlmnchchce8"
                                 android:textColor="#000000"
@@ -333,9 +351,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="Female"
-                                />
+                                android:text="Female" />
                         </LinearLayout>
+
                         <LinearLayout
                             android:id="@+id/rk3dh7nhmde"
                             android:layout_width="0dp"
@@ -347,14 +365,15 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:orientation="horizontal">
+
                             <ImageView
                                 android:id="@+id/r38keohjpnqd"
                                 android:layout_width="17dp"
                                 android:layout_height="17dp"
                                 android:layout_marginEnd="1dp"
                                 android:src="@drawable/neutralgender"
-                                android:scaleType="fitXY"
-                                />
+                                android:scaleType="fitXY" />
+
                             <TextView
                                 android:id="@+id/rsjilsdrku0k"
                                 android:textColor="#000000"
@@ -363,22 +382,24 @@
                                 android:layout_width="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="Others"
-                                />
+                                android:text="Others" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/r5qhotqcofyw"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <LinearLayout
                         android:id="@+id/rpm5n0aoz29"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/r6pdyky3skua"
                             android:textColor="#000000"
@@ -386,39 +407,44 @@
                             android:layout_marginBottom="11dp"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
-                            android:text="About Me"
-                            />
+                            android:text="About Me" />
+
                         <LinearLayout
                             android:id="@+id/rlu06xfct69"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/pdetailsroundedwhite2"
                             android:paddingLeft="12dp"
-                            android:paddingRight="43dp"
+                            android:paddingRight="12dp"
                             android:orientation="vertical">
-                            <TextView
+
+                            <EditText
                                 android:id="@+id/rmwn47x6u6m"
-                                android:textColor="#999999"
-                                android:textSize="14sp"
-                                android:layout_marginTop="13dp"
-                                android:layout_marginBottom="44dp"
-                                android:layout_height="wrap_content"
                                 android:layout_width="match_parent"
-                                android:layout_weight="1"
-                                android:text="Tell us bit about yourself and your different travel experience."
-                                />
+                                android:layout_height="120dp"
+                                android:gravity="top|start"
+                                android:hint="Tell us bit about yourself and your different travel experience."
+                                android:paddingTop="12dp"
+                                android:paddingBottom="12dp"
+                                android:textColor="#000000"
+                                android:textColorHint="#999999"
+                                android:textSize="14sp"
+                                android:inputType="textMultiLine"
+                                android:overScrollMode="ifContentScrolls"
+                                android:scrollbars="vertical" />
                         </LinearLayout>
                     </LinearLayout>
+
                     <TextView
                         android:id="@+id/rtywh8w0ee3"
                         android:textColor="#000000"
                         android:textSize="10sp"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:text="This helps  other travelers connect with you"
-                        />
+                        android:text="This helps  other travelers connect with you" />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/btnNext"
                 android:layout_width="match_parent"
@@ -432,14 +458,14 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/rkl8eel5bzb"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Next"
-                    />
+                    android:text="Next" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

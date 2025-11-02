@@ -79,7 +79,6 @@ class ForgotPasswordFragment : Fragment() {
                 val response = authService.requestPasswordReset(request)
 
                 if (response.isSuccessful) {
-//                    Toast.makeText(requireContext(), "OTP sent successfully!", Toast.LENGTH_SHORT).show()
                     val bundle = Bundle().apply { putString("email", emailText) }
                     view.findNavController().navigate(R.id.action_forgotPasswordFragment_to_resetPasswordFragment, bundle)
 

@@ -56,7 +56,6 @@ class FragmentOtp : Fragment() {
     private lateinit var successVideoView: VideoView
     private lateinit var successVideoInner: FrameLayout
 
-    // ⬅️ added cooldown timestamp
     private var resendCooldownUntil: Long = 0L
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =

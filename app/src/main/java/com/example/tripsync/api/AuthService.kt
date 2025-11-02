@@ -40,8 +40,8 @@ interface AuthService {
     @POST("/api/personal/verify-otp/")
     suspend fun verifyPhoneOtp(
         @Header("Authorization") bearer: String,
-        @Body request: OtpCodeRequest
-    ): Response<VerifyPhoneResponse>
+        @Body request: OTPVerifyRequest
+    ): Response<VerifyOtpResponse>
 
     @POST("/api/personal/resend-otp/")
     suspend fun resendPersonalOtp(
