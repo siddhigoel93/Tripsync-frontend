@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.SecureApiClient
 import com.example.tripsync.api.models.EmailRequest
+import com.example.tripsync.api.models.OtpCodeRequest
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -80,11 +83,11 @@ class ContactVerifyFragment : Fragment() {
 
             btnVerifyOtp.isEnabled = false
             btnVerifyOtp.text = "Verifying..."
-//           function that calls api
+            verifyProfileOtp(otp)
         }
 
         tvResend.setOnClickListener {
-//            requestNewOtp(contact) .... function to call resend api
+            resendProfileOtp()
         }
 
         boxes.forEach { box ->
@@ -112,61 +115,45 @@ class ContactVerifyFragment : Fragment() {
         }
     }
 
-    // --- API Calls ---
 
-//    private fun verifyContact(contact: String, otp: String) {
-//        lifecycleScope.launch {
-//            try {
-//                val api = ApiClient.getAuthService(requireContext())
-//                val request = VerifyContactRequest(contact, otp)
-//                val response = api.verifyContact(request)
-//
-//                if (response.isSuccessful) {
-//                    Toast.makeText(requireContext(), "Verification successful!", Toast.LENGTH_SHORT).show()
-//                    // Navigate to the next screen (e.g., Home, or successful registration)
-//                    findNavController().navigate(R.id.action_contactVerifyFragment_to_homeFragment)
-//                } else {
-//                    val errorJson = response.errorBody()?.string()
-//                    val message = try {
-//                        val obj = JSONObject(errorJson ?: "")
-//                        val attemptsLeft = obj.optInt("attemptsLeft", -1)
-//                        when {
-//                            attemptsLeft > 0 -> "Invalid OTP, please re-enter"
-//                            attemptsLeft == 0 -> "OTP expired. Please resend OTP"
-//                            else -> obj.optString("message", "Verification failed")
-//                        }
-//                    } catch (e: Exception) {
-//                        "Something went wrong. Please try again."
-//                    }
-//                    showOtpError(message)
-//                }
-//
-//            } catch (e: Exception) {
-//                Toast.makeText(requireContext(), "Network error. Please try again.", Toast.LENGTH_SHORT).show()
-//            } finally {
-//                btnVerifyOtp.isEnabled = true
-//                btnVerifyOtp.text = "Verify OTP"
-//            }
-//        }
-//    }
 
-//    private fun requestNewOtp(contact: String) {
-//        lifecycleScope.launch {
-//            try {
-//                val api = ApiClient.getAuthService(requireContext())
-//                // Assuming EmailRequest is generic enough to handle the contact type (phone or email)
-//                val response = api.requestNewOtp(EmailRequest(contact))
-//
-//                if (response.isSuccessful) {
-//                    Toast.makeText(requireContext(), "OTP resent successfully", Toast.LENGTH_SHORT).show()
-//                } else {
-//                    Toast.makeText(requireContext(), "Failed to send OTP", Toast.LENGTH_LONG).show()
-//                }
-//            } catch (e: Exception) {
-//                Toast.makeText(requireContext(), "Failed to resend OTP", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
+    private fun verifyProfileOtp(otp: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val api = SecureApiClient.getSecureProfileService(requireContext())
+                val response = api.verifyPhoneOtp(OtpCodeRequest(otp))
+
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show()
+                    // Navigate or update UI
+                } else {
+                    val error = response.errorBody()?.string()
+                    Log.e("VerifyProfileOtp", "Error: $error")
+                    Toast.makeText(requireContext(), "Invalid or expired OTP", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("VerifyProfileOtp", "Exception: ${e.message}")
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun resendProfileOtp() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val api = SecureApiClient.getSecureProfileService(requireContext())
+                val response = api.resendPersonalOtp()
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "OTP resent successfully!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Failed to resend OTP", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     // --- UI/Input Logic ---
 
