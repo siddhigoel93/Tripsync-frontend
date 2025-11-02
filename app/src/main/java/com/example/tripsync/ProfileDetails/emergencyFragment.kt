@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -28,6 +29,12 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
     private lateinit var inputRelationship: EditText
     private lateinit var btnNext: MaterialButton
     private lateinit var btnPrev: MaterialButton
+
+    private lateinit var bloodGroupError: TextView
+    private lateinit var enameError: TextView
+    private lateinit var enumError: TextView
+    private lateinit var relError: TextView
+    private lateinit var hisError: TextView
 
     private val noEmojiFilter = InputFilter { source, start, end, _, _, _ ->
         val out = StringBuilder()
@@ -74,7 +81,16 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
         btnNext = view.findViewById(R.id.btn)
         btnPrev = view.findViewById(R.id.btnPrevious)
 
+
+        bloodGroupError = view.findViewById(R.id.bloodGroupError)
+        enameError = view.findViewById(R.id.enameError)
+        enumError = view.findViewById(R.id.enumError)
+        relError = view.findViewById(R.id.relError)
+        hisError=view.findViewById(R.id.hisError)
+
         inputMedicalHistory.filters = arrayOf(noEmojiFilter)
+        inputAllergies.filters = arrayOf(noEmojiFilter)
+        inputContactName.filters = arrayOf(noEmojiFilter)
         inputContactPhone.addTextChangedListener(digitsOnlyWatcher)
 
         inputMedicalHistory.addTextChangedListener(object : TextWatcher {
@@ -89,7 +105,8 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
                     inputMedicalHistory.setText(trimmed)
                     inputMedicalHistory.setSelection(trimmed.length)
                     inputMedicalHistory.addTextChangedListener(this)
-                    Toast.makeText(requireContext(), "Maximum 100 words allowed", Toast.LENGTH_SHORT).show()
+                    hisError.text = "Maximum 100 words allowed"
+                    hisError.visibility = View.VISIBLE
                 }
             }
         })
@@ -104,6 +121,8 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
     }
 
     private fun onNextClicked() {
+        hideAllErrors()
+
         val bgroup = inputBloodGroup.text?.toString()?.trim().orEmpty()
         val allergies = inputAllergies.text?.toString()?.trim().orEmpty()
         val medical = inputMedicalHistory.text?.toString()?.trim().orEmpty()
@@ -111,30 +130,41 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
         val enumberDigits = inputContactPhone.text?.toString()?.trim().orEmpty()
         val erelation = inputRelationship.text?.toString()?.trim().orEmpty()
 
+        var hasError = false
+
         if (bgroup.isEmpty()) {
-            toast("Please select blood group")
-            return
+            bloodGroupError.text = "Please select blood group"
+            bloodGroupError.visibility = View.VISIBLE
+            hasError = true
         }
         if (ename.isEmpty()) {
-            toast("Contact name cannot be empty")
-            return
+            enameError.text = "Contact name cannot be empty"
+            enameError.visibility = View.VISIBLE
+            hasError = true
         }
         if (enumberDigits.isEmpty()) {
-            toast("Emergency number cannot be empty")
-            return
-        }
-        if (enumberDigits.length > 15) {
-            toast("Emergency number cannot exceed 15 digits")
-            return
+            enumError.text = "Emergency number cannot be empty"
+            enumError.visibility = View.VISIBLE
+            hasError = true
+        } else if (enumberDigits.length > 10 || enumberDigits.length < 10) {
+            enumError.text = "Invalid phone no."
+            enumError.visibility = View.VISIBLE
+            hasError = true
         }
         if (erelation.isEmpty()) {
-            toast("Please select relationship")
-            return
+            relError.text = "Please select relationship"
+            relError.visibility = View.VISIBLE
+            hasError = true
         }
 
         val selfDigits = vm.personalPhoneDigits
         if (selfDigits.isNotEmpty() && selfDigits == enumberDigits) {
-            toast("Emergency number cannot be same as your own")
+            enumError.text = "Emergency number cannot be same as your own"
+            enumError.visibility = View.VISIBLE
+            hasError = true
+        }
+
+        if (hasError) {
             return
         }
 
@@ -146,6 +176,12 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
         vm.erelation = erelation
 
         findNavController().navigate(R.id.action_emergencyFragment_to_preferencesFragment)
+    }
+    private fun hideAllErrors() {
+        bloodGroupError.visibility = View.GONE
+        enameError.visibility = View.GONE
+        enumError.visibility = View.GONE
+        relError.visibility = View.GONE
     }
 
     private fun showSelectionDialog(optionsArrayId: Int, targetView: EditText) {
@@ -174,7 +210,5 @@ class EmergencyFragment : Fragment(R.layout.fragment_emergency) {
         if (vm.erelation.isNotEmpty()) inputRelationship.setText(vm.erelation)
     }
 
-    private fun toast(msg: String) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-    }
+
 }

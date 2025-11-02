@@ -26,14 +26,15 @@ class FragmentPersonalDetails : Fragment() {
 
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
-    private var selectedGender: String = "male"
+    private var selectedGender: String? = null
+
     private var pickedImageUri: Uri? = null
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (!isAdded || _binding == null) return@registerForActivityResult
         if (uri != null) {
             pickedImageUri = uri
-            binding.r56rex9ns33d.setImageURI(uri)
+            binding.profileImageView.setImageURI(uri)
         }
     }
 
@@ -67,12 +68,12 @@ class FragmentPersonalDetails : Fragment() {
             if (!isAdded || _binding == null) return
             if (s == null) return
             var t = s.filter { it.isDigit() }.toString()
-            if (t.length > 15) t = t.substring(0, 15)
+            if (t.length > 10) t = t.substring(0, 10)
             if (t != s.toString()) {
-                binding.r74p8jg2m2qd.removeTextChangedListener(this)
-                binding.r74p8jg2m2qd.setText(t)
-                binding.r74p8jg2m2qd.setSelection(t.length.coerceAtLeast(0))
-                binding.r74p8jg2m2qd.addTextChangedListener(this)
+                binding.etPhoneNumber.removeTextChangedListener(this)
+                binding.etPhoneNumber.setText(t)
+                binding.etPhoneNumber.setSelection(t.length.coerceAtLeast(0))
+                binding.etPhoneNumber.addTextChangedListener(this)
             }
         }
     }
@@ -80,97 +81,115 @@ class FragmentPersonalDetails : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPersonalDetailsBinding.inflate(inflater, container, false)
 
-        binding.r56rex9ns33d.setOnClickListener { pickImage.launch("image/*") }
+        binding.profileImageView.setOnClickListener { pickImage.launch("image/*") }
 
-        binding.ruy6dpr196f.filters = arrayOf(noEmojiFilter, nameFilter, InputFilter.LengthFilter(30))
-        binding.rcuxd094pa8j.filters = arrayOf(noEmojiFilter, nameFilter, InputFilter.LengthFilter(30))
-        binding.rmwn47x6u6m.filters = arrayOf(noEmojiFilter, InputFilter.LengthFilter(400))
-        binding.r74p8jg2m2qd.addTextChangedListener(digitsOnlyWatcher)
+        binding.etFirstName.filters = arrayOf(noEmojiFilter, nameFilter, InputFilter.LengthFilter(30))
+        binding.etLastName.filters = arrayOf(noEmojiFilter, nameFilter, InputFilter.LengthFilter(30))
+        binding.etAboutMe.filters = arrayOf(noEmojiFilter, InputFilter.LengthFilter(500))
+        binding.etPhoneNumber.addTextChangedListener(digitsOnlyWatcher)
 
-        binding.rcousyd38th8.setOnClickListener { openDatePicker() }
+        binding.etDOB.setOnClickListener { openDatePicker() }
 
-        binding.rfcvab5pvu3c.setOnClickListener { selectGender("male") }
-        binding.rawr3vr06wif.setOnClickListener { selectGender("female") }
-        binding.rk3dh7nhmde.setOnClickListener { selectGender("others") }
+        binding.tvGenderMale.setOnClickListener { selectGender("male") }
+        binding.tvGenderFemale.setOnClickListener { selectGender("female") }
+        binding.tvGenderOthers.setOnClickListener { selectGender("others") }
 
         binding.btnNext.setOnClickListener { onNextClicked() }
 
-        binding.ruy6dpr196f.setText(profileViewModel.firstName)
-        binding.rcuxd094pa8j.setText(profileViewModel.lastName)
-        binding.r74p8jg2m2qd.setText(profileViewModel.phoneNumber)
-        binding.rcousyd38th8.setText(profileViewModel.dob)
-        binding.rmwn47x6u6m.setText(profileViewModel.aboutMe)
-        profileViewModel.imageUri?.let { binding.r56rex9ns33d.setImageURI(it) }
+        binding.etFirstName.setText(profileViewModel.firstName)
+        binding.etLastName.setText(profileViewModel.lastName)
+        binding.etPhoneNumber.setText(profileViewModel.phoneNumber)
+        binding.etDOB.setText(profileViewModel.dob)
+        binding.etAboutMe.setText(profileViewModel.aboutMe)
+        profileViewModel.imageUri?.let { binding.profileImageView.setImageURI(it) }
         selectGender(profileViewModel.gender)
 
         return binding.root
     }
 
     private fun onNextClicked() {
-        val first = binding.ruy6dpr196f.text?.toString() ?: ""
-        val last = binding.rcuxd094pa8j.text?.toString() ?: ""
-        val phoneDigits = binding.r74p8jg2m2qd.text?.toString()?.filter { it.isDigit() } ?: ""
-        val dob = binding.rcousyd38th8.text?.toString()?.trim().orEmpty()
-        val about = binding.rmwn47x6u6m.text?.toString() ?: ""
+        binding.firstnameError.visibility = View.GONE
+        binding.lastnameError.visibility = View.GONE
+        binding.phoneNumError.visibility = View.GONE
+        binding.dobError.visibility = View.GONE
+        binding.aboutError.visibility = View.GONE
+        binding.genderError.visibility = View.GONE
 
-        if (first.isBlank()) {
-            Toast.makeText(requireContext(), "First name cannot be empty", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (first.trim().isEmpty()) {
-            Toast.makeText(requireContext(), "First name cannot be all spaces", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (last.isBlank()) {
-            Toast.makeText(requireContext(), "Last name cannot be empty", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (last.trim().isEmpty()) {
-            Toast.makeText(requireContext(), "Last name cannot be all spaces", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val first = binding.etFirstName.text?.toString()?.trim().orEmpty()
+        val last = binding.etLastName.text?.toString()?.trim().orEmpty()
+        val phoneDigits = binding.etPhoneNumber.text?.toString()?.filter { it.isDigit() }.orEmpty()
+        val dob = binding.etDOB.text?.toString()?.trim().orEmpty()
+        val about = binding.etAboutMe.text?.toString()?.trim().orEmpty()
 
+        var hasError = false
+
+        if (first.isEmpty()) {
+            binding.firstnameError.text = "Required"
+            binding.firstnameError.visibility = View.VISIBLE
+            hasError = true
+        }
+        if (last.isEmpty()) {
+            binding.lastnameError.text = "Required"
+            binding.lastnameError.visibility = View.VISIBLE
+            hasError = true
+        }
         if (phoneDigits.isEmpty()) {
-            Toast.makeText(requireContext(), "Phone number cannot be empty", Toast.LENGTH_SHORT).show()
-            return
+            binding.phoneNumError.text = "Required"
+            binding.phoneNumError.visibility = View.VISIBLE
+            hasError = true
+        } else if (phoneDigits.length > 10 || phoneDigits.length < 10) {
+            binding.phoneNumError.text = "Must be 10 digits"
+            binding.phoneNumError.visibility = View.VISIBLE
+            hasError = true
         }
-        if (phoneDigits.length > 15) {
-            Toast.makeText(requireContext(), "Phone number cannot exceed 15 digits", Toast.LENGTH_SHORT).show()
-            return
+        if (dob.isEmpty()) {
+            binding.dobError.text = "Required"
+            binding.dobError.visibility = View.VISIBLE
+            hasError = true
+        } else if (!isAtLeast13(dob)) {
+            binding.dobError.text = "Must be 13+"
+            binding.dobError.visibility = View.VISIBLE
+            hasError = true
+        }
+        if (about.isEmpty()) {
+            binding.aboutError.text = "Required"
+            binding.aboutError.visibility = View.VISIBLE
+            hasError = true
         }
 
-        if (dob.isBlank()) {
-            Toast.makeText(requireContext(), "Date of birth is required", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (!dob.matches(Regex("""\d{4}-\d{2}-\d{2}"""))) {
-            Toast.makeText(requireContext(), "DOB must be in YYYY-MM-DD", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (!isAtLeast13(dob)) {
-            Toast.makeText(requireContext(), "You must be at least 13 years old", Toast.LENGTH_SHORT).show()
-            return
+        if (selectedGender.isNullOrBlank()) {
+            binding.genderError.text = "Select gender"
+            binding.genderError.visibility = View.VISIBLE
+            hasError = true
         }
 
-        profileViewModel.firstName = first.trim()
-        profileViewModel.lastName = last.trim()
+
+        if (hasError) return
+
+        profileViewModel.firstName = first
+        profileViewModel.lastName = last
         profileViewModel.phoneNumber = phoneDigits
         profileViewModel.personalPhoneDigits = phoneDigits
         profileViewModel.dob = dob
-        profileViewModel.gender = selectedGender
+        profileViewModel.gender = selectedGender ?: ""
         profileViewModel.aboutMe = about
         profileViewModel.imageUri = pickedImageUri
 
         findNavController().navigate(R.id.emergencyFragment)
     }
 
-    private fun selectGender(value: String) {
+
+    private fun selectGender(value: String?) {
         selectedGender = value
         if (!isAdded || _binding == null) return
-        binding.rfcvab5pvu3c.alpha = if (value == "male") 1f else 0.6f
-        binding.rawr3vr06wif.alpha = if (value == "female") 1f else 0.6f
-        binding.rk3dh7nhmde.alpha = if (value == "others") 1f else 0.6f
+
+        binding.tvGenderMale.isSelected = value == "male"
+        binding.tvGenderFemale.isSelected = value == "female"
+        binding.tvGenderOthers.isSelected = value == "others"
     }
+
+
+
 
     private fun openDatePicker() {
         val ctx = context ?: return
@@ -179,7 +198,7 @@ class FragmentPersonalDetails : Fragment() {
             if (!isAdded || _binding == null) return@DatePickerDialog
             val mm = (m + 1).toString().padStart(2, '0')
             val dd = d.toString().padStart(2, '0')
-            binding.rcousyd38th8.setText("$y-$mm-$dd")
+            binding.etDOB.setText("$dd-$mm-$y")
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
     }
 
@@ -211,7 +230,7 @@ class FragmentPersonalDetails : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.r74p8jg2m2qd.removeTextChangedListener(digitsOnlyWatcher)
+        binding.etPhoneNumber.removeTextChangedListener(digitsOnlyWatcher)
         _binding = null
     }
 }

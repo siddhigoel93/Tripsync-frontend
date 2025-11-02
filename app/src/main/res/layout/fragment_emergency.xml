@@ -55,6 +55,17 @@
             app:layout_constraintTop_toBottomOf="@id/bloodGroup"
             android:layout_marginEnd="8dp"
             android:focusable="false" />
+        <TextView
+            android:id="@+id/bloodGroupError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FF0000"
+            android:text="error"
+            android:layout_marginStart="2dp"
+            android:visibility="gone"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@id/inputBloodGroup"
+            app:layout_constraintStart_toEndOf="@id/inputBloodGroup"/>
 
         <EditText
             android:id="@+id/inputAllergies"
@@ -86,6 +97,17 @@
             android:fontFamily="@font/roboto"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/inputBloodGroup" />
+        <TextView
+            android:id="@+id/hisError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FF0000"
+            android:text="error"
+            android:layout_marginStart="2dp"
+            android:visibility="gone"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@id/labelMedicalHistory"
+            app:layout_constraintStart_toEndOf="@id/labelMedicalHistory"/>
 
         <EditText
             android:id="@+id/inputMedicalHistory"
@@ -165,6 +187,17 @@
                 app:layout_constraintTop_toBottomOf="@id/labelContactName"
                 android:inputType="textPersonName"
                 />
+            <TextView
+                android:id="@+id/enameError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:text="error"
+                android:layout_marginStart="2dp"
+                android:visibility="gone"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/labelContactName"
+                app:layout_constraintStart_toEndOf="@id/labelContactName"/>
 
             <TextView
                 android:id="@+id/labelContactPhone"
@@ -176,6 +209,17 @@
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/inputContactName" />
+            <TextView
+                android:id="@+id/enumError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:text="error"
+                android:layout_marginStart="2dp"
+                android:visibility="gone"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/inputContactPhone"
+                app:layout_constraintStart_toEndOf="@id/inputContactPhone"/>
 
             <EditText
                 android:id="@+id/inputContactPhone"
@@ -204,6 +248,17 @@
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/inputContactPhone" />
+            <TextView
+                android:id="@+id/relError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FF0000"
+                android:text="error"
+                android:layout_marginStart="2dp"
+                android:visibility="gone"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/labelRelationship"
+                app:layout_constraintStart_toEndOf="@id/labelRelationship"/>
 
             <EditText
                 android:id="@+id/inputRelationship"
