@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -57,10 +58,15 @@ class PreferencesFragment : Fragment() {
         cards.forEach { card ->
             card.setOnClickListener {
                 selectedCardId?.let { prevId ->
-                    if (prevId != card.id) view.findViewById<ConstraintLayout>(prevId).isSelected = false
+                    val prevCard = view.findViewById<ConstraintLayout>(prevId)
+                    prevCard.isSelected = false
+                    val prevIcon = prevCard.getChildAt(0) as? ImageView
+                    prevIcon?.isSelected = false
                 }
                 val nowSelected = !card.isSelected
                 card.isSelected = nowSelected
+                val icon = card.getChildAt(0) as? ImageView
+                icon?.isSelected = nowSelected
                 selectedCardId = if (nowSelected) card.id else null
             }
         }

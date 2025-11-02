@@ -65,7 +65,8 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="16dp" />
+                    android:layout_marginTop="16dp"
+                    app:tint="@color/icon_tint_selector" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,6 +94,7 @@
                     android:src="@drawable/relaxation"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:tint="@color/icon_tint_selector"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="16dp"
                     android:contentDescription="Relaxation Icon" />
@@ -124,6 +126,7 @@
                     android:layout_height="48dp"
                     android:src="@drawable/nature"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/icon_tint_selector"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="16dp" />
@@ -152,6 +155,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/explore"
+                    app:tint="@color/icon_tint_selector"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -183,6 +187,7 @@
                     android:src="@drawable/spiritual"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:tint="@color/icon_tint_selector"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="16dp" />
                 <TextView
@@ -209,6 +214,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/historic"
+                    app:tint="@color/icon_tint_selector"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

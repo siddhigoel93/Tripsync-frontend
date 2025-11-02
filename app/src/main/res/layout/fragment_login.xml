@@ -249,6 +249,7 @@
                         android:textCursorDrawable="@drawable/custom_cursor"
                         android:backgroundTint="@color/blue"
                         android:paddingVertical="12dp"
+                        android:paddingStart="6dp"
                         android:layout_marginStart="6dp"
                         android:fontFamily="@font/roboto"
                         android:textColorHint="#999999"

@@ -165,10 +165,9 @@ class fragment_signup : Fragment() {
             if (hasFocus) showPwRulesForPassword() else hidePwRulesPass()
         }
 
-//        etConfirm.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-//            confirmContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
-//            if (hasFocus) showPwRulesForConfirm() else hidePwRulesConfirm()
-//        }
+        etConfirm.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            confirmContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+        }
 
         etEmail.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             etEmail.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
@@ -286,7 +285,7 @@ class fragment_signup : Fragment() {
         spannable.setSpan(ForegroundColorSpan(EMAIL_ERROR_COLOR), originalEmailLabel.length, combined.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannable.setSpan(RelativeSizeSpan(0.75f), originalEmailLabel.length, combined.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
         lblEmail.text = spannable
-        etEmail.setBackgroundResource(R.drawable.input_border_error)
+        etEmail.setBackgroundResource(R.drawable.wrong_input)
         ivEmailValid.visibility = View.GONE
     }
 
