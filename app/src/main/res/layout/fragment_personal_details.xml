@@ -25,10 +25,11 @@
                 android:id="@+id/profileImageView"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
-                android:scaleType="centerCrop"
                 android:background="@drawable/circular_gray_background"
-                app:srcCompat="@drawable/camera"
+                android:clipToOutline="true"
+                android:scaleType="centerCrop"
                 android:contentDescription="Profile Picture Placeholder"
+                app:srcCompat="@drawable/camera"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
@@ -433,6 +434,7 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         app:cornerRadius="8dp"
+        android:layout_marginHorizontal="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

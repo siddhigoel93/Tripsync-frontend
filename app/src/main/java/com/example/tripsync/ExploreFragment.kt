@@ -58,6 +58,9 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
     val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
     val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
+
+    val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
 //
 //    if (appBarLayout != null) {
 //
@@ -68,10 +71,13 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //
 //        appBarLayout.bringToFront()
 //    }
+
+    if(isProfileCompleted){
+        customHeader.visibility= View.GONE
+    }
     if (args.showHeader) {
 
-        customHeader.visibility = View.VISIBLE
-
+        customHeader.visibility = View.GONE
         val elevationInPixels = 4f * resources.displayMetrics.density
         appBarLayout.elevation = elevationInPixels
         appBarLayout.translationZ = elevationInPixels
@@ -79,7 +85,11 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
     } else {
 
-        customHeader.visibility = View.GONE
+        customHeader.visibility = View.VISIBLE
+        val elevationInPixels = 4f * resources.displayMetrics.density
+        appBarLayout.elevation = elevationInPixels
+        appBarLayout.translationZ = elevationInPixels
+        appBarLayout.bringToFront()
     }
 
 }

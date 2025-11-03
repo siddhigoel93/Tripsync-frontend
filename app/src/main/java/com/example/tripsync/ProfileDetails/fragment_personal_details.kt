@@ -198,7 +198,7 @@ class FragmentPersonalDetails : Fragment() {
             if (!isAdded || _binding == null) return@DatePickerDialog
             val mm = (m + 1).toString().padStart(2, '0')
             val dd = d.toString().padStart(2, '0')
-            binding.etDOB.setText("$dd-$mm-$y")
+            binding.etDOB.setText("$y-$mm-$dd")
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
     }
 

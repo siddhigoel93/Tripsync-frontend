@@ -1,5 +1,6 @@
 package com.example.tripsync.Auth
 
+import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
@@ -125,6 +126,8 @@ class ContactVerifyFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show()
+                    val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                    sharedPrefs.edit().putBoolean("profile_completed", true).apply()
                     navigateToExplore()
                 } else {
                     val error = response.errorBody()?.string()
