@@ -46,7 +46,6 @@ class fragment_signup : Fragment() {
     private lateinit var lblEmail: TextView
     private lateinit var cbTerms: CheckBox
     private lateinit var tvTerms: TextView
-
     private lateinit var pwRulesTitlePass: TextView
     private lateinit var pwRulesListPass: ViewGroup
     private lateinit var tvRuleLenPass: TextView
@@ -54,7 +53,6 @@ class fragment_signup : Fragment() {
     private lateinit var tvRuleLowerPass: TextView
     private lateinit var tvRuleSpecialPass: TextView
     private lateinit var tvRuleDigitPass: TextView
-
     private lateinit var pwRulesTitleConfirm: TextView
     private lateinit var pwRulesListConfirm: ViewGroup
     private lateinit var tvRuleLenConfirm: TextView
@@ -62,7 +60,6 @@ class fragment_signup : Fragment() {
     private lateinit var tvRuleLowerConfirm: TextView
     private lateinit var tvRuleSpecialConfirm: TextView
     private lateinit var tvRuleDigitConfirm: TextView
-
     private var originalEmailLabel: String = ""
     private val COLOR_OK = Color.parseColor("#00C896")
     private val COLOR_DIM = Color.parseColor("#808080")
@@ -92,7 +89,6 @@ class fragment_signup : Fragment() {
         lblEmail = view.findViewById(R.id.lblEmail)
         cbTerms = view.findViewById(R.id.cbTerms)
         originalEmailLabel = lblEmail.text.toString()
-
         pwRulesTitlePass = view.findViewById(R.id.pwRulesTitlePass)
         pwRulesListPass = view.findViewById(R.id.pwRulesListPass)
         tvRuleLenPass = view.findViewById(R.id.pwRuleLenPass)
@@ -100,7 +96,6 @@ class fragment_signup : Fragment() {
         tvRuleLowerPass = view.findViewById(R.id.pwRuleLowerPass)
         tvRuleSpecialPass = view.findViewById(R.id.pwRuleSpecialPass)
         tvRuleDigitPass = view.findViewById(R.id.pwRuleDigitPass)
-
         pwRulesTitleConfirm = view.findViewById(R.id.pwRulesTitleConfirm)
         pwRulesListConfirm = view.findViewById(R.id.pwRulesListConfirm)
         tvRuleLenConfirm = view.findViewById(R.id.pwRuleLenConfirm)
@@ -120,15 +115,15 @@ class fragment_signup : Fragment() {
         etPassword.filters = arrayOf(blockEmojiAndSpaces, limit20)
         etConfirm.filters = arrayOf(blockEmojiAndSpaces, limit20)
 
-        signin.paintFlags = signin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        signin.paintFlags = signin.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
         tvTerms.paintFlags = tvTerms.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
         ivEmailValid.setImageResource(R.drawable.ic_check_green)
         ivEmailValid.visibility = View.GONE
 
         signin.setOnClickListener {
             view.findNavController().navigate(R.id.action_fragment_signup_to_login)
         }
-
 
         tvTerms.setOnClickListener {
             val dlg = TermsDialogFragment()
@@ -161,17 +156,12 @@ class fragment_signup : Fragment() {
         })
 
         etPassword.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            passwordContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+            passwordContainer.setBgKeepPadding(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
             if (hasFocus) showPwRulesForPassword() else hidePwRulesPass()
         }
 
-//        etConfirm.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-//            confirmContainer.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
-//            if (hasFocus) showPwRulesForConfirm() else hidePwRulesConfirm()
-//        }
-
         etEmail.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            etEmail.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
+            etEmail.setBgKeepPadding(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
             if (!hasFocus) {
                 val email = etEmail.text?.toString()?.trim() ?: ""
                 ivEmailValid.visibility = if (isEmailSimpleValid(email)) View.VISIBLE else View.GONE
@@ -245,7 +235,6 @@ class fragment_signup : Fragment() {
         val hasLower = p.any { it.isLowerCase() }
         val hasSpecial = p.any { !it.isLetterOrDigit() }
         val hasDigit = p.any { it.isDigit() }
-
         if (forPasswordField) {
             tvRuleLenPass.setTextColor(if (hasLen) COLOR_OK else COLOR_DIM)
             tvRuleUpperPass.setTextColor(if (hasUpper) COLOR_OK else COLOR_DIM)
@@ -272,9 +261,9 @@ class fragment_signup : Fragment() {
     private fun clearErrors() {
         etEmail.error = null
         tvConfirmError?.visibility = View.GONE
-        etEmail.setBackgroundResource(R.drawable.input_border)
-        confirmContainer.setBackgroundResource(R.drawable.input_border)
-        passwordContainer.setBackgroundResource(R.drawable.input_border)
+        etEmail.setBgKeepPadding(R.drawable.input_border)
+        confirmContainer.setBgKeepPadding(R.drawable.input_border)
+        passwordContainer.setBgKeepPadding(R.drawable.input_border)
         lblEmail.text = originalEmailLabel
         lblEmail.setTextColor(Color.parseColor("#737373"))
     }
@@ -286,19 +275,19 @@ class fragment_signup : Fragment() {
         spannable.setSpan(ForegroundColorSpan(EMAIL_ERROR_COLOR), originalEmailLabel.length, combined.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannable.setSpan(RelativeSizeSpan(0.75f), originalEmailLabel.length, combined.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
         lblEmail.text = spannable
-        etEmail.setBackgroundResource(R.drawable.input_border_error)
+        etEmail.setBgKeepPadding(R.drawable.input_border_error)
         ivEmailValid.visibility = View.GONE
     }
 
     private fun showPasswordError(message: String) {
         tvConfirmError?.text = message
         tvConfirmError?.visibility = View.VISIBLE
-        passwordContainer.setBackgroundResource(R.drawable.input_border_error)
-        confirmContainer.setBackgroundResource(R.drawable.input_border_error)
+        passwordContainer.setBgKeepPadding(R.drawable.input_border_error)
+        confirmContainer.setBgKeepPadding(R.drawable.input_border_error)
     }
 
     private fun isEmailSimpleValid(email: String): Boolean {
-        val pattern = Regex("^\\S+@\\S+\$")
+        val pattern = Regex("^\\S+@\\S+$")
         return pattern.matches(email)
     }
 
@@ -344,4 +333,13 @@ class fragment_signup : Fragment() {
             }
         }
     }
+}
+
+private fun View.setBgKeepPadding(resId: Int) {
+    val l = paddingLeft
+    val t = paddingTop
+    val r = paddingRight
+    val b = paddingBottom
+    setBackgroundResource(resId)
+    setPadding(l, t, r, b)
 }
