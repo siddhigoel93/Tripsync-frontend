@@ -33,6 +33,9 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:windowSoftInputMode="adjustPan|stateHidden" />
 
+
+
+
         <meta-data
             android:name="android.max_aspect"
             android:value="2.6" />

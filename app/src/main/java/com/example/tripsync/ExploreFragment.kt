@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
+import android.content.Intent
 
 class ExploreFragment : Fragment() {
 
@@ -26,6 +27,13 @@ class ExploreFragment : Fragment() {
         complete_profile_button.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
         }
+
+
+        val cardAIPlanner = view.findViewById<CardView>(R.id.card_ai_planner)
+        cardAIPlanner.setOnClickListener {
+            findNavController().navigate(R.id.AIItinearyPlanner)
+        }
+        // ✅
 //        val button = view.findViewById<MaterialButton>(R.id.logoutButton)
 //
 //        button.setOnClickListener {

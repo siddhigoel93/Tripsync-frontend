@@ -105,6 +105,9 @@
         <action
             android:id="@+id/action_homeFragment_to_fragment_personal_details"
             app:destination="@id/fragment_personal_details" />
+        <action
+            android:id="@+id/action_homeFragment_to_AIItinearyPlannerFragment"
+            app:destination="@id/AIItinearyPlannerFragment" />
     </fragment>
     <fragment
         android:id="@+id/emergencyFragment"
@@ -150,4 +153,8 @@
         android:id="@+id/contactVerifyFragment"
         android:name="com.example.tripsync.Auth.ContactVerifyFragment"
         android:label="ContactVerifyFragment" />
+    <fragment
+        android:id="@+id/AIItinearyPlannerFragment"
+        android:name="com.example.tripsync.AIItinearyPlannerFragment"
+        android:label="AIItinearyPlannerFragment" />
 </navigation>
