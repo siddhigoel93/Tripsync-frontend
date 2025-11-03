@@ -125,7 +125,7 @@ class ContactVerifyFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_contactVerifyFragment_to_homeFragment)
+                    navigateToExplore()
                 } else {
                     val error = response.errorBody()?.string()
                     Log.e("VerifyProfileOtp", "Error: $error")
@@ -141,6 +141,11 @@ class ContactVerifyFragment : Fragment() {
         }
     }
 
+    fun navigateToExplore() {
+        val action = ContactVerifyFragmentDirections.actionContactVerifyFragmentToHomeFragment(showHeader = true)
+
+        findNavController().navigate(action)
+    }
     private fun resendProfileOtp() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {

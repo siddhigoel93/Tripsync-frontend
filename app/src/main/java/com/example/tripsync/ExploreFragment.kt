@@ -12,8 +12,12 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.navigation.fragment.navArgs
 
 class ExploreFragment : Fragment() {
+
+    private val args: ExploreFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,6 +26,8 @@ class ExploreFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
 
         val complete_profile_button = view.findViewById<MaterialButton>(R.id.complete_profile_button)
+
+
 
         complete_profile_button.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
@@ -51,15 +57,29 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
 
     val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
+    val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
+//
+//    if (appBarLayout != null) {
+//
+//        val elevationInPixels = 4f * resources.displayMetrics.density
+//
+//        ViewCompat.setElevation(appBarLayout, elevationInPixels)
+//        appBarLayout.translationZ = elevationInPixels
+//
+//        appBarLayout.bringToFront()
+//    }
+    if (args.showHeader) {
 
-    if (appBarLayout != null) {
+        customHeader.visibility = View.VISIBLE
 
         val elevationInPixels = 4f * resources.displayMetrics.density
-
-        ViewCompat.setElevation(appBarLayout, elevationInPixels)
+        appBarLayout.elevation = elevationInPixels
         appBarLayout.translationZ = elevationInPixels
-
         appBarLayout.bringToFront()
+
+    } else {
+
+        customHeader.visibility = View.GONE
     }
 
 }

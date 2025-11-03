@@ -102,6 +102,10 @@
         android:name="com.example.tripsync.ExploreFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_explore" >
+        <argument
+            android:name="showHeader"
+            app:argType="boolean"
+            android:defaultValue="false" />
         <action
             android:id="@+id/action_homeFragment_to_fragment_personal_details"
             app:destination="@id/fragment_personal_details" />
