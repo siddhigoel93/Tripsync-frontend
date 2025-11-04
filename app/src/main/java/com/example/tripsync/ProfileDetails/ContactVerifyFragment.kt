@@ -190,10 +190,6 @@ class ContactVerifyFragment : Fragment() {
                         box.setBackgroundResource(R.drawable.otp_box_bg)
                     }
                 }
-
-                if (text.length < boxes.size) {
-                    boxes[text.length].setBackgroundResource(R.drawable.otp_box_active)
-                }
             }
 
             override fun afterTextChanged(s: Editable?) {

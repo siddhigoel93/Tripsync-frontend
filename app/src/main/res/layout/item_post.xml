@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:background="@color/white"
+    android:layout_marginBottom="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        >
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.05" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.95"/>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/post_user_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.RoundedCorners"
+            tools:src="@drawable/ic_launcher_background" />
+        <TextView
+            android:id="@+id/post_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/post_user_avatar"
+            app:layout_constraintTop_toTopOf="@id/post_user_avatar"
+            tools:text="Riya Sharma" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintTop_toTopOf="@id/post_user_name"
+            app:layout_constraintBottom_toBottomOf="@id/post_time"
+            android:src="@drawable/three_dots"
+            android:layout_marginEnd="20dp"/>
+
+        <TextView
+            android:id="@+id/post_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/post_user_name"
+            app:layout_constraintTop_toBottomOf="@id/post_user_name"
+            tools:text="2 hours ago" />
+
+        <TextView
+            android:id="@+id/post_caption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toBottomOf="@id/post_user_avatar"
+            tools:text="Jaipur completely stole my heart! The Amber Fort's..." />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/post_media_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="@id/guideline_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toBottomOf="@id/post_caption"
+            app:shapeAppearanceOverlay="@style/RoundedImageStyle" />
+
+
+        <ImageView
+            android:id="@+id/icon_like"
+            android:layout_width="41dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="6dp"
+            android:paddingVertical="8dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toBottomOf="@id/post_media_image"
+            app:srcCompat="@drawable/like"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/icon_comment"
+            android:layout_width="41dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="4dp"
+            android:padding="8dp"
+            app:layout_constraintStart_toEndOf="@id/icon_like"
+            app:layout_constraintTop_toTopOf="@id/icon_like"
+            app:srcCompat="@drawable/comment"
+            app:tint="@color/black" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

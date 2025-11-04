@@ -49,6 +49,8 @@ class ResetPasswordFragment : Fragment() {
     private lateinit var rule3: TextView
     private lateinit var rule4: TextView
     private lateinit var rule5: TextView
+    private lateinit var passwordRules: LinearLayout
+
 
     private var isPasswordVisible1 = false
     private var isPasswordVisible2 = false
@@ -69,7 +71,7 @@ class ResetPasswordFragment : Fragment() {
         signInText = view.findViewById(R.id.signup)
         passwordField = view.findViewById(R.id.passwordField)
         passwordConfirmField = view.findViewById(R.id.passwordConfirmField)
-        val passwordRules = view.findViewById<LinearLayout>(R.id.passwordRules)
+        passwordRules = view.findViewById(R.id.passwordRules)
 
         icon1 = view.findViewById(R.id.icon1)
         icon2 = view.findViewById(R.id.icon2)
@@ -85,15 +87,22 @@ class ResetPasswordFragment : Fragment() {
         signInText.paintFlags = signInText.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         etPassword.setOnFocusChangeListener { _, hasFocus ->
-            passwordField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
-            passwordRules.visibility = if (hasFocus) View.VISIBLE else View.GONE
+            if (hasFocus) {
+                passwordField.setBackgroundResource(R.drawable.selected_input)
+                passwordError.visibility = View.GONE
+                passwordRules.visibility = View.VISIBLE
+            } else {
+                passwordField.setBackgroundResource(R.drawable.input_border)
+                passwordRules.visibility = View.GONE
+            }
         }
         etPassword2.setOnFocusChangeListener { _, hasFocus ->
             passwordConfirmField.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
         }
 
         etPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val password = s.toString()
                 updateRule(password.length >= 8, icon1, rule1)
@@ -135,6 +144,13 @@ class ResetPasswordFragment : Fragment() {
             val pass2 = etPassword2.text.toString().trim()
             val email = arguments?.getString("email") ?: ""
 
+            passwordConfirmError.visibility = View.GONE
+            passwordError.visibility = View.GONE
+            passwordField.setBackgroundResource(R.drawable.input_border)
+            passwordConfirmField.setBackgroundResource(R.drawable.input_border)
+
+
+
             var hasError = false
             btn.isEnabled = false
 
@@ -143,7 +159,8 @@ class ResetPasswordFragment : Fragment() {
                 passwordConfirmError.text = "Please fill in both fields"
                 passwordField.setBackgroundResource(R.drawable.wrong_input)
                 passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
-                hasError = true
+                btn.isEnabled = true
+                return@setOnClickListener
             } else {
                 passwordConfirmError.visibility = View.GONE
                 passwordField.setBackgroundResource(R.drawable.input_border)
@@ -154,7 +171,8 @@ class ResetPasswordFragment : Fragment() {
                 passwordConfirmError.visibility = View.VISIBLE
                 passwordConfirmError.text = "Passwords must be the same"
                 passwordConfirmField.setBackgroundResource(R.drawable.wrong_input)
-                hasError = true
+                btn.isEnabled = true
+                return@setOnClickListener
             }
 
             if (pass1.length < 8) { icon1.setColorFilter(Color.RED); rule1.setTextColor(Color.RED); hasError = true }
@@ -165,12 +183,14 @@ class ResetPasswordFragment : Fragment() {
 
             if (hasError) {
                 passwordError.visibility = View.VISIBLE
+                passwordRules.visibility = View.VISIBLE
                 passwordError.text = "Please fix the highlighted rules"
                 btn.isEnabled = true
                 return@setOnClickListener
-            } else {
-                passwordError.visibility = View.GONE
             }
+//            else {
+//                passwordError.visibility = View.GONE
+//            }
             val bundle = Bundle().apply {
                 putString("email", email)
                 putString("new_password" , pass1)

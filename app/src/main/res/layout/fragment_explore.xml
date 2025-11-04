@@ -67,7 +67,7 @@
         app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/bottom_app_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
         >
 
         <LinearLayout
@@ -201,14 +201,12 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_add_tripmates"
                     style="@style/ActionCardStyle"
-                    android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
                     android:backgroundTint="@color/light_purple_50"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
                     app:layout_constraintEnd_toStartOf="@id/card_sos_emergency"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/card_create_trip"
                     app:layout_constraintTop_toBottomOf="@id/card_create_trip">
 
                     <include layout="@layout/card_add_tripmates" />
@@ -218,12 +216,10 @@
                     android:id="@+id/card_sos_emergency"
                     style="@style/ActionCardStyle"
                     android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="8dp"
                     android:backgroundTint="@color/light_red_50"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/card_ai_planner"
                     app:layout_constraintStart_toEndOf="@id/card_add_tripmates"
                     app:layout_constraintTop_toBottomOf="@id/card_ai_planner">
                     <include layout="@layout/card_sos_emergency" />
@@ -928,50 +924,5 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottom_app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/light_mint_green"
-        app:contentInsetEnd="0dp"
-        app:contentInsetStart="0dp"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="16dp"
-        app:fabCradleVerticalOffset="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:itemBackground="@null"
-            app:itemRippleColor="@android:color/transparent"
-            app:itemIconTint="@color/bottom_nav_color"
-            app:itemTextColor="@color/bottom_nav_color"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu"
-            android:paddingStart="0dp"
-            android:paddingEnd="0dp" />
-    </com.google.android.material.bottomappbar.BottomAppBar>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_store"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/plus_add"
-    app:backgroundTint="@color/mint_active"
-        android:translationY="40dp"
-        android:elevation="10dp"
-        app:pressedTranslationZ="14dp"
-        app:shapeAppearanceOverlay="@style/CircularShape"
-    app:layout_constraintBottom_toTopOf="@id/bottom_app_bar"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:tint="@android:color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

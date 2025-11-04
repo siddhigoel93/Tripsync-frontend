@@ -66,4 +66,8 @@ object ApiClient {
     fun getTokenService(context: Context): AuthService {
         return getRetrofitInstance(context, secure = true).create(AuthService::class.java)
     }
+
+    fun <T> createService(context: Context, serviceClass: Class<T>): T {
+        return getRetrofitInstance(context, secure = false).create(serviceClass)
+    }
 }

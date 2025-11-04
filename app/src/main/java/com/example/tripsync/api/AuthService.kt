@@ -11,6 +11,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 
 interface AuthService {
 
@@ -71,4 +72,14 @@ interface AuthService {
         @Header("Authorization") bearer: String,
         @Body request: EmergencySOSRequest
     ): Response<EmergencySOSResponse>
+
+
+    @GET("api/community/posts/")
+    suspend fun getAllPosts(): List<Post>
+
+    @GET("api/community/posts/{id}/")
+    suspend fun getPostById(@Path("id") id: Int): Post
+
+    @POST("api/community/posts/")
+    suspend fun createPost(@Body postData: Post): Post
 }
