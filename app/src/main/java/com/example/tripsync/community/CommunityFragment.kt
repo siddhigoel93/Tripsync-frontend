@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.community
 
 import android.content.Context
 import android.os.Bundle
@@ -14,13 +14,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tripsync.community.PostAdapter
+import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.AuthService
 import com.example.tripsync.api.models.LikeRequest
+import com.example.tripsync.api.models.PostActionListener
+import com.example.tripsync.ui.CommentsFragment
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.launch
-import com.example.tripsync.api.models.PostActionListener
-
 
 class CommunityFragment : Fragment(), PostActionListener {
 
@@ -110,7 +112,8 @@ class CommunityFragment : Fragment(), PostActionListener {
 
 
     override fun onComment(postId: Int) {
-        TODO("Not yet implemented")
+        val commentsFragment = CommentsFragment.newInstance(postId)
+        commentsFragment.show(parentFragmentManager, CommentsFragment.TAG)
     }
 
     private fun fetchPosts() {

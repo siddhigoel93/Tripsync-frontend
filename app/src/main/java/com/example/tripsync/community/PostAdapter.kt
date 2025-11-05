@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.community
 
 import android.content.Context
 import android.net.Uri
@@ -7,14 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.tripsync.R
 import com.example.tripsync.api.models.Post
 import com.example.tripsync.api.models.PostActionListener
-
 
 class PostAdapter(
     private var posts: List<Post>,
@@ -95,13 +96,14 @@ class PostAdapter(
         }
 
         holder.iconComment.setOnClickListener {
-            Toast.makeText(context, "Comment on Post ${post.id}", Toast.LENGTH_SHORT).show()
+            listener.onComment(post.id)
         }
+
     }
 
     private fun showPopupMenu(view: View, post: Post) {
         val context = view.context
-        val popup = android.widget.PopupMenu(context, view)
+        val popup = PopupMenu(context, view)
         popup.menuInflater.inflate(R.menu.post_menu, popup.menu)
 
         popup.setOnMenuItemClickListener { item ->

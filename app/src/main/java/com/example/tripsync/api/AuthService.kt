@@ -80,7 +80,7 @@ interface AuthService {
     suspend fun listAllPosts(): Response<PostListResponse>
 
     @GET("api/community/posts/{id}/")
-    suspend fun getPostDetails(@Path("id") postId: Int): Response<Post>
+    suspend fun getPostDetails(@Path("id") postId: Int): Response<PostDetailResponse>
 
     @POST("api/community/posts/")
     suspend fun createPost(@Body postData: Post): Post
@@ -113,4 +113,22 @@ interface AuthService {
     suspend fun checkVerificationStatus(): Response<VerificationStatus>
 
     data class VerificationStatus(val is_verified: Boolean, val message: String)
+
+    @POST("api/community/posts/{id}/comments/")
+    suspend fun addComment(
+        @Path("id") postId: Int,
+        @Body requestBody: CommentTextRequest
+    ): Response<CommentResponse>
+
+    @PATCH("api/community/comments/{id}/update/")
+    suspend fun updateComment(
+        @Path("id") commentId: Int,
+        @Body requestBody: CommentTextRequest
+    ): Response<CommentResponse>
+
+    @DELETE("api/community/comments/{id}/delete/")
+    suspend fun deleteComment(
+        @Path("id") commentId: Int
+    ): Response<DeleteResponse>
+
 }

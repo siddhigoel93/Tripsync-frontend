@@ -1,11 +1,10 @@
-package com.example.tripsync
+package com.example.tripsync.community
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,20 +14,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.databinding.FragmentCreatePostBinding
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import com.google.android.material.imageview.ShapeableImageView
-
 
 class CreatePostFragment : Fragment() {
 
@@ -101,7 +101,7 @@ class CreatePostFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        val toolbar = binding.appBar.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        val toolbar = binding.appBar.findViewById<Toolbar>(R.id.toolbar)
 
         toolbar.findViewById<ImageView>(R.id.back_arrow)?.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -128,7 +128,7 @@ class CreatePostFragment : Fragment() {
 
     private fun openMediaPicker(launcher: ActivityResultLauncher<Intent>, mimeType: String) {
         val intent = Intent(Intent.ACTION_PICK).apply {
-            type = mimeType
+            this.setType(mimeType)
         }
         launcher.launch(intent)
     }
