@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:context="com.example.tripsync.AIItinearyPlannerFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1186"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8633"/>
+
+    <ScrollView
+        android:id="@+id/rwdxa89ztchn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/guideline1"
+        app:layout_constraintBottom_toTopOf="@id/guideline2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:id="@+id/r5t6xdis8qsw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient_blue_to_purple_rounded_15"
+                android:paddingVertical="20dp"
+                android:paddingHorizontal="34dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="28dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/rzg6mhub8veq"
+                    android:layout_width="59dp"
+                    android:layout_height="59dp"
+                    android:layout_marginEnd="32dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/itenaryai"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/rtumtb66em1o"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AI-Powered Itinerary"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/receahnewfss"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Get personalized recommendations based on your preferences"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/rs4zp87w9bp9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trip name"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp"/>
+
+            <EditText
+                android:id="@+id/rkfj7pis4rom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selectable_card"
+                android:hint="e.g, Delhi Trip 2025"
+                android:inputType="text"
+                android:paddingVertical="14dp"
+                android:paddingHorizontal="12dp"
+                android:textColor="#737373"
+                android:textSize="14sp"
+                android:layout_marginBottom="17dp"/>
+
+            <TextView
+                android:id="@+id/rc8472uxv84l"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Current Location"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp"/>
+
+            <EditText
+                android:id="@+id/rcv1e9lg3qio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selectable_card"
+                android:hint="Select"
+                android:inputType="text"
+                android:paddingVertical="14dp"
+                android:paddingHorizontal="12dp"
+                android:textColor="#737373"
+                android:textSize="14sp"
+                android:drawableEnd="@drawable/itenarydown"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="17dp"/>
+
+            <TextView
+                android:id="@+id/rjvw3lmvqoz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Destination"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp"/>
+
+            <EditText
+                android:id="@+id/rslzomi0ihm8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selectable_card"
+                android:hint="Select"
+                android:inputType="text"
+                android:paddingVertical="14dp"
+                android:paddingHorizontal="12dp"
+                android:textColor="#737373"
+                android:textSize="14sp"
+                android:drawableEnd="@drawable/itenarydown"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:id="@+id/r_ai_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="AI based recommendations according to your previous histories are…"
+                android:textColor="#737373"
+                android:textSize="12sp"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <!-- REVERTED: static 'Delhi, India' suggestion card -->
+                <LinearLayout
+                    android:id="@+id/rq5y764f4fo_wrap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/fill_light_cyan_stroke_cyan_rounded_10"
+                    android:padding="12dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:id="@+id/rq5y764f4fo"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/itenarylocation"
+                        android:layout_marginEnd="10dp"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Delhi, India"
+                            android:textColor="#000000"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Popular Destination"
+                            android:textColor="#737373"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rr3lwsh20np_wrap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/fill_light_mint_stroke_teal_rounded_10"
+                    android:padding="12dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/rr3lwsh20np"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/itenarylocationgreen"
+                        android:layout_marginEnd="10dp"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mumbai, India"
+                            android:textColor="#000000"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Trending Location"
+                            android:textColor="#737373"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Travel Dates"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="12dp">
+
+                <EditText
+                    android:id="@+id/r_start_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/selectable_card"
+                    android:hint="DD/MM/YYYY"
+                    android:inputType="date"
+                    android:paddingLeft="12dp"
+                    android:paddingVertical="14dp"
+                    android:textColor="#737373"
+                    android:textSize="14sp"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                    android:drawablePadding="8dp"
+                    android:layout_marginEnd="10dp"/>
+
+                <EditText
+                    android:id="@+id/r_end_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/selectable_card"
+                    android:hint="DD/MM/YYYY"
+                    android:inputType="date"
+                    android:paddingLeft="12dp"
+                    android:paddingVertical="14dp"
+                    android:textColor="#737373"
+                    android:textSize="14sp"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                    android:drawablePadding="8dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rfqy5rgwu5h6_wrap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fill_light_cyan_stroke_cyan_rounded_10"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="18dp">
+
+                <ImageView
+                    android:id="@+id/rfqy5rgwu5h6"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/itenarysuitcaseblue"
+                    android:layout_marginEnd="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/r_trip_length_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 Day Trip"
+                        android:textColor="#000000"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/r_trip_length_subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#737373"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trip Type"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:id="@+id/rrqagbhzn0gj"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/selectable_card"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/rpd1oz43ssel"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/itenarysuitcase"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Business Trip"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_marginTop="6dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rdd7g48bxhrn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/selectable_card"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/rfg4hjv5tbbm"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/itenarycommunity"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Group Trip"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_marginTop="6dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/reqgbovj3s1i"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/selectable_card"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/rk62old3ipx8"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/itenaryman"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Solo Trip"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_marginTop="6dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trip Preferences"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginBottom="22dp">
+
+                <LinearLayout
+                    android:id="@+id/rr7hpem12xxh"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/selectable_card"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/rzsds7ko800p"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/itenarytravelman"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Adventure"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_marginTop="6dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rqwfe5qhxt1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/selectable_card"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/rcgqrkh3wnfc"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/itenaryrelaxation"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Relaxation"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_marginTop="6dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/r30npb48x1w7"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/selectable_card"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/r7iwm1igntfs"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/itenaryspiritual"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Spiritual"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:layout_marginTop="6dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_continue_budget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Continue to Budget Planning"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/solid_teal_rounded_8"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/btn_save_draft"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Draft"
+                android:textAllCaps="false"
+                android:textColor="#00C896"
+                android:background="@drawable/fill_white_stroke_teal_rounded_8"/>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
