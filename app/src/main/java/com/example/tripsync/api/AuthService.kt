@@ -103,6 +103,12 @@ interface AuthService {
         @Part vid: MultipartBody.Part?
     ): Response<Post>
 
+    @POST("/api/community/posts/{id}/like/")
+    suspend fun likePost(
+        @Path("id") postId: Int,
+        @Body requestBody: LikeRequest
+    ): Response<LikeResponse>
+
     @GET("api/community/posts/verify_status/")
     suspend fun checkVerificationStatus(): Response<VerificationStatus>
 

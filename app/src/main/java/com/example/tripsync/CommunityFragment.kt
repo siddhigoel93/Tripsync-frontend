@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.AuthService
+import com.example.tripsync.api.models.LikeRequest
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.launch
 import com.example.tripsync.api.models.PostActionListener
@@ -83,6 +84,33 @@ class CommunityFragment : Fragment(), PostActionListener {
 
     override fun onDelete(postId: Int) {
         deletePostById(postId)
+    }
+
+    override fun onLike(postId: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val api = ApiClient.getTokenService(requireContext())
+                val requestBody = LikeRequest(like = true)
+                val response = api.likePost(postId, requestBody)
+
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Like synced with server!", Toast.LENGTH_SHORT).show()
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Toast.makeText(requireContext(), "Failed: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+
+
+
+
+    override fun onComment(postId: Int) {
+        TODO("Not yet implemented")
     }
 
     private fun fetchPosts() {

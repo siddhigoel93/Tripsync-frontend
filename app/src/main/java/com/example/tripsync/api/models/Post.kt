@@ -12,7 +12,8 @@ data class Post(
     val img_url: String?,
     val vid_url: String?,
     val created_at: String,
-    val updated_at: String
+    val updated_at: String,
+    var liked: Boolean = false
 )
 
 data class PostCreateRequest(

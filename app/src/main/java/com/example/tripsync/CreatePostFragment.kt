@@ -1,6 +1,7 @@
 package com.example.tripsync
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.databinding.FragmentCreatePostBinding
 import com.google.android.material.button.MaterialButton
@@ -23,6 +25,10 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import com.google.android.material.imageview.ShapeableImageView
+
 
 class CreatePostFragment : Fragment() {
 
@@ -65,7 +71,33 @@ class CreatePostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupToolbar()
+        setupUserProfile()
         setupListeners()
+    }
+
+    private fun setupUserProfile() {
+        val context = requireContext()
+        val sharedPref = context.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+
+        val currentUserName = sharedPref.getString("userName", "Unknown User")
+        val userNameTextView = binding.postContentCard.findViewById<TextView>(R.id.user_name)
+        userNameTextView.text = currentUserName
+
+        val currentUserAvatarUrl = sharedPref.getString("userAvatarUrl", null)
+        val profileAvatarImageView = binding.postContentCard.findViewById<ShapeableImageView>(R.id.profile_avatar)
+
+        if (!currentUserAvatarUrl.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(currentUserAvatarUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
+                .into(profileAvatarImageView)
+        } else {
+            profileAvatarImageView.setImageResource(R.drawable.placeholder_image)
+        }
+
+        val postVisibilityTextView = binding.postContentCard.findViewById<TextView>(R.id.post_visibility)
+        postVisibilityTextView.text = "Now"
     }
 
     private fun setupToolbar() {
@@ -114,12 +146,20 @@ class CreatePostFragment : Fragment() {
         }
 
         val mediaUri = selectedPhotoUri ?: selectedVideoUri
-        val mimeType = if (selectedPhotoUri != null) "image/*" else if (selectedVideoUri != null) "video/*" else null
+        val mimeType = mediaUri?.let { requireContext().contentResolver.getType(it) }
+
 
         uploadPost(title, desc, loc, locRating, mediaUri, mimeType)
     }
 
-    private fun uploadPost(title: String, desc: String, loc: String, locRating: Int, mediaUri: Uri?, mimeType: String?) {
+    private fun uploadPost(
+        title: String,
+        desc: String,
+        loc: String,
+        locRating: Int,
+        mediaUri: Uri?,
+        mimeType: String?
+    ) {
         val context = requireContext()
 
         val titlePart = title.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -134,35 +174,31 @@ class CreatePostFragment : Fragment() {
                 val contentResolver = context.contentResolver
                 val mimeTypeFinal = contentResolver.getType(mediaUri) ?: "application/octet-stream"
 
-                var fileName = "upload_file"
-                val cursor = contentResolver.query(mediaUri, null, null, null, null)
-                cursor?.use {
-                    val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    if (nameIndex != -1 && it.moveToFirst()) {
-                        fileName = it.getString(nameIndex)
-                    }
-                }
-
-                if (!fileName.contains(".")) {
-                    val ext = when {
-                        mimeTypeFinal.contains("jpeg") -> "jpg"
-                        mimeTypeFinal.contains("png") -> "png"
-                        mimeTypeFinal.contains("mp4") -> "mp4"
-                        else -> "bin"
-                    }
-                    fileName += ".$ext"
-                }
-
                 val inputStream = contentResolver.openInputStream(mediaUri)
-                if (inputStream != null) {
-                    val bytes = inputStream.readBytes()
-                    inputStream.close()
-                    val requestBody = bytes.toRequestBody(mimeTypeFinal.toMediaTypeOrNull())
-                    mediaPart = MultipartBody.Part.createFormData(partName, fileName, requestBody)
-                } else {
-                    Toast.makeText(context, "Failed to open file stream.", Toast.LENGTH_SHORT).show()
+                if (inputStream == null) {
+                    Toast.makeText(context, "Failed to open media file.", Toast.LENGTH_SHORT).show()
                     return
                 }
+
+                val originalExt = when {
+                    mimeTypeFinal.contains("jpeg") -> ".jpg"
+                    mimeTypeFinal.contains("png") -> ".png"
+                    mimeTypeFinal.contains("mp4") -> ".mp4"
+                    else -> ".bin"
+                }
+
+                val tempFile = File.createTempFile("upload_", originalExt, context.cacheDir)
+                tempFile.outputStream().use { output ->
+                    inputStream.copyTo(output)
+                }
+                inputStream.close()
+
+                val fileName = tempFile.name
+                val requestBody = tempFile.asRequestBody(mimeTypeFinal.toMediaTypeOrNull())
+                mediaPart = MultipartBody.Part.createFormData(partName, fileName, requestBody)
+
+
+                Toast.makeText(context, "Preparing to upload: $fileName", Toast.LENGTH_SHORT).show()
 
             } catch (e: Exception) {
                 Toast.makeText(context, "Error reading file: ${e.message}", Toast.LENGTH_LONG).show()
@@ -200,6 +236,7 @@ class CreatePostFragment : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

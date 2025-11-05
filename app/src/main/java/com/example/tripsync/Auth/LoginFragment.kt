@@ -1,10 +1,12 @@
 package com.example.tripsync.Auth
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,15 +26,6 @@ class LoginFragment : Fragment() {
 
     private var passwordVisible = false
 
-//    private class AsteriskPasswordTransformation : PasswordTransformationMethod() {
-//        private class AsteriskCharSequence(private val source: CharSequence) : CharSequence {
-//            override val length get() = source.length
-//            override fun get(index: Int) = '*'
-//            override fun subSequence(startIndex: Int, endIndex: Int) = source.subSequence(startIndex, endIndex)
-//        }
-//
-//        override fun getTransformation(source: CharSequence?, view: View?) = source?.let { AsteriskCharSequence(it) } ?: ""
-//    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -50,7 +43,6 @@ class LoginFragment : Fragment() {
         val passwordError = view.findViewById<TextView>(R.id.passwordError)
         val verified = view.findViewById<ImageView>(R.id.verified)
 
-//        etPassword.transformationMethod = AsteriskPasswordTransformation()
 
         forgotPassword.paintFlags = forgotPassword.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         signup.paintFlags = signup.paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -68,7 +60,6 @@ class LoginFragment : Fragment() {
         fun setPasswordVisible(editText: EditText, icon: ImageView, visible: Boolean) {
             val start = editText.selectionStart
             val end = editText.selectionEnd
-//            editText.transformationMethod = if (visible) null else AsteriskPasswordTransformation()
             editText.transformationMethod = if (visible) null else PasswordTransformationMethod.getInstance()
             editText.setSelection(start, end)
             icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eyedisable)
@@ -115,11 +106,15 @@ class LoginFragment : Fragment() {
 
                     if (response.isSuccessful && body != null && body.status == "success") {
                         val tokens = body.data?.tokens
-                        requireContext().getSharedPreferences("auth", 0).edit().apply {
+                        val sp = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+                        sp.edit().apply {
                             putString("access_token", tokens?.access)
                             putString("refresh_token", tokens?.refresh)
                             apply()
                         }
+                        val token = sp.getString("access_token", null)
+                        Log.d("LoginFragment", "Token found: $token")
+
                         verified.visibility = View.VISIBLE
                         Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)

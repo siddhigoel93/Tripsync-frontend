@@ -10,6 +10,7 @@
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
     android:background="@color/white"
+    android:backgroundTint="@color/white"
     android:layout_marginBottom="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,7 +49,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:textStyle="bold"
+            android:fontFamily="@font/roboto_medium"
             android:textSize="16sp"
+            android:textColor="@color/black"
             app:layout_constraintStart_toEndOf="@id/post_user_avatar"
             app:layout_constraintTop_toTopOf="@id/post_user_avatar"
             tools:text="Riya Sharma" />
@@ -71,6 +74,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
+            android:fontFamily="@font/roboto"
+            android:textColor="@color/gray_700"
             app:layout_constraintStart_toStartOf="@id/post_user_name"
             app:layout_constraintTop_toBottomOf="@id/post_user_name"
             tools:text="2 hours ago" />
@@ -80,6 +85,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:fontFamily="@font/roboto"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
             app:layout_constraintTop_toBottomOf="@id/post_user_avatar"
@@ -105,12 +112,25 @@
             android:layout_width="41dp"
             android:layout_height="42dp"
             android:layout_marginTop="6dp"
-            android:paddingVertical="8dp"
-            android:paddingEnd="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="6dp"
+            android:paddingHorizontal="8dp"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
             app:layout_constraintTop_toBottomOf="@id/post_media_image"
             app:srcCompat="@drawable/like"
-            app:tint="@color/black" />
+            app:background="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/like_count"
+            app:layout_constraintTop_toBottomOf="@id/icon_like"
+            app:layout_constraintStart_toStartOf="@id/icon_like"
+            android:textColor="@color/black"
+            android:text="likes"
+            android:visibility="gone"
+            android:textSize="10dp"
+            app:layout_constraintEnd_toEndOf="@id/icon_like"/>
 
         <ImageView
             android:id="@+id/icon_comment"
@@ -121,7 +141,18 @@
             app:layout_constraintStart_toEndOf="@id/icon_like"
             app:layout_constraintTop_toTopOf="@id/icon_like"
             app:srcCompat="@drawable/comment"
-            app:tint="@color/black" />
+            app:background="@null" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/comment_count"
+            app:layout_constraintTop_toBottomOf="@id/icon_comment"
+            app:layout_constraintStart_toStartOf="@id/icon_comment"
+            android:textColor="@color/black"
+            android:text="comments"
+            android:textSize="10dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/icon_comment"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

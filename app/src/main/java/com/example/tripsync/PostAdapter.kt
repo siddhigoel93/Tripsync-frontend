@@ -2,6 +2,7 @@ package com.example.tripsync
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +43,6 @@ class PostAdapter(
         val post = posts[position]
 
 
-
         val context = holder.itemView.context
         val sharedPref = context.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
         val currentUserName = sharedPref.getString("userName", "Unknown User")
@@ -52,23 +52,20 @@ class PostAdapter(
 
         holder.caption.text = post.desc.ifEmpty { "No caption" }
 
+        val liked = getLikeState(context, post.id)
+        holder.iconLike.setImageResource(if (liked) R.drawable.liked else R.drawable.like)
+
+
+
         holder.time.text = "Just now"
 
         if (!post.img_url.isNullOrEmpty()) {
             holder.mediaImage.visibility = View.VISIBLE
-            Glide.with(context)
-                .load(post.img_url)
-                .placeholder(R.drawable.placeholder_image)
-                .into(holder.mediaImage)
-        } else {
-            holder.mediaImage.visibility = View.GONE
-        }
-
-        if (!post.img_url.isNullOrEmpty()) {
-            holder.mediaImage.visibility = View.VISIBLE
             val imageUrl = post.img_url
+            Log.d("GlideDebug", "Loading image: ${post.img_url}")
 
             if (imageUrl.startsWith("content://") || imageUrl.startsWith("file://") || imageUrl.startsWith("/storage")) {
+
                 Glide.with(context)
                     .load(Uri.parse(imageUrl))
                     .placeholder(R.drawable.placeholder_image)
@@ -91,10 +88,12 @@ class PostAdapter(
         }
 
         holder.iconLike.setOnClickListener {
-            Toast.makeText(context, "Liked Post ${post.id}", Toast.LENGTH_SHORT).show()
+            val newState = !getLikeState(context, post.id)
+            saveLikeState(context, post.id, newState)
+            holder.iconLike.setImageResource(if (newState) R.drawable.liked else R.drawable.like)
+            listener.onLike(post.id)
         }
 
-        // 8. Comment action
         holder.iconComment.setOnClickListener {
             Toast.makeText(context, "Comment on Post ${post.id}", Toast.LENGTH_SHORT).show()
         }
@@ -135,4 +134,15 @@ class PostAdapter(
         posts = newPosts
         notifyDataSetChanged()
     }
+
+    fun saveLikeState(context: Context, postId: Int, liked: Boolean) {
+        val sp = context.getSharedPreferences("liked_posts", Context.MODE_PRIVATE)
+        sp.edit().putBoolean(postId.toString(), liked).apply()
+    }
+
+    fun getLikeState(context: Context, postId: Int): Boolean {
+        val sp = context.getSharedPreferences("liked_posts", Context.MODE_PRIVATE)
+        return sp.getBoolean(postId.toString(), false)
+    }
+
 }
