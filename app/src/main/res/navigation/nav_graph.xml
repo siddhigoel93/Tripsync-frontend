@@ -111,7 +111,7 @@
             app:destination="@id/fragment_personal_details" />
         <action
             android:id="@+id/action_homeFragment_to_communityFragment"
-            app:destination="@id/communityFragment" />
+            app:destination="@id/nav_community" />
     </fragment>
     <fragment
         android:id="@+id/emergencyFragment"
@@ -165,7 +165,7 @@
             app:destination="@id/homeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/communityFragment"
+        android:id="@+id/nav_community"
         android:name="com.example.tripsync.CommunityFragment"
         android:label="fragment_community"
         tools:layout="@layout/fragment_community" >

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E6E6E6"
-    tools:context=".CreatePostActivity">
+    >
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -125,7 +125,7 @@
                 app:layout_constraintStart_toStartOf="@id/card_guideline_start"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.RoundedCorners"
-                tools:src="@drawable/ic_launcher_background" />
+                tools:src="@drawable/placeholder_image" />
 
             <TextView
                 android:id="@+id/user_name"
@@ -133,6 +133,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="Rahul Sharma"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/profile_avatar"
@@ -142,7 +143,7 @@
                 android:id="@+id/post_visibility"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Post to anyone"
+                android:text="2 hours ago "
                 android:textSize="12sp"
                 android:textColor="@android:color/darker_gray"
                 app:layout_constraintStart_toStartOf="@id/user_name"
@@ -156,6 +157,8 @@
                 android:layout_marginTop="16dp"
                 android:gravity="top|start"
                 android:padding="8dp"
+                android:textColorHint="#999999"
+                android:textColor="@color/black"
                 android:hint="Delhi Trip 2025"
                 android:background="@drawable/edittext_simple"
                 app:layout_constraintStart_toStartOf="@id/card_guideline_start"

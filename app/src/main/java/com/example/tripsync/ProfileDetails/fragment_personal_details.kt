@@ -1,6 +1,9 @@
 package com.example.tripsync.ui
 
+import android.Manifest
 import android.app.DatePickerDialog
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -18,6 +23,7 @@ import com.example.tripsync.R
 import com.example.tripsync.ProfileDetails.ProfileViewModel
 import com.example.tripsync.databinding.FragmentPersonalDetailsBinding
 import java.util.Calendar
+
 
 class FragmentPersonalDetails : Fragment() {
 
@@ -80,6 +86,15 @@ class FragmentPersonalDetails : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPersonalDetailsBinding.inflate(inflater, container, false)
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(requireActivity(),
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
+                100)
+        }
+
 
         binding.profileImageView.setOnClickListener { pickImage.launch("image/*") }
 
@@ -174,6 +189,13 @@ class FragmentPersonalDetails : Fragment() {
         profileViewModel.gender = selectedGender ?: ""
         profileViewModel.aboutMe = about
         profileViewModel.imageUri = pickedImageUri
+
+        val sharedPref = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putString("userName", first)
+            putString("userAvatarUrl", pickedImageUri?.toString())
+            apply()
+        }
 
         findNavController().navigate(R.id.emergencyFragment)
     }

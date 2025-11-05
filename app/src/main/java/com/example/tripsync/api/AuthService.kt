@@ -2,8 +2,10 @@ package com.example.tripsync.api
 
 import com.example.tripsync.api.models.*
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -75,11 +77,34 @@ interface AuthService {
 
 
     @GET("api/community/posts/")
-    suspend fun getAllPosts(): List<Post>
+    suspend fun listAllPosts(): Response<PostListResponse>
 
     @GET("api/community/posts/{id}/")
-    suspend fun getPostById(@Path("id") id: Int): Post
+    suspend fun getPostDetails(@Path("id") postId: Int): Response<Post>
 
     @POST("api/community/posts/")
     suspend fun createPost(@Body postData: Post): Post
+
+    @DELETE("api/community/posts/{id}/delete/")
+    suspend fun deletePost(@Path("id") postId: Int): Response<Unit>
+
+    @GET("api/community/posts/my_posts/")
+    suspend fun getMyPosts(): Response<List<Post>>
+
+    @Multipart
+    @POST("api/community/posts/create/")
+    suspend fun createPost(
+        @Part("title") title: RequestBody,
+        @Part("desc") desc: RequestBody,
+        @Part("loc") loc: RequestBody,
+        @Part("loc_rating") loc_rating: Int,
+
+        @Part img: MultipartBody.Part?,
+        @Part vid: MultipartBody.Part?
+    ): Response<Post>
+
+    @GET("api/community/posts/verify_status/")
+    suspend fun checkVerificationStatus(): Response<VerificationStatus>
+
+    data class VerificationStatus(val is_verified: Boolean, val message: String)
 }

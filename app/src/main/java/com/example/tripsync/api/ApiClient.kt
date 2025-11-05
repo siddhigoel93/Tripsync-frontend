@@ -13,7 +13,9 @@ import java.util.concurrent.TimeUnit
 
 object ApiClient {
     private const val DEFAULT_BASE_URL = "http://51.20.254.52/"
-    @Volatile private var retrofit: Retrofit? = null
+    private var retrofitSecure: Retrofit? = null
+    private var retrofitInsecure: Retrofit? = null
+
 
     private fun getBaseUrl(context: Context): String {
         val properties = Properties()
@@ -35,7 +37,7 @@ object ApiClient {
         val baseUrl = getBaseUrl(context)
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val clientBuilder = OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(context.applicationContext))
+//            .addInterceptor(AuthInterceptor(context.applicationContext))
             .addInterceptor(logging)
             .connectTimeout(25, TimeUnit.SECONDS)
             .readTimeout(25, TimeUnit.SECONDS)
@@ -55,8 +57,14 @@ object ApiClient {
     }
 
     private fun getRetrofitInstance(context: Context, secure: Boolean): Retrofit {
-        return retrofit ?: synchronized(this) {
-            retrofit ?: buildRetrofit(context, secure).also { retrofit = it }
+        return if (secure) {
+            retrofitSecure ?: synchronized(this) {
+                retrofitSecure ?: buildRetrofit(context, true).also { retrofitSecure = it }
+            }
+        } else {
+            retrofitInsecure ?: synchronized(this) {
+                retrofitInsecure ?: buildRetrofit(context, false).also { retrofitInsecure = it }
+            }
         }
     }
 

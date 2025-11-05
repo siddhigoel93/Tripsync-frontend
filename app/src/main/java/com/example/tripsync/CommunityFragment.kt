@@ -1,37 +1,135 @@
 package com.example.tripsync
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.AuthService
-import com.example.tripsync.databinding.FragmentCommunityBinding
+import com.google.android.material.appbar.AppBarLayout
+import kotlinx.coroutines.launch
+import com.example.tripsync.api.models.PostActionListener
 
-class CommunityFragment : Fragment() {
-//    private lateinit var binding: FragmentCommunityBinding
-//    private lateinit var viewModel: CommunityViewModel
-//
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-//        binding = FragmentCommunityBinding.inflate(inflater, container, false)
-//        return binding.root
-//    }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        val api = ApiClient.createService(requireContext(), AuthService::class.java)
-//        val repository = CommunityRepository(api)
-//        viewModel = ViewModelProvider(this, CommunityViewModelFactory(repository))
-//            .get(CommunityViewModel::class.java)
-//
-//        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-//
-//        viewModel.posts.observe(viewLifecycleOwner) { posts ->
-//            binding.recyclerView.adapter = PostAdapter(posts)
-//        }
-//
-//        viewModel.fetchPosts()
-//    }
+
+class CommunityFragment : Fragment(), PostActionListener {
+
+    private var recyclerView: RecyclerView? = null
+    private var postAdapter: PostAdapter? = null
+    private var toolbar: Toolbar? = null
+    private var searchIcon: ImageView? = null
+    private var createIcon: ImageView? = null
+
+    private var apiService: AuthService? = null
+    private var api: AuthService? = null
+
+    companion object {
+        const val POST_CREATION_REQUEST_KEY = "post_creation_request"
+        const val REFRESH_FEED_KEY = "refresh_feed_key"
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = inflater.inflate(R.layout.fragment_community, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        apiService = ApiClient.getAuthService(requireContext())
+        api = ApiClient.getTokenService(requireContext())
+
+        recyclerView = view.findViewById(R.id.community_posts_recycler_view)
+
+        val appBarLayout: AppBarLayout = view.findViewById(R.id.app_bar)
+        toolbar = appBarLayout.findViewById(R.id.toolbar)
+        searchIcon = toolbar?.findViewById(R.id.search)
+        createIcon = toolbar?.findViewById(R.id.create)
+
+        val sharedPref = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+        val currentUserEmail = sharedPref.getString("userEmail", null)
+        val currentUserName = sharedPref.getString("userName", "Unknown User")
+        val currentUserAvatar = sharedPref.getString("userAvatarUrl", null)
+
+        Log.d("CommunityFragment", "Loaded user: $currentUserName, $currentUserEmail")
+
+        postAdapter = PostAdapter(emptyList(), this, currentUserEmail)
+        recyclerView?.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = postAdapter
+        }
+
+        searchIcon?.setOnClickListener {
+            Toast.makeText(requireContext(), "Search coming soon...", Toast.LENGTH_SHORT).show()
+        }
+
+        createIcon?.setOnClickListener {
+            findNavController().navigate(R.id.action_communityFragment_to_createPostFragment)
+        }
+
+        setupPostCreationResultListener()
+        fetchPosts()
+    }
+
+    override fun onDelete(postId: Int) {
+        deletePostById(postId)
+    }
+
+    private fun fetchPosts() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = apiService?.listAllPosts()
+                if (response?.isSuccessful == true && response.body() != null) {
+                    val posts = response.body()!!.data
+                    postAdapter?.updateData(posts)
+                    Toast.makeText(requireContext(), "Feed refreshed (${posts.size} posts)", Toast.LENGTH_SHORT).show()
+                } else {
+                    val errorMsg = response?.errorBody()?.string() ?: "Unknown error"
+                    Log.e("CommunityFragment", "API Error: ${response?.code()} - $errorMsg")
+                    Toast.makeText(requireContext(), "Failed to load feed", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Log.e("CommunityFragment", "Network Exception: ${e.message}", e)
+                Toast.makeText(requireContext(), "Network Error: Could not connect", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun setupPostCreationResultListener() {
+        parentFragmentManager.setFragmentResultListener(
+            POST_CREATION_REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val shouldRefresh = bundle.getBoolean(REFRESH_FEED_KEY, false)
+            if (shouldRefresh) fetchPosts()
+        }
+    }
+
+    private fun deletePostById(postId: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = api?.deletePost(postId)
+                if (response?.isSuccessful == true) {
+                    Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
+                    fetchPosts()
+                } else {
+                    val errorMsg = response?.errorBody()?.string() ?: "Delete failed"
+                    Toast.makeText(requireContext(), "Error: $errorMsg", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Network error during deletion", Toast.LENGTH_LONG).show()
+                e.printStackTrace()
+            }
+        }
+    }
 }

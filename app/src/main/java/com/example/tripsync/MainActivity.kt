@@ -17,15 +17,24 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.appbar.AppBarLayout
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.navigation.ui.setupWithNavController
 
 class MainActivity : AppCompatActivity() {
     lateinit var progressLayout: View
     lateinit var app_bar_layout: AppBarLayout
     lateinit var gradient: GradientDrawable
-    lateinit var bottom_nav : AppBarLayout
+    lateinit var bottom_app_bar_wrapper: BottomAppBar
+    lateinit var bottom_nav_view: BottomNavigationView
+    lateinit var fab_store: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
@@ -37,12 +46,26 @@ class MainActivity : AppCompatActivity() {
 
         progressLayout = findViewById(R.id.profileProgressLayout)
         app_bar_layout = findViewById(R.id.app_bar_layout)
-        bottom_nav = findViewById(R.id.bottom_app_bar)
+        bottom_app_bar_wrapper = findViewById(R.id.bottom_app_bar)
+        bottom_nav_view = findViewById(R.id.bottom_navigation_view)
+        fab_store = findViewById(R.id.fab_store)
 
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+
+        bottom_nav_view.setupWithNavController(navController)
+
+//        fab_store.setOnClickListener {
+//            // Check if the current destination is already the CreatePostFragment before navigating
+//            if (navController.currentDestination?.id != R.id.createPostFragment) {
+//                navController.navigate(R.id.createPostFragment)
+//            } else {
+//                // Optional: Show a message or do nothing if already on the create post screen
+//                Toast.makeText(this, "Already creating a post", Toast.LENGTH_SHORT).show()
+//            }
+//        }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
@@ -64,14 +87,16 @@ class MainActivity : AppCompatActivity() {
 
             when (destination.id) {
                 R.id.homeFragment,
-                R.id.communityFragment,
+                R.id.nav_community,
                 R.id.createPostFragment,
                     -> {
-                    bottom_nav.visibility = View.VISIBLE
+                    bottom_app_bar_wrapper.visibility = View.VISIBLE
+                    bottom_nav_view.visibility = View.VISIBLE
+                    fab_store.visibility = View.VISIBLE
                 }
 
                 else -> {
-                    bottom_nav.visibility = View.GONE
+                    bottom_app_bar_wrapper.visibility = View.GONE
                 }
             }
         }

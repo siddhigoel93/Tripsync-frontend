@@ -14,3 +14,12 @@ data class Post(
     val created_at: String,
     val updated_at: String
 )
+
+data class PostCreateRequest(
+    val title: String,
+    val desc: String,
+    val loc: String,
+    val loc_rating: Int,
+    val img: String?,
+    val vid: String?
+)
