@@ -1,6 +1,8 @@
 package com.example.tripsync.community
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
+import android.icu.util.TimeZone
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +17,12 @@ import com.bumptech.glide.Glide
 import com.example.tripsync.R
 import com.example.tripsync.api.models.Post
 import com.example.tripsync.api.models.PostActionListener
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
+
 
 class PostAdapter(
     private var posts: List<Post>,
@@ -55,7 +63,7 @@ class PostAdapter(
 
         holder.caption.text = post.desc.ifEmpty { "No caption" }
 
-        holder.time.text = "Just now"
+        holder.time.text = formatTimeAgo(post.created)
 
         val userPic = user?.pic
         if (!userPic.isNullOrEmpty()) {
@@ -67,10 +75,33 @@ class PostAdapter(
             holder.userAvatar.setImageResource(R.drawable.placeholder_image)
         }
 
+//        if (!post.img_url.isNullOrEmpty()) {
+//            holder.mediaImage.visibility = View.VISIBLE
+//            val imageUrl = post.img_url
+//            Log.d("GlideDebug", "Loading image: $imageUrl")
+//
+//            if (imageUrl.startsWith("content://") ||
+//                imageUrl.startsWith("file://") ||
+//                imageUrl.startsWith("/storage")
+//            ) {
+//                Glide.with(context)
+//                    .load(Uri.parse(imageUrl))
+//                    .placeholder(R.drawable.placeholder_image)
+//                    .into(holder.mediaImage)
+//            } else {
+//                Glide.with(context)
+//                    .load(imageUrl)
+//                    .placeholder(R.drawable.placeholder_image)
+//                    .into(holder.mediaImage)
+//            }
+//        } else {
+//            holder.mediaImage.visibility = View.GONE
+//        }
         if (!post.img_url.isNullOrEmpty()) {
             holder.mediaImage.visibility = View.VISIBLE
             val imageUrl = post.img_url
             Log.d("GlideDebug", "Loading image: $imageUrl")
+
 
             if (imageUrl.startsWith("content://") ||
                 imageUrl.startsWith("file://") ||
@@ -81,8 +112,26 @@ class PostAdapter(
                     .placeholder(R.drawable.placeholder_image)
                     .into(holder.mediaImage)
             } else {
+                // 🧩 Reuse token from SharedPreferences (same as AuthInterceptor)
+                val token = context
+                    .getSharedPreferences("auth", Context.MODE_PRIVATE)
+                    .getString("access_token", null)
+                Log.d("GlideAuth", "Loading image with token: $token")
+
+                val glideUrl = if (token != null) {
+                    GlideUrl(
+                        imageUrl,
+                        LazyHeaders.Builder()
+                            .addHeader("Authorization", "Bearer $token")
+                            .addHeader("Accept", "image/*")
+                            .build()
+                    )
+                } else {
+                    GlideUrl(imageUrl)
+                }
+
                 Glide.with(context)
-                    .load(imageUrl)
+                    .load(glideUrl)
                     .placeholder(R.drawable.placeholder_image)
                     .into(holder.mediaImage)
             }
@@ -154,5 +203,36 @@ class PostAdapter(
     private fun getLikeState(context: Context, postId: Int): Boolean {
         val sp = context.getSharedPreferences("liked_posts", Context.MODE_PRIVATE)
         return sp.getBoolean(postId.toString(), false)
+    }
+
+    private fun formatTimeAgo(isoDate: String?): String {
+        if (isoDate.isNullOrEmpty()) return "Unknown time"
+        return try {
+            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            sdf.timeZone = TimeZone.getTimeZone("UTC")
+            val time = sdf.parse(isoDate)?.time ?: return "Unknown time"
+
+            val now = System.currentTimeMillis()
+            val diff = now - time
+
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+            val hours = TimeUnit.MILLISECONDS.toHours(diff)
+            val days = TimeUnit.MILLISECONDS.toDays(diff)
+
+            when {
+                minutes < 1 -> "Just now"
+                minutes < 60 -> "$minutes min ago"
+                hours < 24 -> "$hours hr ago"
+                days == 1L -> "Yesterday"
+                days < 7 -> "$days days ago"
+                else -> {
+                    val outputFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
+                    outputFormat.format(Date(time))
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("TimeFormat", "Error parsing time: ${e.message}")
+            "Unknown time"
+        }
     }
 }
