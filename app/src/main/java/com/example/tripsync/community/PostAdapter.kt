@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -42,31 +41,41 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
-
-
         val context = holder.itemView.context
-        val sharedPref = context.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-        val currentUserName = sharedPref.getString("userName", "Unknown User")
-        val currentUserAvatarUri = sharedPref.getString("userAvatarUrl", null)
 
-        holder.userName.text = currentUserName
+        val user = post.user
+        holder.userName.text = if (user != null) {
+            val fullName = "${user.fname ?: ""} ${user.lname ?: ""}".trim()
+            if (fullName.isNotEmpty()) fullName else "Unknown User"
+        } else {
+            "Unknown User"
+        }
+
+        Log.d("PostDebug", "User object for post ${post.id}: ${post.user}")
 
         holder.caption.text = post.desc.ifEmpty { "No caption" }
 
-        val liked = getLikeState(context, post.id)
-        holder.iconLike.setImageResource(if (liked) R.drawable.liked else R.drawable.like)
-
-
-
         holder.time.text = "Just now"
+
+        val userPic = user?.pic
+        if (!userPic.isNullOrEmpty()) {
+            Glide.with(context)
+                .load(userPic)
+                .placeholder(R.drawable.placeholder_image)
+                .into(holder.userAvatar)
+        } else {
+            holder.userAvatar.setImageResource(R.drawable.placeholder_image)
+        }
 
         if (!post.img_url.isNullOrEmpty()) {
             holder.mediaImage.visibility = View.VISIBLE
             val imageUrl = post.img_url
-            Log.d("GlideDebug", "Loading image: ${post.img_url}")
+            Log.d("GlideDebug", "Loading image: $imageUrl")
 
-            if (imageUrl.startsWith("content://") || imageUrl.startsWith("file://") || imageUrl.startsWith("/storage")) {
-
+            if (imageUrl.startsWith("content://") ||
+                imageUrl.startsWith("file://") ||
+                imageUrl.startsWith("/storage")
+            ) {
                 Glide.with(context)
                     .load(Uri.parse(imageUrl))
                     .placeholder(R.drawable.placeholder_image)
@@ -80,13 +89,8 @@ class PostAdapter(
         } else {
             holder.mediaImage.visibility = View.GONE
         }
-
-        if (post.user_email == currentUserEmail) {
-            holder.optionsMenu.visibility = View.VISIBLE
-            holder.optionsMenu.setOnClickListener { showPopupMenu(it, post) }
-        } else {
-            holder.optionsMenu.visibility = View.GONE
-        }
+        val liked = getLikeState(context, post.id)
+        holder.iconLike.setImageResource(if (liked) R.drawable.liked else R.drawable.like)
 
         holder.iconLike.setOnClickListener {
             val newState = !getLikeState(context, post.id)
@@ -94,11 +98,16 @@ class PostAdapter(
             holder.iconLike.setImageResource(if (newState) R.drawable.liked else R.drawable.like)
             listener.onLike(post.id)
         }
-
         holder.iconComment.setOnClickListener {
             listener.onComment(post.id)
         }
 
+        if (post.owner) {
+            holder.optionsMenu.visibility = View.VISIBLE
+            holder.optionsMenu.setOnClickListener { showPopupMenu(it, post) }
+        } else {
+            holder.optionsMenu.visibility = View.GONE
+        }
     }
 
     private fun showPopupMenu(view: View, post: Post) {
@@ -137,14 +146,13 @@ class PostAdapter(
         notifyDataSetChanged()
     }
 
-    fun saveLikeState(context: Context, postId: Int, liked: Boolean) {
+    private fun saveLikeState(context: Context, postId: Int, liked: Boolean) {
         val sp = context.getSharedPreferences("liked_posts", Context.MODE_PRIVATE)
         sp.edit().putBoolean(postId.toString(), liked).apply()
     }
 
-    fun getLikeState(context: Context, postId: Int): Boolean {
+    private fun getLikeState(context: Context, postId: Int): Boolean {
         val sp = context.getSharedPreferences("liked_posts", Context.MODE_PRIVATE)
         return sp.getBoolean(postId.toString(), false)
     }
-
 }

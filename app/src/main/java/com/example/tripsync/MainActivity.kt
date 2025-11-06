@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.homeFragment,
                 R.id.nav_community,
                 R.id.createPostFragment,
+                R.id.searchFragment,
                     -> {
                     bottom_app_bar_wrapper.visibility = View.VISIBLE
                     bottom_nav_view.visibility = View.VISIBLE

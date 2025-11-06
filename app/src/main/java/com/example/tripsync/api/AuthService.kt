@@ -14,6 +14,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AuthService {
 
@@ -77,7 +78,7 @@ interface AuthService {
 
 
     @GET("api/community/posts/")
-    suspend fun listAllPosts(): Response<PostListResponse>
+    suspend fun listAllPosts(): Response<PostResponse>
 
     @GET("api/community/posts/{id}/")
     suspend fun getPostDetails(@Path("id") postId: Int): Response<PostDetailResponse>
@@ -130,5 +131,10 @@ interface AuthService {
     suspend fun deleteComment(
         @Path("id") commentId: Int
     ): Response<DeleteResponse>
+
+    @GET("/api/community/posts/search/")
+    suspend fun searchPosts(
+        @Query("q") query: String // 'q' is the query parameter name
+    ): Response<SearchPostsResponse>
 
 }

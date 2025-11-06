@@ -35,21 +35,44 @@ class CommentAdapter(
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = comments[position]
-        val avatarUrl = comment.user.pic
 
-        holder.userName.text = "${comment.user.fname} ${comment.user.lname}"
+        // Use safe access to ensure 'comment.user' is not null before accessing its properties
+        comment.user?.let { user ->
+            // This code block only executes if 'comment.user' is NOT null
 
-        if (!avatarUrl.isNullOrEmpty()) {
-            Glide.with(context)
-                .load(avatarUrl)
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.placeholder_image)
-                .circleCrop()
-                .into(holder.userAvatar)
-        } else {
+            // 1. Set the user name (Safely access fname and lname)
+            holder.userName.text = "${user.fname} ${user.lname}"
+
+            // 2. Load the avatar (Safely access pic)
+            val avatarUrl = user.pic
+
+            if (!avatarUrl.isNullOrEmpty()) {
+                Glide.with(context)
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.placeholder_image)
+                    .circleCrop()
+                    .into(holder.userAvatar)
+            } else {
+                holder.userAvatar.setImageResource(R.drawable.placeholder_image)
+            }
+
+        } ?: run {
+            holder.userName.text = "Unknown User"
             holder.userAvatar.setImageResource(R.drawable.placeholder_image)
+            // Optionally, log an error or hide the entire comment if user data is critical
         }
+
         holder.commentText.text = comment.text
+
+        if (comment.owner) {
+            holder.optionsMenu.visibility = View.VISIBLE
+            holder.optionsMenu.setOnClickListener {
+                showPopupMenu(it, comment, position)
+            }
+        } else {
+            holder.optionsMenu.visibility = View.GONE
+        }
 
         if (comment.owner) {
             holder.optionsMenu.visibility = View.VISIBLE
@@ -100,9 +123,12 @@ class CommentAdapter(
     }
 
     private fun showEditDialog(comment: CommentData, position: Int) {
+        val paddingDp = 16
+        val paddingPx = (paddingDp * context.resources.displayMetrics.density).toInt()
+
         val editText = EditText(context).apply {
             setText(comment.text)
-            setPadding(30, 30, 30, 30)
+            setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
         }
 
         AlertDialog.Builder(context)
@@ -118,6 +144,7 @@ class CommentAdapter(
             .setNegativeButton("Cancel", null)
             .show()
     }
+
 
     private fun confirmAndDelete(comment: CommentData, position: Int) {
         AlertDialog.Builder(context)

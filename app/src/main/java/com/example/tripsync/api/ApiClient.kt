@@ -30,7 +30,7 @@ object ApiClient {
         } catch (e: IOException) {
             Log.e("ApiClient", "Error loading BASE_URL", e)
         }
-        return DEFAULT_BASE_URL
+       return DEFAULT_BASE_URL
     }
 
     private fun buildRetrofit(context: Context , secure : Boolean): Retrofit {
@@ -38,7 +38,7 @@ object ApiClient {
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val clientBuilder = OkHttpClient.Builder()
 //            .addInterceptor(AuthInterceptor(context.applicationContext))
-            .addInterceptor(logging)
+//            .addInterceptor(logging)
             .connectTimeout(25, TimeUnit.SECONDS)
             .readTimeout(25, TimeUnit.SECONDS)
             .writeTimeout(25, TimeUnit.SECONDS)

@@ -66,14 +66,15 @@ class CommunityFragment : Fragment(), PostActionListener {
 
         Log.d("CommunityFragment", "Loaded user: $currentUserName, $currentUserEmail")
 
-        postAdapter = PostAdapter(emptyList(), this, currentUserEmail)
+        postAdapter = PostAdapter(emptyList(), this , currentUserEmail)
         recyclerView?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
 
         searchIcon?.setOnClickListener {
-            Toast.makeText(requireContext(), "Search coming soon...", Toast.LENGTH_SHORT).show()
+//            findNavController().navigate(R.id.action_nav_community_to_searchFragment)
+            Toast.makeText(requireContext(), "Search icon clicked", Toast.LENGTH_SHORT).show()
         }
 
         createIcon?.setOnClickListener {
@@ -96,10 +97,11 @@ class CommunityFragment : Fragment(), PostActionListener {
                 val response = api.likePost(postId, requestBody)
 
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Like synced with server!", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "Like synced with server!", Toast.LENGTH_SHORT).show()
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
-                    Toast.makeText(requireContext(), "Failed: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                    Log.e("CommunityFragment", "API Error: ${response.code()} - $errorBody")
+//                    Toast.makeText(requireContext(), "Failed: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Network error: ${e.message}", Toast.LENGTH_LONG).show()

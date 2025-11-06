@@ -137,7 +137,7 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Network Error adding comment", e)
-                Toast.makeText(context, "Network error: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Network error" , Toast.LENGTH_LONG).show()
             }
         }
     }
