@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/success_dialog_bg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/imgBadge"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/reward"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Congratulations"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You have successfully created a trip\nusing AI itinerary"
+        android:gravity="center"
+        android:textColor="#555555"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/btnBackHome"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="Back To Home"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/btn_primary_teal_selector"
+        android:layout_marginTop="4dp"
+        android:clickable="true"
+        android:focusable="true" />
+</LinearLayout>
