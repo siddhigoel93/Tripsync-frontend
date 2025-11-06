@@ -233,5 +233,13 @@
             android:name="totalBudget"
             app:argType="string"
             android:defaultValue="" />
+        <action
+            android:id="@+id/action_budgetOverviewFragment_to_itinearyProgressThree2"
+            app:destination="@id/itinearyProgressThree2" />
     </fragment>
+
+    <fragment
+        android:id="@+id/itinearyProgressThree2"
+        android:name="com.example.tripsync.ItinearyProgressThree"
+        android:label="ItinearyProgressThree" />
 </navigation>

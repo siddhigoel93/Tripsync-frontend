@@ -21,6 +21,7 @@ class BudgetOverviewFragment : Fragment(R.layout.fragment_budget_overview) {
     private lateinit var subtitleAmount: TextView
     private lateinit var chipAllocation: TextView
     private lateinit var chipDivisions: TextView
+    private lateinit var recycler: RecyclerView
     private lateinit var adapter: BudgetCategoryAdapter
 
     private var tripName: String = ""
@@ -43,41 +44,68 @@ class BudgetOverviewFragment : Fragment(R.layout.fragment_budget_overview) {
         subtitleAmount = view.findViewById(R.id.bo_total_subtitle)
         chipAllocation = view.findViewById(R.id.bo_chip_allocation)
         chipDivisions = view.findViewById(R.id.bo_chip_divisions)
+        recycler = view.findViewById(R.id.bo_breakdown_recycler)
 
         adapter = BudgetCategoryAdapter()
-        view.findViewById<RecyclerView>(R.id.bo_breakdown_recycler).adapter = adapter
+        recycler.adapter = adapter
         adapter.setTotalBudget(totalBudget.toLongOrNull() ?: 0L)
-
         adapter.onListChanged = { updateChips() }
 
         view.findViewById<View>(R.id.bo_edit).setOnClickListener {
-            BudgetEditDialogFragment.newInstance(totalBudget).show(parentFragmentManager, "edit_budget")
-        }
-
-        setFragmentResultListener("budget_update") { _, bundle ->
-            totalBudget = bundle.getString("totalBudget").orEmpty()
-            findNavController().previousBackStackEntry?.savedStateHandle?.set("totalBudget", totalBudget)
-            renderTop()
-            adapter.setTotalBudget(totalBudget.toLongOrNull() ?: 0L)
+            BudgetEditDialogFragment.newInstance(totalBudget)
+                .show(parentFragmentManager, "edit_budget")
         }
 
         view.findViewById<View>(R.id.bo_add_category).setOnClickListener {
-            AddCategoryDialogFragment.newInstance().show(parentFragmentManager, "add_category")
-        }
-
-        setFragmentResultListener("category_add_result") { _, bundle ->
-            val pickedTitle = bundle.getString("title").orEmpty()
-            val percent = bundle.getInt("percent")
-            val iconRes = bundle.getInt("iconRes")
-            adapter.addCategory(BudgetCategory(pickedTitle, percent, iconRes))
+            AddCategoryDialogFragment.newInstance()
+                .show(parentFragmentManager, "add_category")
         }
 
         view.findViewById<View>(R.id.bo_back).setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
+        // Navigate to Step 3 when "Continue to AI Itinerary" is pressed
+        view.findViewById<View>(R.id.bo_continue).setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("tripName", tripName)
+                putString("startDate", startDate)
+                putString("endDate", endDate)
+                putString("preference", preference)
+            }
+            findNavController().navigate(
+                R.id.action_budgetOverviewFragment_to_itinearyProgressThree2,
+                bundle
+            )
+        }
+
+        // Keep BOTH listeners so old/new dialog keys work
+        listenCategoryResult("category_add_result")
+        listenCategoryResult("add_category_result")
+
         renderTop()
         updateChips()
+    }
+
+    private fun listenCategoryResult(requestKey: String) {
+        setFragmentResultListener(requestKey) { _, bundle ->
+            val pickedTitle = bundle.getString("title").orEmpty()
+            val iconRes = bundle.getInt("iconRes", 0)
+
+            val percentFromInt = bundle.getInt("percent", -1)
+            val percent = if (percentFromInt >= 0) {
+                percentFromInt
+            } else {
+                bundle.getString("percent")?.toIntOrNull() ?: 0
+            }
+
+            if (pickedTitle.isNotBlank() && iconRes != 0) {
+                adapter.addCategory(BudgetCategory(pickedTitle, percent, iconRes))
+                recycler.post {
+                    recycler.smoothScrollToPosition(adapter.itemCount - 1)
+                }
+            }
+        }
     }
 
     private fun updateChips() {
