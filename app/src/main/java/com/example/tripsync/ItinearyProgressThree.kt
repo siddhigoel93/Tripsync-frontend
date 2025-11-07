@@ -1,13 +1,10 @@
 package com.example.tripsync
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.View
-import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.abs
@@ -57,25 +54,10 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         }
 
         view.findViewById<View>(R.id.btnCreateTrip).setOnClickListener {
-            showSuccessDialog()
+            CongratsDialogFragment().show(parentFragmentManager, "congrats")
         }
 
         view.findViewById<View>(R.id.btnSaveDraft).setOnClickListener { }
-
         view.findViewById<View>(R.id.btnDownload).setOnClickListener { }
-    }
-
-    private fun showSuccessDialog() {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_trip_success)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        dialog.findViewById<View>(R.id.btnBackHome).setOnClickListener {
-            dialog.dismiss()
-            findNavController().navigate(R.id.homeFragment)
-        }
-
-        dialog.show()
     }
 }
