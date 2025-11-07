@@ -203,6 +203,8 @@ class AIItinearyPlannerFragment : Fragment() {
                 putString("startDate", startText)
                 putString("endDate", endText)
                 putString("preference", selectedPreference)
+                putString("currentLocation", currentLocation)
+                putString("destination", destination)
             }
             findNavController().navigate(R.id.action_AIItinearyPlannerFragment_to_budgetFragment, bundle)
         }

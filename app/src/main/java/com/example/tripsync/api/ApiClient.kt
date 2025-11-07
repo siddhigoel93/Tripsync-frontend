@@ -31,20 +31,22 @@ object ApiClient {
         return DEFAULT_BASE_URL
     }
 
-    private fun buildRetrofit(context: Context , secure : Boolean): Retrofit {
+    private fun buildRetrofit(context: Context, secure: Boolean): Retrofit {
         val baseUrl = getBaseUrl(context)
+
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+
+        // Create client builder once, add auth interceptor only once.
         val clientBuilder = OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(context.applicationContext))
+            // Longer timeouts to allow backend AI generation to finish.
+            .connectTimeout(50, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)
+            .callTimeout(140, TimeUnit.SECONDS)
             .addInterceptor(logging)
-            .connectTimeout(25, TimeUnit.SECONDS)
-            .readTimeout(25, TimeUnit.SECONDS)
-            .writeTimeout(25, TimeUnit.SECONDS)
 
-
-        if (secure) {
-            clientBuilder.addInterceptor(AuthInterceptor(context.applicationContext))
-        }
+        // Always add AuthInterceptor once (it will not be duplicated)
+        clientBuilder.addInterceptor(AuthInterceptor(context.applicationContext))
 
         val client = clientBuilder.build()
         return Retrofit.Builder()
@@ -65,5 +67,8 @@ object ApiClient {
     }
     fun getTokenService(context: Context): AuthService {
         return getRetrofitInstance(context, secure = true).create(AuthService::class.java)
+    }
+    fun getItineraryService(context: Context): ItineraryService {
+        return getRetrofitInstance(context, secure = true).create(ItineraryService::class.java)
     }
 }

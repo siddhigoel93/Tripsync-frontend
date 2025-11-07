@@ -29,6 +29,8 @@ class BudgetOverviewFragment : Fragment(R.layout.fragment_budget_overview) {
     private var endDate: String = ""
     private var preference: String = ""
     private var totalBudget: String = ""
+    private var currentLocation: String = ""
+    private var destination: String = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         tripName = arguments?.getString("tripName").orEmpty()
@@ -36,6 +38,8 @@ class BudgetOverviewFragment : Fragment(R.layout.fragment_budget_overview) {
         endDate = arguments?.getString("endDate").orEmpty()
         preference = arguments?.getString("preference").orEmpty()
         totalBudget = arguments?.getString("totalBudget").orEmpty()
+        currentLocation = arguments?.getString("currentLocation").orEmpty()
+        destination = arguments?.getString("destination").orEmpty()
 
         title = view.findViewById(R.id.bo_trip_title)
         sub = view.findViewById(R.id.bo_trip_sub)
@@ -65,13 +69,14 @@ class BudgetOverviewFragment : Fragment(R.layout.fragment_budget_overview) {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        // Navigate to Step 3 when "Continue to AI Itinerary" is pressed
         view.findViewById<View>(R.id.bo_continue).setOnClickListener {
             val bundle = Bundle().apply {
                 putString("tripName", tripName)
                 putString("startDate", startDate)
                 putString("endDate", endDate)
                 putString("preference", preference)
+                putString("currentLocation", currentLocation)
+                putString("destination", destination)
             }
             findNavController().navigate(
                 R.id.action_budgetOverviewFragment_to_itinearyProgressThree2,
@@ -79,7 +84,6 @@ class BudgetOverviewFragment : Fragment(R.layout.fragment_budget_overview) {
             )
         }
 
-        // Keep BOTH listeners so old/new dialog keys work
         listenCategoryResult("category_add_result")
         listenCategoryResult("add_category_result")
 

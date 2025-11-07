@@ -22,6 +22,8 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
     private lateinit var dateText: TextView
     private lateinit var title: TextView
     private var lastSavedBudget: String = ""
+    private var currentLocationArg: String = ""
+    private var destinationArg: String = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         title = view.findViewById(R.id.rwenfcmsasp)
@@ -32,6 +34,8 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
         val startDate = arguments?.getString("startDate").orEmpty()
         val endDate = arguments?.getString("endDate").orEmpty()
         preference = arguments?.getString("preference").orEmpty()
+        currentLocationArg = arguments?.getString("currentLocation").orEmpty()
+        destinationArg = arguments?.getString("destination").orEmpty()
 
         if (tripName.isNotBlank()) title.text = tripName
 
@@ -90,6 +94,8 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
                 putString("endDate", endDate)
                 putString("preference", preference)
                 putString("totalBudget", totalBudget)
+                putString("currentLocation", currentLocationArg)
+                putString("destination", destinationArg)
             }
             findNavController().navigate(R.id.action_budgetFragment_to_budgetOverviewFragment, bundle)
         }
