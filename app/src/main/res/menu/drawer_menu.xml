@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_profile" android:title="Profile" />
+    <item android:id="@+id/nav_weather" android:title="Weather" />
+    <item android:id="@+id/nav_add_tripmates" android:title="Add Tripmates" />
+    <item android:id="@+id/nav_friends" android:title="Friends" />
+    <item android:id="@+id/nav_train_info" android:title="Train Info" />
+    <item android:id="@+id/nav_logout" android:title="Logout" />
+    <item android:id="@+id/nav_sos" android:title="SOS" />
+</menu>

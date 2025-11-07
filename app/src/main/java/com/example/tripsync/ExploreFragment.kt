@@ -14,6 +14,9 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.fragment.navArgs
+import android.widget.ImageView
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.core.view.GravityCompat // ⬅️ NEW IMPORT for opening the drawer
 
 class ExploreFragment : Fragment() {
 
@@ -27,19 +30,31 @@ class ExploreFragment : Fragment() {
 
         val complete_profile_button = view.findViewById<MaterialButton>(R.id.complete_profile_button)
 
-
-
         complete_profile_button.setOnClickListener {
+            // NOTE: Assuming action_homeFragment_to_fragment_personal_details points to the correct destination
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
         }
-//        val button = view.findViewById<MaterialButton>(R.id.logoutButton)
-//
-//        button.setOnClickListener {
-//            logoutUser()
-//        }
 
-//        val emergency = view.findViewById<CardView>(R.id.card_sos_emergency)
-//        emergency.setOnClickListener { findNavController().navigate(R.id.action_homeFragment_to_emergencyFragment) }
+        // ❌ Removed: val drawerLayout = view.findViewById<DrawerLayout>(R.id.drawer_layout)
+        // ❌ Removed: val navView = view.findViewById<NavigationView>(R.id.nav_view)
+
+        // 1. Find the profile icon in the fragment's toolbar
+        val profileButton = view.findViewById<ImageView>(R.id.menu_icon)
+
+        // 2. Set the click listener to open the drawer
+        profileButton.setOnClickListener {
+            // ⬅️ FIX: Access the DrawerLayout from the hosting Activity's hierarchy
+            val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+
+            // ⬅️ FIX: Use GravityCompat.START to open the drawer from the left
+            if (drawerLayout != null) {
+                drawerLayout.openDrawer(GravityCompat.START)
+            } else {
+                Toast.makeText(requireContext(), "DrawerLayout not found in Activity", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // ... (Commented-out code remains commented out) ...
         return view
     }
 //
@@ -52,45 +67,35 @@ class ExploreFragment : Fragment() {
 //
 //        findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
 //    }
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
 
-    val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
-    val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
+        val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
+        val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
 
-    val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
-//
-//    if (appBarLayout != null) {
-//
-//        val elevationInPixels = 4f * resources.displayMetrics.density
-//
-//        ViewCompat.setElevation(appBarLayout, elevationInPixels)
-//        appBarLayout.translationZ = elevationInPixels
-//
-//        appBarLayout.bringToFront()
-//    }
+        val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
 
-    if(isProfileCompleted){
-        customHeader.visibility= View.GONE
+        if(isProfileCompleted){
+            customHeader.visibility= View.GONE
+        }
+        if (args.showHeader) {
+
+            customHeader.visibility = View.GONE
+            val elevationInPixels = 4f * resources.displayMetrics.density
+            appBarLayout.elevation = elevationInPixels
+            appBarLayout.translationZ = elevationInPixels
+            appBarLayout.bringToFront()
+
+        } else {
+
+            customHeader.visibility = View.VISIBLE
+            val elevationInPixels = 4f * resources.displayMetrics.density
+            appBarLayout.elevation = elevationInPixels
+            appBarLayout.translationZ = elevationInPixels
+            appBarLayout.bringToFront()
+        }
     }
-    if (args.showHeader) {
-
-        customHeader.visibility = View.GONE
-        val elevationInPixels = 4f * resources.displayMetrics.density
-        appBarLayout.elevation = elevationInPixels
-        appBarLayout.translationZ = elevationInPixels
-        appBarLayout.bringToFront()
-
-    } else {
-
-        customHeader.visibility = View.VISIBLE
-        val elevationInPixels = 4f * resources.displayMetrics.density
-        appBarLayout.elevation = elevationInPixels
-        appBarLayout.translationZ = elevationInPixels
-        appBarLayout.bringToFront()
-    }
-
-}
 }

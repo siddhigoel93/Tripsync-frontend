@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity"
+    tools:openDrawer="end">
+    <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main_content_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -54,7 +61,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                     />
+                    />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -309,6 +316,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:src="@drawable/plus_add"
+        android:visibility="gone"
         app:backgroundTint="@color/mint_active"
         android:translationY="40dp"
         android:elevation="10dp"
@@ -318,4 +326,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:tint="@android:color/white" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/drawer_menu_include"
+        layout="@layout/layout_drawer_menu"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>
