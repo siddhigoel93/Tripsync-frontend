@@ -7,16 +7,17 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.Space
+import android.widget.TextView
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.example.tripsync.api.ApiClient
-import com.example.tripsync.itinerary.*
+import com.example.tripsync.itinerary.ActivityItem
+import com.example.tripsync.itinerary.CreateTripRequest
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
@@ -27,20 +28,14 @@ import kotlin.math.abs
 class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
 
     private data class LocalCard(val iconRes: Int = 0, val title: String, val subtitle: String)
-    private data class LocalSection(val label: String, val iconRes: Int = 0, val cards: List<LocalCard>)
+    private data class LocalSection(val label: String, val iconName: String? = null, val cards: List<LocalCard>)
     private data class LocalDay(val dayNumber: Int, val title: String, val sections: List<LocalSection>)
-
-    private sealed class Item {
-        data class SectionHeader(val label: String, val iconRes: Int) : Item()
-        data class CardItem(val iconRes: Int, val title: String, val subtitle: String) : Item()
-    }
 
     private lateinit var tripTitle: TextView
     private lateinit var tripMeta: TextView
     private lateinit var tripDate: TextView
     private lateinit var dayTitle: TextView
-    private lateinit var rv: RecyclerView
-    private val adapter = ItineraryListAdapter()
+    private lateinit var rvContainer: LinearLayout
     private lateinit var tab1: TextView
     private lateinit var tab2: TextView
     private lateinit var tab3: TextView
@@ -55,15 +50,11 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         tripMeta = view.findViewById(R.id.tripMeta)
         tripDate = view.findViewById(R.id.tripDate)
         dayTitle = view.findViewById(R.id.dayTitle)
-        rv = view.findViewById(R.id.rvItinerary)
+        rvContainer = view.findViewById(R.id.rvItinerary)
         tab1 = view.findViewById(R.id.tabDay1)
         tab2 = view.findViewById(R.id.tabDay2)
         tab3 = view.findViewById(R.id.tabDay3)
         tab4 = view.findViewById(R.id.tabDay4)
-
-        rv.layoutManager = LinearLayoutManager(requireContext())
-        rv.adapter = adapter
-        rv.isNestedScrollingEnabled = false
 
         val tripName = arguments?.getString("tripName").orEmpty()
         val startDate = arguments?.getString("startDate").orEmpty()
@@ -127,7 +118,6 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
 
         lifecycleScope.launch {
             try {
-                Toast.makeText(requireContext(), "Fetching itinerary...", Toast.LENGTH_SHORT).show()
                 val service = ApiClient.getItineraryService(requireContext())
 
                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -206,15 +196,11 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                         null
                     }
                     if (createResp == null) {
-                        Toast.makeText(requireContext(), "Failed to create trip", Toast.LENGTH_LONG).show()
                         days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                         selectDay(0)
                         return@launch
                     }
                     if (!createResp.isSuccessful) {
-                        val rawErr = try { createResp.errorBody()?.string() } catch (_: Exception) { null }
-                        Log.e(TAG, "createTrip failed resp=${createResp.code()} body=$rawErr")
-                        Toast.makeText(requireContext(), "Failed to create trip", Toast.LENGTH_LONG).show()
                         days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                         selectDay(0)
                         return@launch
@@ -234,20 +220,12 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                                     val arr = jo.optJSONArray("data")
                                     if (arr.length() > 0) id = arr.optJSONObject(0)?.optInt("id")
                                 }
-                                if ((id == null || id == 0) && jo.has("message")) {
-                                    val message = jo.optString("message")
-                                    val error = jo.optString("error")
-                                    Log.e(TAG, "createTrip server message: $message error:$error")
-                                    Toast.makeText(requireContext(), "$message ${if (error.isNotBlank()) ": $error" else ""}", Toast.LENGTH_LONG).show()
-                                }
                             }
                         } catch (t: Throwable) {
                             Log.e(TAG, "Failed to parse createResp raw body", t)
                         }
                     }
                     if (id == null || id == 0) {
-                        Log.e(TAG, "createTrip missing id in response")
-                        Toast.makeText(requireContext(), "Failed to create trip", Toast.LENGTH_LONG).show()
                         days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                         selectDay(0)
                         return@launch
@@ -259,8 +237,6 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 for (d in 1..4) {
                     try {
                         val dayResp = service.getDayItinerary(tripId, d)
-                        val rawReq = try { dayResp.raw().request } catch (_: Exception) { null }
-                        rawReq?.let { Log.d(TAG, "Day $d request url=${it.url}") }
                         if (dayResp.isSuccessful) {
                             val b = dayResp.body()
                             val title = b?.data?.title ?: "Day $d"
@@ -270,31 +246,37 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                                 val sec = dayData!!.sections!!.map { s ->
                                     LocalSection(
                                         label = s.label ?: "",
-                                        iconRes = resIdOrZero(s.icon),
+                                        iconName = s.icon,
                                         cards = s.cards.orEmpty().map { c ->
-                                            LocalCard(iconRes = resIdOrZero(c.icon), title = c.title ?: "", subtitle = c.subtitle ?: "")
+                                            LocalCard(iconRes = 0, title = c.title ?: "", subtitle = c.subtitle ?: "")
                                         }
                                     )
                                 }
                                 sections.addAll(sec)
                             } else if (!dayData?.activities.isNullOrEmpty()) {
                                 val actList = dayData!!.activities!!.orEmpty()
-                                if (actList.isNotEmpty()) {
-                                    val cards = actList.map { a ->
-                                        LocalCard(iconRes = 0, title = a.title ?: "", subtitle = a.description ?: "")
+                                val grouped = groupActivitiesByTime(actList)
+                                val order = listOf("Morning", "Afternoon", "Evening", "Night")
+                                for (key in order) {
+                                    val list = grouped[key].orEmpty()
+                                    if (list.isNotEmpty()) {
+                                        val cards = list.map { a -> LocalCard(iconRes = 0, title = a.title ?: "", subtitle = a.description ?: "") }
+                                        val iconName = when (key) {
+                                            "Morning" -> "morning"
+                                            "Afternoon" -> "afternoon"
+                                            "Evening" -> "afternoon"
+                                            "Night" -> "night"
+                                            else -> null
+                                        }
+                                        sections.add(LocalSection(label = key, iconName = iconName, cards = cards))
                                     }
-                                    sections.add(LocalSection(label = "Activities", iconRes = 0, cards = cards))
                                 }
                             }
                             fetchedDays.add(LocalDay(d, title, sections))
                         } else {
-                            val code = dayResp.code()
-                            val err = try { dayResp.errorBody()?.string() } catch (_: Exception) { null }
-                            Log.e(TAG, "day $d failed code=$code body=$err")
                             fetchedDays.add(buildEmptyDay(d))
                         }
                     } catch (t: Throwable) {
-                        Log.e(TAG, "Exception fetching day $d", t)
                         fetchedDays.add(buildEmptyDay(d))
                     }
                 }
@@ -302,12 +284,29 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 days = fetchedDays
                 selectDay(0)
             } catch (t: Throwable) {
-                Log.e("ItineraryAPI", "Exception fetching itinerary", t)
-                Toast.makeText(requireContext(), "Error fetching itinerary: ${t.localizedMessage ?: t.javaClass.simpleName}", Toast.LENGTH_LONG).show()
                 days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                 selectDay(0)
             }
         }
+    }
+
+    private fun groupActivitiesByTime(list: List<ActivityItem>): Map<String, List<ActivityItem>> {
+        val map = mutableMapOf<String, MutableList<ActivityItem>>()
+        map["Morning"] = mutableListOf()
+        map["Afternoon"] = mutableListOf()
+        map["Evening"] = mutableListOf()
+        map["Night"] = mutableListOf()
+        for (a in list) {
+            val t = (a.time ?: "").trim().lowercase(Locale.getDefault())
+            when {
+                t.contains("mor") || t.contains("breakfast") -> map["Morning"]!!.add(a)
+                t.contains("aft") || t.contains("lunch") -> map["Afternoon"]!!.add(a)
+                t.contains("eve") -> map["Evening"]!!.add(a)
+                t.contains("night") || t.contains("dinner") -> map["Night"]!!.add(a)
+                else -> map["Morning"]!!.add(a)
+            }
+        }
+        return map
     }
 
     private fun selectDay(index: Int) {
@@ -319,15 +318,99 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         setTabActive(tab2, index == 1)
         setTabActive(tab3, index == 2)
         setTabActive(tab4, index == 3)
-        val items = mutableListOf<Item>()
-        d.sections.forEach { s ->
-            items += Item.SectionHeader(s.label, s.iconRes)
-            s.cards.forEach { c ->
-                items += Item.CardItem(c.iconRes, c.title, c.subtitle)
+
+        rvContainer.removeAllViews()
+
+        for (s in d.sections) {
+            val headerRow = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                setPadding(dpToPx(requireContext(), 6))
+                gravity = Gravity.CENTER_VERTICAL
             }
+
+            val iconView = ImageView(requireContext()).apply {
+                val size = dpToPx(requireContext(), 28)
+                layoutParams = LinearLayout.LayoutParams(size, size).apply { marginEnd = dpToPx(requireContext(), 10) }
+                val res = resIdOrZero(s.iconName)
+                if (res != 0) setImageResource(res) else setImageDrawable(null)
+            }
+            val label = TextView(requireContext()).apply {
+                text = s.label
+                textSize = 14f
+                setTypeface(typeface, Typeface.BOLD)
+                setTextColor(0xFF6D6D6D.toInt())
+            }
+            headerRow.addView(iconView)
+            headerRow.addView(label)
+            rvContainer.addView(headerRow)
+
+            val sectionBox = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                    topMargin = dpToPx(requireContext(), 6)
+                    bottomMargin = dpToPx(requireContext(), 12)
+                }
+                val bg = GradientDrawable().apply {
+                    cornerRadius = dpToPx(requireContext(), 8).toFloat()
+                    setColor(0xFFFFFFFF.toInt())
+                }
+                background = bg
+                setPadding(dpToPx(requireContext(), 12), dpToPx(requireContext(), 12), dpToPx(requireContext(), 12), dpToPx(requireContext(), 12))
+            }
+
+            var first = true
+            for (c in s.cards) {
+                val card = LinearLayout(requireContext()).apply {
+                    orientation = LinearLayout.VERTICAL
+                    layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                        if (!first) topMargin = dpToPx(requireContext(), 14)
+                    }
+                    val bgc = GradientDrawable().apply {
+                        cornerRadius = dpToPx(requireContext(), 10).toFloat()
+
+                        setColor(0xFFDAF5F8.toInt())
+                    }
+                    background = bgc
+                    setPadding(dpToPx(requireContext(), 18), dpToPx(requireContext(), 14), dpToPx(requireContext(), 18), dpToPx(requireContext(), 14))
+                }
+
+                val t = TextView(requireContext()).apply {
+                    text = c.title
+                    textSize = 16f
+                    setTypeface(typeface, Typeface.BOLD)
+
+                    setTextColor(0xFF007F6A.toInt())
+                }
+                val sub = TextView(requireContext()).apply {
+                    text = c.subtitle
+                    textSize = 13f
+
+                    setTextColor(0xFF2E2E2E.toInt())
+                    val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                    layoutParams = lp
+                }
+                card.addView(t)
+                card.addView(sub)
+                sectionBox.addView(card)
+                first = false
+            }
+
+            rvContainer.addView(sectionBox)
+
+            val spacer = Space(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(requireContext(), 10))
+            }
+            rvContainer.addView(spacer)
         }
-        adapter.submitList(items)
-        rv.scrollToPosition(0)
+
+        val bottomSpacer = Space(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(requireContext(), 24))
+        }
+        rvContainer.addView(bottomSpacer)
+
+        val parentScroll = view?.findViewById<ScrollView>(R.id.pageScroll)
+        parentScroll?.post { parentScroll.fullScroll(View.FOCUS_UP) }
     }
 
     private fun setTabActive(tv: TextView, active: Boolean) {
@@ -347,105 +430,5 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         return try { resources.getIdentifier(name, "drawable", requireContext().packageName) } catch (_: Exception) { 0 }
     }
 
-    private class ItineraryListAdapter : ListAdapter<Item, RecyclerView.ViewHolder>(Diff()) {
-        private companion object {
-            const val TYPE_SECTION = 1
-            const val TYPE_CARD = 2
-        }
-
-        override fun getItemViewType(position: Int): Int {
-            return when (getItem(position)) {
-                is Item.SectionHeader -> TYPE_SECTION
-                is Item.CardItem -> TYPE_CARD
-            }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val ctx = parent.context
-            return if (viewType == TYPE_SECTION) {
-                val container = LinearLayout(ctx).apply {
-                    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    orientation = LinearLayout.HORIZONTAL
-                    setPadding(dpToPx(ctx, 12))
-                    gravity = Gravity.CENTER_VERTICAL
-                }
-                val iv = ImageView(ctx).apply {
-                    layoutParams = LinearLayout.LayoutParams(dpToPx(ctx, 28), dpToPx(ctx, 28)).apply { marginEnd = dpToPx(ctx, 12) }
-                    scaleType = ImageView.ScaleType.FIT_CENTER
-                }
-                val tv = TextView(ctx).apply {
-                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                    setTypeface(typeface, Typeface.BOLD)
-                    textSize = 14f
-                }
-                container.addView(iv)
-                container.addView(tv)
-                SectionVH(container, iv, tv)
-            } else {
-                val container = LinearLayout(ctx).apply {
-                    orientation = LinearLayout.VERTICAL
-                    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    val pad = dpToPx(ctx, 12)
-                    setPadding(pad, pad, pad, pad)
-                }
-                val inner = LinearLayout(ctx).apply {
-                    orientation = LinearLayout.HORIZONTAL
-                    layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    gravity = Gravity.CENTER_VERTICAL
-                }
-                val iv = ImageView(ctx).apply {
-                    layoutParams = LinearLayout.LayoutParams(dpToPx(ctx, 40), dpToPx(ctx, 40)).apply { marginEnd = dpToPx(ctx, 12) }
-                    scaleType = ImageView.ScaleType.CENTER_INSIDE
-                }
-                val texts = LinearLayout(ctx).apply {
-                    orientation = LinearLayout.VERTICAL
-                    layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-                }
-                val title = TextView(ctx).apply {
-                    textSize = 14f
-                    setTypeface(typeface, Typeface.BOLD)
-                }
-                val subtitle = TextView(ctx).apply { textSize = 12f }
-                texts.addView(title)
-                texts.addView(subtitle)
-                inner.addView(iv)
-                inner.addView(texts)
-                val bg = GradientDrawable().apply {
-                    cornerRadius = dpToPx(ctx, 8).toFloat()
-                    setColor(0xFFF6F6F6.toInt())
-                }
-                container.background = bg
-                container.setPadding(dpToPx(ctx, 12), dpToPx(ctx, 12), dpToPx(ctx, 12), dpToPx(ctx, 12))
-                container.addView(inner)
-                CardVH(container, iv, title, subtitle)
-            }
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val item = getItem(position)
-            when (holder) {
-                is SectionVH -> {
-                    val s = item as Item.SectionHeader
-                    holder.label.text = s.label
-                    if (s.iconRes != 0) holder.icon.setImageResource(s.iconRes) else holder.icon.setImageDrawable(null)
-                }
-                is CardVH -> {
-                    val c = item as Item.CardItem
-                    holder.title.text = c.title
-                    holder.subtitle.text = c.subtitle
-                    if (c.iconRes != 0) holder.icon.setImageResource(c.iconRes) else holder.icon.setImageDrawable(null)
-                }
-            }
-        }
-
-        private class SectionVH(itemView: View, val icon: ImageView, val label: TextView) : RecyclerView.ViewHolder(itemView)
-        private class CardVH(itemView: View, val icon: ImageView, val title: TextView, val subtitle: TextView) : RecyclerView.ViewHolder(itemView)
-
-        private class Diff : DiffUtil.ItemCallback<Item>() {
-            override fun areItemsTheSame(oldItem: Item, newItem: Item) = oldItem == newItem
-            override fun areContentsTheSame(oldItem: Item, newItem: Item) = oldItem == newItem
-        }
-
-        private fun dpToPx(ctx: android.content.Context, dp: Int) = (dp * ctx.resources.displayMetrics.density).toInt()
-    }
+    private fun dpToPx(ctx: android.content.Context, dp: Int) = (dp * ctx.resources.displayMetrics.density).toInt()
 }

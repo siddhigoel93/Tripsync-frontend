@@ -190,18 +190,18 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="6dp"/>
 
-            <androidx.recyclerview.widget.RecyclerView
+            <LinearLayout
                 android:id="@+id/rvItinerary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
+                android:orientation="vertical"
+                android:clipToPadding="false"
                 android:paddingBottom="12dp"/>
 
             <TextView
                 android:id="@+id/btnCreateTrip"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="56dp"
                 android:gravity="center"
                 android:text="Create A trip"
                 android:textAllCaps="false"
