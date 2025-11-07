@@ -5,18 +5,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.cardview.widget.CardView
-import androidx.core.view.ViewCompat
-import androidx.fragment.app.Fragment
-import com.google.android.material.appbar.AppBarLayout
-import androidx.navigation.fragment.findNavController
-import com.google.android.material.button.MaterialButton
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.navigation.fragment.navArgs
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.core.view.GravityCompat // ⬅️ NEW IMPORT for opening the drawer
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.models.WeatherResponse
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ExploreFragment : Fragment() {
 
@@ -28,25 +33,14 @@ class ExploreFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
 
-        val complete_profile_button = view.findViewById<MaterialButton>(R.id.complete_profile_button)
-
-        complete_profile_button.setOnClickListener {
-            // NOTE: Assuming action_homeFragment_to_fragment_personal_details points to the correct destination
+        val completeProfileButton = view.findViewById<MaterialButton>(R.id.complete_profile_button)
+        completeProfileButton.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
         }
 
-        // ❌ Removed: val drawerLayout = view.findViewById<DrawerLayout>(R.id.drawer_layout)
-        // ❌ Removed: val navView = view.findViewById<NavigationView>(R.id.nav_view)
-
-        // 1. Find the profile icon in the fragment's toolbar
         val profileButton = view.findViewById<ImageView>(R.id.menu_icon)
-
-        // 2. Set the click listener to open the drawer
         profileButton.setOnClickListener {
-            // ⬅️ FIX: Access the DrawerLayout from the hosting Activity's hierarchy
             val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-
-            // ⬅️ FIX: Use GravityCompat.START to open the drawer from the left
             if (drawerLayout != null) {
                 drawerLayout.openDrawer(GravityCompat.START)
             } else {
@@ -54,23 +48,11 @@ class ExploreFragment : Fragment() {
             }
         }
 
-        // ... (Commented-out code remains commented out) ...
         return view
     }
-//
-//    private fun logoutUser() {
-//        // Clear stored tokens
-//        val sharedPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
-//        sharedPrefs.edit().clear().apply()
-//
-//        Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
-//
-//        findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
         val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
@@ -78,24 +60,33 @@ class ExploreFragment : Fragment() {
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
 
-        if(isProfileCompleted){
-            customHeader.visibility= View.GONE
-        }
-        if (args.showHeader) {
+        customHeader.visibility = if (isProfileCompleted || args.showHeader) View.GONE else View.VISIBLE
 
-            customHeader.visibility = View.GONE
-            val elevationInPixels = 4f * resources.displayMetrics.density
-            appBarLayout.elevation = elevationInPixels
-            appBarLayout.translationZ = elevationInPixels
-            appBarLayout.bringToFront()
+        val elevationInPixels = 4f * resources.displayMetrics.density
+        appBarLayout.elevation = elevationInPixels
+        appBarLayout.translationZ = elevationInPixels
+        appBarLayout.bringToFront()
 
-        } else {
+        fetchWeather("Delhi") // Example location
+    }
 
-            customHeader.visibility = View.VISIBLE
-            val elevationInPixels = 4f * resources.displayMetrics.density
-            appBarLayout.elevation = elevationInPixels
-            appBarLayout.translationZ = elevationInPixels
-            appBarLayout.bringToFront()
+    private fun fetchWeather(location: String) {
+        lifecycleScope.launch {
+            try {
+                val api = ApiClient.getAuthService(requireContext())
+                val weatherResponse = withContext(Dispatchers.IO) {
+                    api.getWeather(location)
+                }
+
+                val weather = weatherResponse.data
+                view?.findViewById<TextView>(R.id.temp_yesterday)?.text = "${weather.wind} km/h"
+                view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.temperature}°"
+                view?.findViewById<TextView>(R.id.temp_tomorrow)?.text = "${weather.chance_of_rain}%"
+
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
 }

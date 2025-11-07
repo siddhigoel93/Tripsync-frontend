@@ -351,83 +351,77 @@
                                 app:tint="@color/white"
                                 tools:ignore="ContentDescription" />
 
-                            <TextView
-                                android:id="@+id/temp_yesterday"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                            <ImageView
+                                android:id="@+id/yesterday"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
                                 android:layout_marginTop="24dp"
-                                android:text="24°"
-                                android:textColor="@color/white"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
-                                app:layout_constraintEnd_toStartOf="@id/temp_today"
+                                android:src="@drawable/first"
+                                app:layout_constraintEnd_toStartOf="@id/today"
                                 app:layout_constraintHorizontal_chainStyle="spread"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/weather_subtitle" />
 
                             <TextView
-                                android:id="@+id/yesterday"
+                                android:id="@+id/temp_yesterday"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:alpha="0.8"
                                 android:text="Yesterday"
                                 android:textColor="@color/white"
-                                android:textSize="12sp"
-                                app:layout_constraintEnd_toStartOf="@id/today"
+                                android:fontFamily="@font/roboto"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toStartOf="@id/temp_today"
                                 app:layout_constraintHorizontal_chainStyle="spread"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/temp_yesterday"
+                                app:layout_constraintTop_toBottomOf="@id/yesterday"
                                 tools:ignore="HardcodedText" />
+
+                            <ImageView
+                                android:id="@+id/today"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginTop="24dp"
+                                android:src="@drawable/second"
+                                app:layout_constraintEnd_toStartOf="@id/tomorrow"
+                                app:layout_constraintStart_toEndOf="@id/yesterday"
+                                app:layout_constraintTop_toBottomOf="@id/weather_subtitle" />
 
                             <TextView
                                 android:id="@+id/temp_today"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="24dp"
-                                android:text="26°"
-                                android:textColor="@color/white"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
-                                app:layout_constraintEnd_toStartOf="@id/temp_tomorrow"
-                                app:layout_constraintStart_toEndOf="@id/temp_yesterday"
-                                app:layout_constraintTop_toBottomOf="@id/weather_subtitle" />
-
-                            <TextView
-                                android:id="@+id/today"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
                                 android:alpha="0.8"
                                 android:text="Today"
                                 android:textColor="@color/white"
-                                android:textSize="12sp"
-                                app:layout_constraintEnd_toStartOf="@id/tomorrow"
-                                app:layout_constraintStart_toEndOf="@id/yesterday"
-                                app:layout_constraintTop_toBottomOf="@id/temp_today"
+                                android:textSize="14sp"
+                                android:fontFamily="@font/roboto"
+                              app:layout_constraintStart_toStartOf="@id/today"
+                                app:layout_constraintEnd_toEndOf="@id/today"
+                                app:layout_constraintTop_toBottomOf="@id/today"
                                 tools:ignore="HardcodedText" />
+
+                            <ImageView
+                                android:id="@+id/tomorrow"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginTop="24dp"
+                                android:src="@drawable/third"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/today"
+                                app:layout_constraintTop_toBottomOf="@id/weather_subtitle" />
 
                             <TextView
                                 android:id="@+id/temp_tomorrow"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="24dp"
-                                android:text="22°"
-                                android:textColor="@color/white"
-                                android:textSize="24sp"
-                                android:textStyle="bold"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/temp_today"
-                                app:layout_constraintTop_toBottomOf="@id/weather_subtitle" />
-
-                            <TextView
-                                android:id="@+id/tomorrow"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
                                 android:alpha="0.8"
                                 android:text="Tomorrow"
                                 android:textColor="@color/white"
-                                android:textSize="12sp"
-                                app:layout_constraintStart_toEndOf="@id/today"
-                                app:layout_constraintTop_toBottomOf="@id/temp_tomorrow"
+                                android:fontFamily="@font/roboto"
+                                android:textSize="14sp"
+                                app:layout_constraintStart_toEndOf="@id/temp_today"
+                                app:layout_constraintTop_toBottomOf="@id/tomorrow"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 tools:ignore="HardcodedText" />
 

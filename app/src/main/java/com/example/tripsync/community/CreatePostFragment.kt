@@ -77,11 +77,17 @@ class CreatePostFragment : Fragment() {
 
     private fun setupUserProfile() {
         val context = requireContext()
-        val sharedPref = context.getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+        val sharedPref = context.getSharedPreferences("user", Context.MODE_PRIVATE)
 
-        val currentUserName = sharedPref.getString("userName", "Unknown User")
+        val fname = sharedPref.getString("fname", "")
+        val lname = sharedPref.getString("lname", "")
+        val fullName = listOfNotNull(fname, lname)
+            .filter { it.isNotBlank() }
+            .joinToString(" ")
+            .ifEmpty { "Unknown User" }
+
         val userNameTextView = binding.postContentCard.findViewById<TextView>(R.id.user_name)
-        userNameTextView.text = currentUserName
+        userNameTextView.text = fullName
 
         val currentUserAvatarUrl = sharedPref.getString("userAvatarUrl", null)
         val profileAvatarImageView = binding.postContentCard.findViewById<ShapeableImageView>(R.id.profile_avatar)
@@ -135,13 +141,17 @@ class CreatePostFragment : Fragment() {
 
     private fun handlePostSubmission() {
         val context = requireContext()
-        val title = "Default Title"
+        val title = binding.postContentCard.findViewById<EditText>(R.id.ettitle).text.toString().trim()
         val desc = binding.postContentCard.findViewById<EditText>(R.id.edit_text_post).text.toString().trim()
         val loc = "Current Location"
         val locRating = 5
 
         if (desc.isEmpty()) {
             Toast.makeText(context, "Please enter a description.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (title.isEmpty()) {
+            Toast.makeText(context, "Please enter a title.", Toast.LENGTH_SHORT).show()
             return
         }
 

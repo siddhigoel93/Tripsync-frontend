@@ -149,22 +149,65 @@
                 app:layout_constraintStart_toStartOf="@id/user_name"
                 app:layout_constraintTop_toBottomOf="@id/user_name" />
 
+            <TextView
+                android:id="@+id/post_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="@id/card_guideline_start"
+                app:layout_constraintBottom_toTopOf="@id/ettitle"
+                app:layout_constraintTop_toBottomOf="@id/profile_avatar"/>
+
             <EditText
-                android:id="@+id/edit_text_post"
+                android:id="@+id/ettitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="150dp"
-                android:layout_marginTop="16dp"
+                android:minHeight="50dp"
                 android:gravity="top|start"
                 android:padding="8dp"
                 android:textColorHint="#999999"
                 android:textColor="@color/black"
-                android:hint="Delhi Trip 2025"
+                android:hint="Add Title"
                 android:background="@drawable/edittext_simple"
                 app:layout_constraintStart_toStartOf="@id/card_guideline_start"
                 app:layout_constraintEnd_toEndOf="@id/card_guideline_end"
-                app:layout_constraintTop_toBottomOf="@id/profile_avatar"
+                app:layout_constraintTop_toBottomOf="@id/post_title"
                 android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Caption"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="@id/card_guideline_start"
+                app:layout_constraintBottom_toTopOf="@id/edit_text_post"
+                app:layout_constraintTop_toBottomOf="@id/ettitle"
+                android:layout_marginTop="8dp"/>
+
+            <EditText
+                android:id="@+id/edit_text_post"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/edittext_simple"
+                android:gravity="top|start"
+                android:hint="Delhi Trip 2025"
+                android:inputType="textMultiLine"
+                android:minHeight="150dp"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                app:layout_constraintEnd_toEndOf="@id/card_guideline_end"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/card_guideline_start"
+                app:layout_constraintTop_toBottomOf="@id/caption" />
 
             <ImageView
                 android:id="@+id/btn_upload_photo"

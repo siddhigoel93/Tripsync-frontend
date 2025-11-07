@@ -104,8 +104,11 @@ class LoginFragment : Fragment() {
                     val body = response.body()
 
 
+
                     if (response.isSuccessful && body != null && body.status == "success") {
                         val tokens = body.data?.tokens
+                        Log.d("LoginFragment", "Access token saved: ${tokens?.access}")
+
                         val sp = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
                         sp.edit().apply {
                             putString("access_token", tokens?.access)

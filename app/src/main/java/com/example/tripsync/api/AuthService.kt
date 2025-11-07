@@ -132,9 +132,13 @@ interface AuthService {
         @Path("id") commentId: Int
     ): Response<DeleteResponse>
 
-    @GET("/api/community/posts/search/")
-    suspend fun searchPosts(
-        @Query("q") query: String // 'q' is the query parameter name
-    ): Response<SearchPostsResponse>
+    @GET("/api/community/posts/")
+    suspend fun searchPosts(@Query("search") query: String): Response<SearchPostsResponse>
+
+
+    @GET("/api/Homepage/weather/")
+    suspend fun getWeather(
+        @Query("location") location: String
+    ): WeatherResponse
 
 }

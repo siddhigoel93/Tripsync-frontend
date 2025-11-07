@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -21,24 +19,33 @@ import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.Post
 import com.example.tripsync.api.models.PostActionListener
 import com.example.tripsync.community.PostAdapter
-import com.example.tripsync.ui.CommentsFragment.Companion.TAG
+import com.example.tripsync.ui.CommentsFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.core.widget.addTextChangedListener
+import com.example.tripsync.api.models.LikeRequest
+import com.example.tripsync.api.models.SearchPostResponseItem // Import the data class if Post is not the exact type
+import com.example.tripsync.api.models.UserP
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), PostActionListener { // Implement PostActionListener here
 
-     lateinit var searchEditText: EditText
-    lateinit var searchResultsRecyclerView: RecyclerView
-     lateinit var noDataLayout: ImageView
-     lateinit var initialSearchStateLayout: ImageView
-     lateinit var backButton: ImageView
-     lateinit var searchAdapter: PostAdapter
+    private lateinit var searchEditText: EditText
+    private lateinit var searchResultsRecyclerView: RecyclerView
+    private lateinit var noDataLayout: ImageView
+    private lateinit var initialSearchStateLayout: ImageView
+    private lateinit var backButton: ImageView
 
-     var searchJob: Job? = null
+    // Initialized in setupRecyclerView
+    private lateinit var searchAdapter: PostAdapter
 
+    private var searchJob: Job? = null
 
-
+    // Constants or Companion Object for Logging
+    companion object {
+        private const val TAG = "SearchFragment"
+        private const val SEARCH_DELAY_MS = 500L
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,7 +75,9 @@ class SearchFragment : Fragment() {
         val sharedPref = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
         val currentUserEmail = sharedPref.getString("userEmail", null)
 
-//        searchAdapter = PostAdapter(emptyList<Post>(), postActionListener, currentUserEmail)
+        // 🌟 FIX: Initialize the adapter here
+        // The adapter must be initialized with an empty list and the listener (this fragment)
+        searchAdapter = PostAdapter(emptyList<Post>(), this, currentUserEmail)
         searchResultsRecyclerView.adapter = searchAdapter
     }
 
@@ -77,8 +86,11 @@ class SearchFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        // Search action on keyboard ENTER/Search button
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                // Cancel any pending debounced job and perform the search immediately
+                searchJob?.cancel()
                 performSearch(searchEditText.text.toString())
                 true
             } else {
@@ -86,17 +98,18 @@ class SearchFragment : Fragment() {
             }
         }
 
+        // Debounced search on text change
         searchEditText.addTextChangedListener { editable ->
             val query = editable.toString().trim()
-            searchJob?.cancel()
+            searchJob?.cancel() // Cancel the previous debounced search
 
-            if (query.isNotEmpty()) {
+            if (query.isNotEmpty() && query.length >= 2) { // Optional: require minimum 2 characters
                 searchJob = lifecycleScope.launch {
-                    delay(500)
+                    delay(SEARCH_DELAY_MS) // Wait for 500ms
                     performSearch(query)
                 }
             } else {
-                showInitialSearchState()
+                showInitialSearchState() // Show initial state if query is empty
             }
         }
     }
@@ -109,17 +122,36 @@ class SearchFragment : Fragment() {
 
         lifecycleScope.launch {
             try {
-                // Hide keyboard when search is initiated (optional)
-                // val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                // imm?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
-
                 val api = ApiClient.getTokenService(requireContext())
-
                 val response = api.searchPosts(query)
+                Log.d(TAG, "Search URL: ${response.raw().request.url}")
 
                 if (response.isSuccessful) {
-                    val rawResults = response.body() ?: emptyList<Post>()
-                    val results = rawResults as List<Post>
+                    val rawResults = response.body()?.data ?: emptyList()
+                    val results = rawResults.map { it ->
+                        Post(
+                            id = it.id,
+                            title = it.title,
+                            desc = it.desc,
+                            img = it.img ?: "",
+                            img_url = it.img_url ?: "",
+                            vid = it.vid ?: "",
+                            vid_url = it.vid_url ?: "",
+                            likes = it.likes,
+                            dislikes = it.dislikes,
+                            rating = it.rating,
+                            loc = it.loc ?: "",
+                            created = it.created ?: "",
+                            updated = it.updated ?: "",
+                            total_comments = it.total_comments,
+                            reaction = it.reaction ?: "",
+                            user = null as UserP?,
+                            owner = it.owner
+                        )
+                    }
+
+
+
 
                     if (results.isNotEmpty()) {
                         searchAdapter.updateData(results)
@@ -129,18 +161,55 @@ class SearchFragment : Fragment() {
                         showNoDataState()
                     }
                 } else {
-                    Log.e(TAG, "Search API Error: ${response.code()}")
+                    Log.e(TAG, "Search API Error: ${response.code()} - ${response.message()}")
                     searchAdapter.updateData(emptyList())
                     showNoDataState()
                 }
+
             } catch (e: Exception) {
                 Log.e(TAG, "Network Exception during search: ${e.message}", e)
                 searchAdapter.updateData(emptyList())
                 showNoDataState()
             }
+
         }
     }
 
+        // --- PostActionListener Implementation for Search Results ---
+
+        override fun onDelete(postId: Int) {
+            // Implement post deletion logic for posts found via search, if required.
+            Log.d(TAG, "Delete action triggered for post ID: $postId (from search)")
+            // Typically, you'd navigate back to the main CommunityFragment to handle the delete and refresh the feed.
+        }
+
+        override fun onLike(postId: Int) {
+            // Implement the like API call (similar to CommunityFragment)
+            // Since PostAdapter handles the local UI change, you just need to sync the API.
+            lifecycleScope.launch {
+                try {
+                    val api = ApiClient.getTokenService(requireContext())
+                    val response = api.likePost(
+                        postId,
+                        LikeRequest(like = true)
+                    ) // Use actual LikeRequest model
+                    if (!response.isSuccessful) {
+                        Log.e(TAG, "Like sync failed for post $postId: ${response.code()}")
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Network error liking post $postId: ${e.message}")
+                }
+            }
+        }
+
+
+    override fun onComment(postId: Int) {
+        // Show the comments fragment (CommentsFragment)
+        val commentsFragment = CommentsFragment.newInstance(postId)
+        commentsFragment.show(parentFragmentManager, CommentsFragment.TAG)
+    }
+
+    // --- State Management Functions ---
 
     private fun showResults() {
         initialSearchStateLayout.visibility = View.GONE

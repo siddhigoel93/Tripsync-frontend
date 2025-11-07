@@ -73,8 +73,8 @@ class CommunityFragment : Fragment(), PostActionListener {
         }
 
         searchIcon?.setOnClickListener {
-//            findNavController().navigate(R.id.action_nav_community_to_searchFragment)
-            Toast.makeText(requireContext(), "Search icon clicked", Toast.LENGTH_SHORT).show()
+         findNavController().navigate(R.id.action_nav_community_to_searchFragment)
+//            Toast.makeText(requireContext(), "Search icon clicked", Toast.LENGTH_SHORT).show()
         }
 
         createIcon?.setOnClickListener {

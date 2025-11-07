@@ -35,6 +35,7 @@ class PostAdapter(
         val userAvatar: ImageView = itemView.findViewById(R.id.post_user_avatar)
         val userName: TextView = itemView.findViewById(R.id.post_user_name)
         val time: TextView = itemView.findViewById(R.id.post_time)
+        val title : TextView = itemView.findViewById(R.id.post_title)
         val caption: TextView = itemView.findViewById(R.id.post_caption)
         val mediaImage: ImageView = itemView.findViewById(R.id.post_media_image)
         val iconLike: ImageView = itemView.findViewById(R.id.icon_like)
@@ -62,6 +63,7 @@ class PostAdapter(
         Log.d("PostDebug", "User object for post ${post.id}: ${post.user}")
 
         holder.caption.text = post.desc.ifEmpty { "No caption" }
+        holder.title.text = post.title.ifEmpty { "No title" }
 
         holder.time.text = formatTimeAgo(post.created)
 

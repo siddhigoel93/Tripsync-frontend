@@ -1,3 +1,7 @@
 package com.example.tripsync.api.models
 
-class SearchPostsResponse : ArrayList<SearchPostResponseItem>()
+data class SearchPostsResponse(
+    val status: String,
+    val count: Int,
+    val data: List<SearchPostResponseItem>
+)

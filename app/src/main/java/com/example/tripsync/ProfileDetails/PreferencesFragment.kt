@@ -136,6 +136,12 @@ class PreferencesFragment : Fragment() {
             erelation = vm.erelation,
             preference = vm.preference
         )
+        val prefs = requireContext().getSharedPreferences("user", Context.MODE_PRIVATE)
+        prefs.edit()
+            .putString("fname", vm.firstName)
+            .putString("lname", vm.lastName)
+            .apply()
+
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             val createResp = withContext(Dispatchers.IO) { service.createProfile(bearer, req) }
