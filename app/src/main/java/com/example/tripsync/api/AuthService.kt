@@ -53,9 +53,8 @@ interface AuthService {
     suspend fun resendPersonalOtp(): Response<ResendOtpResponse>
 
     @GET("/api/personal/profile/")
-    suspend fun getProfile(
-        @Header("Authorization") bearer: String
-    ): Response<GetProfileResponse>
+    suspend fun getProfile(): Response<GetProfileResponse>
+
 
     @PATCH("/api/personal/profile/")
     suspend fun updateProfile(
@@ -140,5 +139,26 @@ interface AuthService {
     suspend fun getWeather(
         @Query("location") location: String
     ): WeatherResponse
+
+    @Multipart
+    @POST("/api/personal/profile/")
+    suspend fun createProfileWithImage(
+        @Header("Authorization") bearer: String,
+        @Part("fname") fname: RequestBody,
+        @Part("lname") lname: RequestBody,
+        @Part("phone_number") phone_number: RequestBody,
+        @Part("date") date: RequestBody,
+        @Part("gender") gender: RequestBody,
+        @Part("bio") bio: RequestBody,
+        @Part("bgroup") bgroup: RequestBody,
+        @Part("allergies") allergies: RequestBody,
+        @Part("medical") medical: RequestBody,
+        @Part("ename") ename: RequestBody,
+        @Part("enumber") enumber: RequestBody,
+        @Part("erelation") erelation: RequestBody,
+        @Part("prefrence") preference: RequestBody,
+        @Part profile_pic: MultipartBody.Part? = null
+    ): Response<CreateProfileResponse>
+
 
 }

@@ -119,6 +119,7 @@ class LoginFragment : Fragment() {
                         Log.d("LoginFragment", "Token found: $token")
 
                         verified.visibility = View.VISIBLE
+                        val profileCompleted = checkProfileCompletion()
                         Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                     } else {
@@ -160,4 +161,33 @@ class LoginFragment : Fragment() {
         errorView.visibility = View.VISIBLE
         field.setBackgroundResource(R.drawable.wrong_input)
     }
+    private suspend fun checkProfileCompletion(): Boolean {
+        return try {
+            val api = ApiClient.getTokenService(requireContext())
+            val response = api.getProfile()
+
+            if (response.isSuccessful) {
+                val profile = response.body()?.data?.profile
+                val completed = profile?.fname?.isNotEmpty() == true && profile?.lname?.isNotEmpty() == true
+
+                Log.d("LoginFragment", "Fetched profile: fname=${profile?.fname}, lname=${profile?.lname}, avatar=${profile?.profile_pic_url}")
+
+                requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
+                    .putBoolean("profile_completed", true)
+                    .putString("fname", profile?.fname ?: "")
+                    .putString("lname", profile?.lname ?: "")
+                    .putString("userAvatarUrl", profile?.profile_pic_url ?: "")
+                    .apply()
+
+                completed
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("ProfileCheck", "Error fetching profile: ${e.message}")
+            false
+        }
+    }
+
+
 }

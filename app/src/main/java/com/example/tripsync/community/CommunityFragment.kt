@@ -59,9 +59,10 @@ class CommunityFragment : Fragment(), PostActionListener {
         searchIcon = toolbar?.findViewById(R.id.search)
         createIcon = toolbar?.findViewById(R.id.create)
 
-        val sharedPref = requireContext().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+        val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val currentUserEmail = sharedPref.getString("userEmail", null)
-        val currentUserName = sharedPref.getString("userName", "Unknown User")
+        val currentUserName = sharedPref.getString("fname", "Unknown User") + " " +
+                sharedPref.getString("lname", "")
         val currentUserAvatar = sharedPref.getString("userAvatarUrl", null)
 
         Log.d("CommunityFragment", "Loaded user: $currentUserName, $currentUserEmail")

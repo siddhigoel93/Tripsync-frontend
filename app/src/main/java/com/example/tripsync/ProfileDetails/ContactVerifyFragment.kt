@@ -125,7 +125,22 @@ class ContactVerifyFragment : Fragment() {
 
 
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show()
+                    val body = response.body()
+                    val profile = body?.data?.profile
+
+                    if (body?.success == true && profile != null) {
+                        val prefs =
+                            requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                        prefs.edit()
+                            .putString("fname", profile.fname ?: "")
+                            .putString("lname", profile.lname ?: "")
+                            .putString(
+                                "userAvatarUrl",
+                                profile.profilePicUrl ?: profile.profilePic ?: ""
+                            )
+                            .apply()
+                    }
+                        Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show()
                     val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                     sharedPrefs.edit().putBoolean("profile_completed", true).apply()
                     navigateToExplore()

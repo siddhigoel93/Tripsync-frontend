@@ -76,35 +76,38 @@ class CreatePostFragment : Fragment() {
     }
 
     private fun setupUserProfile() {
-        val context = requireContext()
-        val sharedPref = context.getSharedPreferences("user", Context.MODE_PRIVATE)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
-        val fname = sharedPref.getString("fname", "")
-        val lname = sharedPref.getString("lname", "")
-        val fullName = listOfNotNull(fname, lname)
-            .filter { it.isNotBlank() }
-            .joinToString(" ")
-            .ifEmpty { "Unknown User" }
+            // Get user info
+            val fname = sharedPref.getString("fname", "")
+            val lname = sharedPref.getString("lname", "")
+            val fullName = listOfNotNull(fname, lname)
+                .filter { it.isNotBlank() }
+                .joinToString(" ")
+                .ifEmpty { "Unknown User" }
 
-        val userNameTextView = binding.postContentCard.findViewById<TextView>(R.id.user_name)
-        userNameTextView.text = fullName
+            val userNameTextView = binding.postContentCard.findViewById<TextView>(R.id.user_name)
+            userNameTextView.text = fullName
 
-        val currentUserAvatarUrl = sharedPref.getString("userAvatarUrl", null)
-        val profileAvatarImageView = binding.postContentCard.findViewById<ShapeableImageView>(R.id.profile_avatar)
+            val avatarUrl = sharedPref.getString("userAvatarUrl", null)
+            val profileAvatarImageView = binding.postContentCard.findViewById<ShapeableImageView>(R.id.profile_avatar)
 
-        if (!currentUserAvatarUrl.isNullOrEmpty()) {
-            Glide.with(this)
-                .load(currentUserAvatarUrl)
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.placeholder_image)
-                .into(profileAvatarImageView)
-        } else {
-            profileAvatarImageView.setImageResource(R.drawable.placeholder_image)
+            if (!avatarUrl.isNullOrEmpty()) {
+                Glide.with(this@CreatePostFragment)
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.placeholder_image)
+                    .into(profileAvatarImageView)
+            } else {
+                profileAvatarImageView.setImageResource(R.drawable.placeholder_image)
+            }
+
+            val postVisibilityTextView = binding.postContentCard.findViewById<TextView>(R.id.post_visibility)
+            postVisibilityTextView.text = "Now"
         }
-
-        val postVisibilityTextView = binding.postContentCard.findViewById<TextView>(R.id.post_visibility)
-        postVisibilityTextView.text = "Now"
     }
+
 
     private fun setupToolbar() {
         val toolbar = binding.appBar.findViewById<Toolbar>(R.id.toolbar)

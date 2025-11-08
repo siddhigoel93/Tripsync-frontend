@@ -25,6 +25,11 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+
+fun String.toRequestBody(): RequestBody = this.toRequestBody("text/plain".toMediaTypeOrNull())
+
 
 class PreferencesFragment : Fragment() {
 
@@ -105,12 +110,91 @@ class PreferencesFragment : Fragment() {
         val name = (uri.lastPathSegment ?: "profile.jpg").take(80)
         val temp = File(requireContext().cacheDir, name)
         cr.openInputStream(uri)?.use { input ->
-            FileOutputStream(temp).use { out -> input.copyTo(out) }
+            FileOutputStream(temp).use { out ->
+                val bitmap = android.graphics.BitmapFactory.decodeStream(input)
+                bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 80, out)
+            }
         } ?: return@withContext null
         val mime = cr.getType(uri) ?: "image/jpeg"
         val body = temp.asRequestBody(mime.toMediaTypeOrNull())
-        MultipartBody.Part.createFormData("image", temp.name, body)
+        MultipartBody.Part.createFormData("profile_pic", temp.name, body)
     }
+//
+//    private fun submitProfile() {
+//        val bearer = bearer()
+//        if (bearer.isNullOrEmpty()) {
+//            Toast.makeText(context, "Not logged in. Please sign in again.", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//
+//        val service = ApiClient.getAuthService(requireContext())
+//
+//        val req = CreateProfileRequest(
+//            fname = vm.firstName,
+//            lname = vm.lastName,
+//            phone_number = normalizeToIndiaE164(vm.phoneNumber),
+//            date = vm.dob,
+//            gender = vm.gender,
+//            bio = vm.aboutMe,
+//            bgroup = vm.bgroup,
+//            allergies = vm.allergies,
+//            medical = vm.medical,
+//            ename = vm.ename,
+//            enumber = normalizeToIndiaE164(vm.enumberRaw),
+//            erelation = vm.erelation,
+//            preference = vm.preference
+//        )
+////        val prefs = requireContext().getSharedPreferences("user", Context.MODE_PRIVATE)
+////        prefs.edit()
+////            .putString("fname", vm.firstName)
+////            .putString("lname", vm.lastName)
+////            .apply()
+//
+//
+//        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+//            try {
+//                // Step 1: Create profile via JSON
+//                val createResp = withContext(Dispatchers.IO) { service.createProfile(bearer, req) }
+//
+//                if (!createResp.isSuccessful) {
+//                    val code = createResp.code()
+//                    val errorBody = createResp.errorBody()?.string()?.trim().orEmpty()
+//                    Log.e("ProfileCreate", "Error ($code): $errorBody")
+//                    Toast.makeText(context, "Failed to create profile ($code)", Toast.LENGTH_LONG).show()
+//                    return@launchWhenStarted
+//                }
+//
+//                Toast.makeText(context, "Profile created successfully", Toast.LENGTH_SHORT).show()
+//
+//                // Step 2: Upload profile picture if selected
+//                val part = uriToPart()
+//                if (part != null) {
+//                    val imageResp = withContext(Dispatchers.IO) { service.uploadProfileImage(bearer, part) }
+//
+//                    if (imageResp.isSuccessful) {
+//                        Toast.makeText(context, "Profile picture uploaded successfully", Toast.LENGTH_SHORT).show()
+//                        val partName = part.headers?.get("Content-Disposition") ?: "unknown"
+//                        Log.d("ProfileCreate", "Image uploaded: $partName")
+//                    } else {
+//                        val code = imageResp.code()
+//                        val errorBody = imageResp.errorBody()?.string()?.trim().orEmpty()
+//                        Log.e("ProfileCreate", "Image upload failed ($code): $errorBody")
+//                        Toast.makeText(context, "Profile created but image upload failed", Toast.LENGTH_LONG).show()
+//                    }
+//                } else {
+//                    Log.d("ProfileCreate", "No image selected, skipping upload")
+//                }
+//
+//                // Step 3: Navigate to next screen
+//                findNavController().navigate(
+//                    R.id.action_preferencesFragment_to_contactVerifyFragment,
+//                    Bundle().apply { putString("travel_preference", vm.preference) }
+//                )
+//
+//            } catch (e: Exception) {
+//                Log.e("ProfileCreate", "Unexpected error: ${e.message}")
+//                Toast.makeText(context, "Something went wrong. Please try again later.", Toast.LENGTH_SHORT).show()
+//            }
 
     private fun submitProfile() {
         val bearer = bearer()
@@ -121,87 +205,52 @@ class PreferencesFragment : Fragment() {
 
         val service = ApiClient.getAuthService(requireContext())
 
-        val req = CreateProfileRequest(
-            fname = vm.firstName,
-            lname = vm.lastName,
-            phone_number = normalizeToIndiaE164(vm.phoneNumber),
-            date = vm.dob,
-            gender = vm.gender,
-            bio = vm.aboutMe,
-            bgroup = vm.bgroup,
-            allergies = vm.allergies,
-            medical = vm.medical,
-            ename = vm.ename,
-            enumber = normalizeToIndiaE164(vm.enumberRaw),
-            erelation = vm.erelation,
-            preference = vm.preference
-        )
-        val prefs = requireContext().getSharedPreferences("user", Context.MODE_PRIVATE)
-        prefs.edit()
-            .putString("fname", vm.firstName)
-            .putString("lname", vm.lastName)
-            .apply()
-
-
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            val createResp = withContext(Dispatchers.IO) { service.createProfile(bearer, req) }
+            try {
+                val imagePart = uriToPart() // optional
 
-            if (createResp.isSuccessful) {
-                val part = uriToPart()
-                if (part != null) {
-                    withContext(Dispatchers.IO) { service.uploadProfileImage(bearer, part) }
+                val response = withContext(Dispatchers.IO) {
+                    service.createProfileWithImage(
+                        bearer,
+                        vm.firstName.toRequestBody(),
+                        vm.lastName.toRequestBody(),
+                        normalizeToIndiaE164(vm.phoneNumber).toRequestBody(),
+                        vm.dob.toRequestBody(),
+                        vm.gender.toRequestBody(),
+                        vm.aboutMe.toRequestBody(),
+                        vm.bgroup.toRequestBody(),
+                        vm.allergies.toRequestBody(),
+                        vm.medical.toRequestBody(),
+                        vm.ename.toRequestBody(),
+                        normalizeToIndiaE164(vm.enumberRaw).toRequestBody(),
+                        vm.erelation.toRequestBody(),
+                        vm.preference.toRequestBody(),
+                        imagePart
+                    )
                 }
-                Toast.makeText(context, "Profile created", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(
-                    R.id.action_preferencesFragment_to_contactVerifyFragment,
-                    Bundle().apply { putString("travel_preference", vm.preference) }
-                )
-            } else {
-                val code = createResp.code()
-                val errorBody = createResp.errorBody()?.string()?.trim().orEmpty()
-                Log.e("ProfileCreate", "Error ($code): $errorBody")
 
-                try {
-                    val json = JSONObject(errorBody)
-                    val message = json.optString("message", "Unknown error")
-                    val errorCode = json.optString("error_code", "")
-                    val errors = json.optJSONObject("errors")
-
-                    when {
-                        errorCode.equals("PROFILE_EXISTS", true) -> {
-                            Toast.makeText(context, "Profile already exists", Toast.LENGTH_LONG).show()
-                        }
-
-                        errorCode.equals("SMS_FAILED", true) -> {
-                            Toast.makeText(context, "Failed to send OTP. Try again later.", Toast.LENGTH_LONG).show()
-                        }
-
-                        errorCode.equals("OTP_LOCKED", true) -> {
-                            Toast.makeText(context, "Too many attempts. Please try again later.", Toast.LENGTH_LONG).show()
-                        }
-
-                        errors?.has("phone_number") == true -> {
-                            Toast.makeText(context, "This phone number is already registered", Toast.LENGTH_LONG).show()
-                        }
-
-                        errors?.has("date") == true -> {
-                            Toast.makeText(context, "Please fill your date of birth", Toast.LENGTH_LONG).show()
-                        }
-
-                        errors?.has("enumber") == true -> {
-                            Toast.makeText(context, "Emergency number must be in international format", Toast.LENGTH_LONG).show()
-                        }
-
-                        else -> {
-                            Toast.makeText(context, message.ifEmpty { "Failed to upload details ($code)" }, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e("ProfileCreate", "Error parsing JSON: ${e.message}")
-                    Toast.makeText(context, "Unexpected error ($code)", Toast.LENGTH_SHORT).show()
+                if (response.isSuccessful) {
+                    Toast.makeText(context, "Profile created successfully", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(
+                        R.id.action_preferencesFragment_to_contactVerifyFragment,
+                        Bundle().apply { putString("travel_preference", vm.preference) }
+                    )
+                } else {
+                    val errorBody = response.errorBody()?.string().orEmpty()
+                    Log.e("ProfileCreate", "Error: $errorBody")
+                    Toast.makeText(context, "Failed to create profile", Toast.LENGTH_LONG).show()
                 }
+
+            } catch (e: Exception) {
+                Log.e("ProfileCreate", "Exception: ${e.message}")
+                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
             }
-
         }
     }
+
 }
+
+
+
+
+

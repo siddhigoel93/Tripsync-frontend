@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.WeatherResponse
 import com.google.android.material.appbar.AppBarLayout
@@ -60,7 +61,20 @@ class ExploreFragment : Fragment() {
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
 
-        customHeader.visibility = if (isProfileCompleted || args.showHeader) View.GONE else View.VISIBLE
+        customHeader.visibility = if (isProfileCompleted ) View.GONE else View.VISIBLE
+
+        val sp = requireContext().getSharedPreferences("user", Context.MODE_PRIVATE)
+        val avatarUrl = sp.getString("userAvatarUrl", null)
+        val profileImageView = view.findViewById<ImageView>(R.id.profile_avatar)
+        if (!avatarUrl.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(avatarUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
+                .into(profileImageView)
+        } else {
+            profileImageView?.setImageResource(R.drawable.placeholder_image)
+        }
 
         val elevationInPixels = 4f * resources.displayMetrics.density
         appBarLayout.elevation = elevationInPixels
