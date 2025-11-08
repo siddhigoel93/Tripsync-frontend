@@ -64,12 +64,13 @@ class ExploreFragment : Fragment() {
         customHeader.visibility = if (isProfileCompleted ) View.GONE else View.VISIBLE
 
         val avatarUrl = sharedPrefs.getString("userAvatarUrl", null)
-        val profileImageView = view.findViewById<ImageView>(R.id.profile_avatar)
+        val profileImageView = view.findViewById<ImageView>(R.id.menu_icon)
         if (!avatarUrl.isNullOrEmpty()) {
             Glide.with(this)
                 .load(avatarUrl)
                 .placeholder(R.drawable.placeholder_image)
                 .error(R.drawable.placeholder_image)
+                .circleCrop()
                 .into(profileImageView)
         } else {
             profileImageView?.setImageResource(R.drawable.placeholder_image)

@@ -94,6 +94,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.homeFragment,
                 R.id.nav_community,
+                R.id.trendingDestinationFragment,
                 R.id.createPostFragment,
                 R.id.searchFragment,
                     -> {

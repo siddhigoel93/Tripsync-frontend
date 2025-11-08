@@ -160,5 +160,6 @@ interface AuthService {
         @Part profile_pic: MultipartBody.Part? = null
     ): Response<CreateProfileResponse>
 
-
+    @GET("/api/trending/places/")
+    suspend fun getTrendingPlaces(): List<TrendingPlace>
 }

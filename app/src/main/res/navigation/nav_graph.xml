@@ -112,6 +112,9 @@
         <action
             android:id="@+id/action_homeFragment_to_communityFragment"
             app:destination="@id/nav_community" />
+        <action
+            android:id="@+id/action_homeFragment_to_trendingDestinationFragment"
+            app:destination="@id/trendingDestinationFragment" />
     </fragment>
     <fragment
         android:id="@+id/emergencyFragment"
@@ -188,4 +191,8 @@
             android:id="@+id/action_searchFragment_to_nav_community"
             app:destination="@id/nav_community" />
     </fragment>
+    <fragment
+        android:id="@+id/trendingDestinationFragment"
+        android:name="com.example.tripsync.TrendingDestinationFragment"
+        android:label="TrendingDestinationFragment" />
 </navigation>
