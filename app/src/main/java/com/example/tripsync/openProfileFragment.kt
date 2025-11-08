@@ -31,7 +31,8 @@ class OpenProfileFragment : Fragment() {
     private lateinit var emailField: EditText
     private lateinit var contactField: EditText
     private lateinit var bioField: EditText
-    private lateinit var genderField: TextView
+    private lateinit var genderM: TextView
+    private lateinit var genderF: TextView
     private lateinit var bloodGroupField: EditText
     private lateinit var allergiesField: EditText
     private lateinit var emergencyName: EditText
@@ -50,6 +51,7 @@ class OpenProfileFragment : Fragment() {
 
     private var isEditing = false
     private var imageUri: Uri? = null
+    private var selectedGender: String? = null
 
     companion object {
         private const val PICK_IMAGE_REQUEST = 1001
@@ -65,6 +67,7 @@ class OpenProfileFragment : Fragment() {
         toggleEditable(false)
         setupInterestClicks()
         setupEditButton()
+        setupGenderClicks()
         fetchProfile()
         setupAvatarClick()
         return view
@@ -75,7 +78,8 @@ class OpenProfileFragment : Fragment() {
         emailField = view.findViewById(R.id.email)
         contactField = view.findViewById(R.id.contact)
         bioField = view.findViewById(R.id.bio_content)
-        genderField = view.findViewById(R.id.gender)
+        genderM = view.findViewById(R.id.genderM)
+        genderF = view.findViewById(R.id.genderF)
         bloodGroupField = view.findViewById(R.id.blood_group_value)
         allergiesField = view.findViewById(R.id.allergies_value)
         emergencyName = view.findViewById(R.id.contact_name_input)
@@ -120,6 +124,26 @@ class OpenProfileFragment : Fragment() {
         cardRelaxation.setOnClickListener(clickListener)
         cardSpiritual.setOnClickListener(clickListener)
         cardHistoric.setOnClickListener(clickListener)
+    }
+    private fun setupGenderClicks() {
+        // Assume you have gender_selector (default) and gender_selected (active) drawables
+        val normalBg = ContextCompat.getDrawable(requireContext(), R.drawable.gender_selector)
+        val selectedBg = ContextCompat.getDrawable(requireContext(), R.drawable.gender_selected)
+
+        genderM.setOnClickListener {
+            if (isEditing) {
+                selectedGender = "Male"
+                genderM.background = selectedBg
+                genderF.background = normalBg
+            }
+        }
+        genderF.setOnClickListener {
+            if (isEditing) {
+                selectedGender = "Female"
+                genderF.background = selectedBg
+                genderM.background = normalBg
+            }
+        }
     }
 
     private fun setupEditButton() {
@@ -232,7 +256,6 @@ class OpenProfileFragment : Fragment() {
         emailField.setText("example@gmail.com") // you can set from API if exists
         contactField.setText(profile.phone_number ?: "")
         bioField.setText(profile.bio ?: "")
-        genderField.text = profile.gender ?: "N/A"
         bloodGroupField.setText(profile.bgroup ?: "")
         allergiesField.setText(profile.allergies ?: "")
         emergencyName.setText(profile.ename ?: "")
@@ -246,6 +269,7 @@ class OpenProfileFragment : Fragment() {
 
         Glide.with(this)
             .load(profile.profile_pic_url ?: R.drawable.placeholder_image)
+            .circleCrop()
             .into(avatarImage)
     }
 

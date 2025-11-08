@@ -398,7 +398,7 @@
                 android:layout_marginTop="16dp"
                 android:textColor="@color/black"
                 android:layout_marginStart="8dp"
-                app:layout_constraintTop_toBottomOf="@id/gender"
+                app:layout_constraintTop_toBottomOf="@id/genderM"
                 app:layout_constraintStart_toEndOf="@id/guideline_half"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -504,7 +504,6 @@
                     android:layout_height="wrap_content"
                     android:entries="@array/relationship_options"
                     android:background="@drawable/edittext_white"
-                    android:paddingVertical="12dp"
                     android:textColor="@color/black"
                     android:paddingStart="12dp"
                     app:layout_constraintTop_toBottomOf="@id/relationship_label"
