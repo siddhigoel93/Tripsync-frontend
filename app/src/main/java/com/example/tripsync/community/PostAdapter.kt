@@ -111,7 +111,7 @@ class PostAdapter(
             holder.optionsMenu.visibility = View.VISIBLE
             holder.optionsMenu.setOnClickListener { showPopupMenu(it, post) }
         } else {
-            holder.optionsMenu.visibility = View.GONE
+            holder.optionsMenu.visibility = View.VISIBLE
         }
     }
 

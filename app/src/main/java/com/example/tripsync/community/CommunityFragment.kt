@@ -126,7 +126,7 @@ class CommunityFragment : Fragment(), PostActionListener {
                 if (response?.isSuccessful == true && response.body() != null) {
                     val posts = response.body()!!.data
                     postAdapter?.updateData(posts)
-                    Toast.makeText(requireContext(), "Feed refreshed (${posts.size} posts)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Feed refreshed ", Toast.LENGTH_SHORT).show()
                 } else {
                     val errorMsg = response?.errorBody()?.string() ?: "Unknown error"
                     Log.e("CommunityFragment", "API Error: ${response?.code()} - $errorMsg")
