@@ -36,11 +36,11 @@ interface AuthService {
     @POST("/api/account/password/reset/verify/")
     suspend fun verifyOtp(@Body request: ResetPasswordOTPRequest): Response<Any>
 
-    @POST("/api/personal/profile/")
-    suspend fun createProfile(
-        @Header("Authorization") bearer: String,
-        @Body request: CreateProfileRequest
-    ): Response<CreateProfileResponse>
+//    @POST("/api/personal/profile/")
+//    suspend fun createProfile(
+//        @Header("Authorization") bearer: String,
+//        @Body request: CreateProfileRequest
+//    ): Response<CreateProfileResponse>
 
     @Headers("Content-Type: application/json")
     @POST("api/personal/verify-otp/")
@@ -62,12 +62,12 @@ interface AuthService {
         @Body request: UpdateProfileRequest
     ): Response<UpdateProfileResponse>
 
-    @Multipart
-    @POST("/api/personal/profile/picture/")
-    suspend fun uploadProfileImage(
-        @Header("Authorization") bearer: String,
-        @Part image: MultipartBody.Part
-    ): Response<GenericResponse>
+//    @Multipart
+//    @POST("/api/personal/profile/picture/")
+//    suspend fun uploadProfileImage(
+//        @Header("Authorization") bearer: String,
+//        @Part image: MultipartBody.Part
+//    ): Response<GenericResponse>
 
     @POST("/api/personal/emergency/sos/")
     suspend fun sendEmergencySOS(

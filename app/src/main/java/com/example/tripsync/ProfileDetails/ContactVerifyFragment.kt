@@ -146,8 +146,8 @@ class ContactVerifyFragment : Fragment() {
                     navigateToExplore()
                 } else {
                     val error = response.errorBody()?.string()
+                    showOtpError("Invalid or expired OTP")
                     Log.e("VerifyProfileOtp", "Error: $error")
-                    Toast.makeText(requireContext(), "Invalid or expired OTP", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Log.e("VerifyProfileOtp", "Exception: ${e.message}")
@@ -180,8 +180,6 @@ class ContactVerifyFragment : Fragment() {
         }
     }
 
-
-    // --- UI/Input Logic ---
 
     private fun showOtpError(message: String) {
         otpError.text = message

@@ -348,10 +348,10 @@ class FragmentOtp : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP resent successfully!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Verification failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Failed to resend OTP", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Wrong OTP", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
             }
         }
     }

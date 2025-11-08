@@ -118,6 +118,10 @@ class LoginFragment : Fragment() {
                         val token = sp.getString("access_token", null)
                         Log.d("LoginFragment", "Token found: $token")
 
+                        requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
+                            .putString("userEmail" , emailText)
+                            .apply()
+
                         verified.visibility = View.VISIBLE
                         val profileCompleted = checkProfileCompletion()
                         Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
@@ -131,6 +135,7 @@ class LoginFragment : Fragment() {
                     showFieldError(usernameError, etUsername, "(Please check your email or password)")
                     showFieldError(passwordError, passwordField, "")
                 } catch (ioException: IOException) {
+                    Log.e("LoginFragment", "Network error: ${ioException.message}")
                     Toast.makeText(requireContext(), "Please check your internet connection and try again.", Toast.LENGTH_SHORT).show()
                 } catch (exception: Exception) {
                     Toast.makeText(requireContext(), "Something went wrong. Please try again later.", Toast.LENGTH_SHORT).show()

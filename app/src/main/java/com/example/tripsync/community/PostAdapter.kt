@@ -77,47 +77,6 @@ class PostAdapter(
             holder.userAvatar.setImageResource(R.drawable.placeholder_image)
         }
 
-//        if (!post.img_url.isNullOrEmpty()) {
-//            holder.mediaImage.visibility = View.VISIBLE
-//            val imageUrl = post.img_url
-//            Log.d("GlideDebug", "Loading image: $imageUrl")
-//
-//            if (imageUrl.startsWith("content://") ||
-//                imageUrl.startsWith("file://") ||
-//                imageUrl.startsWith("/storage")
-//            ) {
-//                Glide.with(context)
-//                    .load(Uri.parse(imageUrl))
-//                    .placeholder(R.drawable.placeholder_image)
-//                    .into(holder.mediaImage)
-//            } else {
-//                // ✅ Only add Authorization header for your API URLs (not S3)
-//                val glideUrl = if (imageUrl.contains("tripsync-media.s3.amazonaws.com")) {
-//                    GlideUrl(imageUrl) // public S3 link, no auth needed
-//                } else {
-//                    val token = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
-//                        .getString("access_token", null)
-//
-//                    if (token != null) {
-//                        GlideUrl(
-//                            imageUrl,
-//                            LazyHeaders.Builder()
-//                                .addHeader("Authorization", "Bearer $token")
-//                                .addHeader("Accept", "image/*")
-//                                .build()
-//                        )
-//                    } else GlideUrl(imageUrl)
-//                }
-//
-//                Glide.with(context)
-//                    .load(glideUrl)
-//                    .placeholder(R.drawable.placeholder_image)
-//                    .error(R.drawable.placeholder_image)
-//                    .into(holder.mediaImage)
-//            }
-//        } else {
-//            holder.mediaImage.visibility = View.GONE
-//        }
         if (!post.img_url.isNullOrEmpty()) {
             holder.mediaImage.visibility = View.VISIBLE
 
@@ -145,6 +104,8 @@ class PostAdapter(
         holder.iconComment.setOnClickListener {
             listener.onComment(post.id)
         }
+
+        Log.d("PostAdapter", "Post ${post.id} owner: ${post.owner}")
 
         if (post.owner) {
             holder.optionsMenu.visibility = View.VISIBLE

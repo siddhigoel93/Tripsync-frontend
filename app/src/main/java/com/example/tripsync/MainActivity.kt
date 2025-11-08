@@ -25,6 +25,7 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 
 class MainActivity : AppCompatActivity() {
     lateinit var progressLayout: View
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        window.statusBarColor = Color.TRANSPARENT
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
 
@@ -47,6 +49,9 @@ class MainActivity : AppCompatActivity() {
             isAppearanceLightStatusBars = false
             isAppearanceLightNavigationBars = false
         }
+
+
+
         progressLayout = findViewById(R.id.profileProgressLayout)
         app_bar_layout = findViewById(R.id.app_bar_layout)
         bottom_app_bar_wrapper = findViewById(R.id.bottom_app_bar)
@@ -107,6 +112,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupDrawerMenuListeners() {
         val drawerMenuView = findViewById<View>(R.id.drawer_menu_include)
+
+        val profileName = drawerMenuView.findViewById<TextView>(R.id.profile_name)
+        val profileEmail = drawerMenuView.findViewById<TextView>(R.id.profile_email)
+        val profileImage = drawerMenuView.findViewById<ImageView>(R.id.profile_image)
+
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val fname = sharedPref.getString("fname", "User")
+        val lname = sharedPref.getString("lname", "")
+        val email = sharedPref.getString("userEmail", "example@email.com")
+        val avatarUrl = sharedPref.getString("userAvatarUrl", null)
+
+        profileName.text = "$fname"
+        profileEmail.text = email
+        if (!avatarUrl.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(avatarUrl)
+                .placeholder(R.drawable.profile)
+                .error(R.drawable.profile)
+                .circleCrop()
+                .into(profileImage)
+        } else {
+            profileImage.setImageResource(R.drawable.profile)
+        }
 
         // Find menu items by their IDs from layout_drawer_menu.xml
         val menuProfile = drawerMenuView.findViewById<TextView>(R.id.menu_profile)
@@ -240,8 +268,8 @@ class MainActivity : AppCompatActivity() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // If the drawer is open, consume the back event and close it.
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START)
+                if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                    drawerLayout.closeDrawer(GravityCompat.END)
                 } else {
                     // If the drawer is closed, allow the default system back behavior
                     isEnabled = false
