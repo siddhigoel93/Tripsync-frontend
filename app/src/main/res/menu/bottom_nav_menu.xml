@@ -17,7 +17,7 @@
     android:icon="@drawable/community"
     android:title="Community" />
     <item
-        android:id="@+id/nav_search"
+        android:id="@+id/chatFragment"
         android:icon="@drawable/chat"
         android:title="Chat" />
 </menu>

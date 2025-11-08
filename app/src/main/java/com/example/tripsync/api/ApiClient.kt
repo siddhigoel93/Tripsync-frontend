@@ -33,7 +33,7 @@ object ApiClient {
        return DEFAULT_BASE_URL
     }
 
-    private fun buildRetrofit(context: Context , secure : Boolean): Retrofit {
+    private fun buildRetrofit(context: Context, secure: Boolean): Retrofit {
         val baseUrl = getBaseUrl(context)
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val clientBuilder = OkHttpClient.Builder()
@@ -77,5 +77,8 @@ object ApiClient {
 
     fun <T> createService(context: Context, serviceClass: Class<T>): T {
         return getRetrofitInstance(context, secure = false).create(serviceClass)
+    }
+    fun getItineraryService(context: Context): ItineraryService {
+        return getRetrofitInstance(context, secure = true).create(ItineraryService::class.java)
     }
 }

@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val fname = sharedPref.getString("fname", "User")
         val lname = sharedPref.getString("lname", "")
-        val email = sharedPref.getString("userEmail", "example@email.com")
+        val email = sharedPref.getString("currentUserEmail", "example@email.com")
         val avatarUrl = sharedPref.getString("userAvatarUrl", null)
 
         profileName.text = "$fname"
@@ -281,5 +281,17 @@ class MainActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, callback)
     }
+
+    fun updateDrawerProfileImage(url: String) {
+        val drawerMenuView = findViewById<View>(R.id.drawer_menu_include)
+        val profileImage = drawerMenuView.findViewById<ImageView>(R.id.profile_image)
+        Glide.with(this)
+            .load(url)
+            .placeholder(R.drawable.profile)
+            .error(R.drawable.profile)
+            .circleCrop()
+            .into(profileImage)
+    }
+
 
 }

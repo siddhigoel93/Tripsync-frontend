@@ -9,7 +9,7 @@
         android:id="@+id/fragment_signup"
         android:name="com.example.tripsync.Auth.fragment_signup"
         android:label="Sign Up"
-        tools:layout="@layout/fragment_signup" >
+        tools:layout="@layout/fragment_signup">
         <action
             android:id="@+id/action_fragment_signup_to_fragment_otp"
             app:destination="@id/fragment_otp" />
@@ -21,7 +21,7 @@
         android:id="@+id/fragment_otp"
         android:name="com.example.tripsync.Auth.FragmentOtp"
         android:label="fragment_otp"
-        tools:layout="@layout/fragment_otp" >
+        tools:layout="@layout/fragment_otp">
         <action
             android:id="@+id/action_fragment_otp_to_login"
             app:destination="@id/loginFragment" />
@@ -29,7 +29,7 @@
             android:id="@+id/action_fragment_otp_to_welcomeFragment"
             app:destination="@id/welcomeFragment"
             app:popUpTo="@id/fragment_signup"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
@@ -39,7 +39,7 @@
             android:id="@+id/action_onboarding_to_login"
             app:destination="@id/loginFragment"
             app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_onboardingFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -62,13 +62,13 @@
             android:id="@+id/action_loginFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
         android:id="@+id/resetPasswordFragment"
         android:name="com.example.tripsync.Auth.ResetPasswordFragment"
-        android:label="Reset Password" >
+        android:label="Reset Password">
         <action
             android:id="@+id/action_resetPasswordFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -79,7 +79,7 @@
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.example.tripsync.Auth.ForgotPasswordFragment"
-        android:label="Forgot Password" >
+        android:label="Forgot Password">
         <action
             android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -109,6 +109,12 @@
         <action
             android:id="@+id/action_homeFragment_to_fragment_personal_details"
             app:destination="@id/fragment_personal_details" />
+        <action
+            android:id="@+id/action_homeFragment_to_AIItinearyPlannerFragment"
+            app:destination="@id/AIItinearyPlannerFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
         <action
             android:id="@+id/action_homeFragment_to_communityFragment"
             app:destination="@id/nav_community" />
@@ -170,6 +176,94 @@
             android:id="@+id/action_contactVerifyFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/AIItinearyPlannerFragment"
+        android:name="com.example.tripsync.AIItinearyPlannerFragment"
+        android:label="activity_a_i_itineary_planner"
+        tools:layout="@layout/activity_a_i_itineary_planner">
+        <action
+            android:id="@+id/action_AIItinearyPlannerFragment_to_budgetFragment"
+            app:destination="@id/budgetFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="com.example.tripsync.BudgetFragment"
+        android:label="BudgetFragment">
+        <argument
+            android:name="tripName"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="startDate"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="endDate"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="preference"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="tripType"
+            app:argType="string"
+            android:defaultValue="" />
+        <action
+            android:id="@+id/action_budgetFragment_to_budgetOverviewFragment"
+            app:destination="@id/budgetOverviewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/budgetOverviewFragment"
+        android:name="com.example.tripsync.BudgetOverviewFragment"
+        android:label="BudgetOverviewFragment">
+        <argument
+            android:name="tripName"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="startDate"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="endDate"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="preference"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="totalBudget"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="tripType"
+            app:argType="string"
+            android:defaultValue="" />
+        <action
+            android:id="@+id/action_budgetOverviewFragment_to_itinearyProgressThree2"
+            app:destination="@id/itinearyProgressThree2" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/itinearyProgressThree2"
+        android:name="com.example.tripsync.ItinearyProgressThree"
+        android:label="ItinearyProgressThree" />
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.tripsync.ChatFragment"
+        android:label="ChatFragment"
+        tools:layout="@layout/fragment_chats">
+        <action
+            android:id="@+id/action_chatFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/nav_community"
         android:name="com.example.tripsync.community.CommunityFragment"

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -20,6 +21,7 @@ import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.WeatherResponse
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,13 +36,14 @@ class ExploreFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
 
-        val completeProfileButton = view.findViewById<MaterialButton>(R.id.complete_profile_button)
-        completeProfileButton.setOnClickListener {
+
+        // Complete Profile Button
+        view.findViewById<MaterialButton>(R.id.complete_profile_button).setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
         }
 
-        val profileButton = view.findViewById<ImageView>(R.id.menu_icon)
-        profileButton.setOnClickListener {
+        // Drawer Menu Button
+        view.findViewById<ImageView>(R.id.menu_icon).setOnClickListener {
             val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
             if (drawerLayout != null) {
                 drawerLayout.openDrawer(GravityCompat.END)
@@ -48,6 +51,25 @@ class ExploreFragment : Fragment() {
                 Toast.makeText(requireContext(), "DrawerLayout not found in Activity", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // AI Planner Card
+        view.findViewById<CardView>(R.id.card_ai_planner).setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_AIItinearyPlannerFragment)
+        }
+
+        // Bottom Navigation Listener
+//        view.findViewById<BottomNavigationView>(R.id.bottom_navigation_view).setOnItemSelectedListener { item ->
+//            when (item.itemId) {
+//                R.id.nav_search -> {
+//                    val navController = findNavController()
+//                    if (navController.currentDestination?.id != R.id.chatFragment) {
+//                        navController.navigate(R.id.chatFragment)
+//                    }
+//                    true
+//                }
+//                else -> false
+//            }
+//        }
 
         return view
     }
@@ -61,34 +83,40 @@ class ExploreFragment : Fragment() {
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
 
-        customHeader.visibility = if (isProfileCompleted ) View.GONE else View.VISIBLE
+        // Show/hide header
+        customHeader.visibility = if (isProfileCompleted) View.GONE else View.VISIBLE
 
-        val avatarUrl = sharedPrefs.getString("userAvatarUrl", null)
-        val profileImageView = view.findViewById<ImageView>(R.id.menu_icon)
-        if (!avatarUrl.isNullOrEmpty()) {
-            Glide.with(this)
-                .load(avatarUrl)
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.placeholder_image)
-                .circleCrop()
-                .into(profileImageView)
+        // Header setup
+        if (args.showHeader) {
+            val avatarUrl = sharedPrefs.getString("userAvatarUrl", null)
+            val profileImageView = view.findViewById<ImageView>(R.id.menu_icon)
+            if (!avatarUrl.isNullOrEmpty()) {
+                Glide.with(this)
+                    .load(avatarUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.placeholder_image)
+                    .circleCrop()
+                    .into(profileImageView)
+            } else {
+                profileImageView.setImageResource(R.drawable.placeholder_image)
+            }
+            customHeader.visibility = View.GONE
         } else {
-            profileImageView?.setImageResource(R.drawable.placeholder_image)
+            fetchWeather("Delhi") // Example location
         }
 
+        // AppBar elevation
         val elevationInPixels = 4f * resources.displayMetrics.density
         appBarLayout.elevation = elevationInPixels
         appBarLayout.translationZ = elevationInPixels
         appBarLayout.bringToFront()
-
-        fetchWeather("Delhi") // Example location
     }
 
     private fun fetchWeather(location: String) {
         lifecycleScope.launch {
             try {
                 val api = ApiClient.getAuthService(requireContext())
-                val weatherResponse = withContext(Dispatchers.IO) {
+                val weatherResponse: WeatherResponse = withContext(Dispatchers.IO) {
                     api.getWeather(location)
                 }
 
@@ -101,6 +129,16 @@ class ExploreFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    fun updateExploreProfileImage(url: String) {
+        val exploreProfileImage = requireView().findViewById<ImageView>(R.id.profileImageView)
+        Glide.with(this)
+            .load(url)
+            .placeholder(R.drawable.profile)
+            .error(R.drawable.profile)
+            .circleCrop()
+            .into(exploreProfileImage)
     }
 
 }
