@@ -1,4 +1,7 @@
 package com.example.tripsync
 
-class Trip {
-}
+data class Trip(
+    val title: String,
+    val bannerRes: Int,
+    val avatarRes: List<Int>
+)

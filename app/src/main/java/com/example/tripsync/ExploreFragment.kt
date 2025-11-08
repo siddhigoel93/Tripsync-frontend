@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.bottomnavigation.BottomNavigationView   // ADDED
 
 class ExploreFragment : Fragment() {
 
@@ -27,8 +28,6 @@ class ExploreFragment : Fragment() {
 
         val complete_profile_button = view.findViewById<MaterialButton>(R.id.complete_profile_button)
 
-
-
         complete_profile_button.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
         }
@@ -37,65 +36,52 @@ class ExploreFragment : Fragment() {
         cardAIPlanner.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_AIItinearyPlannerFragment)
         }
-//        val button = view.findViewById<MaterialButton>(R.id.logoutButton)
-//
-//        button.setOnClickListener {
-//            logoutUser()
-//        }
 
-//        val emergency = view.findViewById<CardView>(R.id.card_sos_emergency)
-//        emergency.setOnClickListener { findNavController().navigate(R.id.action_homeFragment_to_emergencyFragment) }
         return view
     }
-//
-//    private fun logoutUser() {
-//        // Clear stored tokens
-//        val sharedPrefs = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
-//        sharedPrefs.edit().clear().apply()
-//
-//        Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
-//
-//        findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-//    }
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
-    val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
+        val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
+        val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
 
-    val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-    val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
-//
-//    if (appBarLayout != null) {
-//
-//        val elevationInPixels = 4f * resources.displayMetrics.density
-//
-//        ViewCompat.setElevation(appBarLayout, elevationInPixels)
-//        appBarLayout.translationZ = elevationInPixels
-//
-//        appBarLayout.bringToFront()
-//    }
+        val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
 
-    if(isProfileCompleted){
-        customHeader.visibility= View.GONE
+        if(isProfileCompleted){
+            customHeader.visibility= View.GONE
+        }
+        if (args.showHeader) {
+
+            customHeader.visibility = View.GONE
+            val elevationInPixels = 4f * resources.displayMetrics.density
+            appBarLayout.elevation = elevationInPixels
+            appBarLayout.translationZ = elevationInPixels
+            appBarLayout.bringToFront()
+
+        } else {
+
+            customHeader.visibility = View.VISIBLE
+            val elevationInPixels = 4f * resources.displayMetrics.density
+            appBarLayout.elevation = elevationInPixels
+            appBarLayout.translationZ = elevationInPixels
+            appBarLayout.bringToFront()
+        }
+        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_search -> {
+                    val navController = findNavController()
+                    val current = navController.currentDestination?.id
+                    if (current != R.id.chatFragment) {
+                        navController.navigate(R.id.chatFragment)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+        // END ADDED
     }
-    if (args.showHeader) {
-
-        customHeader.visibility = View.GONE
-        val elevationInPixels = 4f * resources.displayMetrics.density
-        appBarLayout.elevation = elevationInPixels
-        appBarLayout.translationZ = elevationInPixels
-        appBarLayout.bringToFront()
-
-    } else {
-
-        customHeader.visibility = View.VISIBLE
-        val elevationInPixels = 4f * resources.displayMetrics.density
-        appBarLayout.elevation = elevationInPixels
-        appBarLayout.translationZ = elevationInPixels
-        appBarLayout.bringToFront()
-    }
-
-}
 }

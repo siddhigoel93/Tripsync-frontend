@@ -4,6 +4,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="ts_teal">#18C2A8</color>
     <color name="ts_white">#FFFFFFFF</color>
+
+    <color name="bg_gray">#F5F5F5</color>
+    <color name="dark_gray">#6B6B6B</color>
+    <color name="green">#2EBD7A</color>
     <color name="gray_700">#616161</color>
     <color name="blue_500">#42A5F5</color>
     <color name="green_500">#66BB6A</color>

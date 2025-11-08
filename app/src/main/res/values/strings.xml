@@ -17,4 +17,10 @@
     <string name="cd_hide_password">Hide password</string>
     <string name="forgot_password"><![CDATA[<u>Forgot Password</u>]]></string>
     <string name="empty" translatable="false"></string>
+
+
+    <string name="chat">Chat</string>
+    <string name="add">Add</string>
+    <string name="search">Search</string>
+    <string name="edit">Edit</string>
 </resources>

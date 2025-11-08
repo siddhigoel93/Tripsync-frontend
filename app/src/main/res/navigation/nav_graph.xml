@@ -116,6 +116,9 @@
         <action
             android:id="@+id/action_homeFragment_to_AIItinearyPlannerFragment"
             app:destination="@id/AIItinearyPlannerFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
 
     <fragment
@@ -250,5 +253,15 @@
         android:id="@+id/itinearyProgressThree2"
         android:name="com.example.tripsync.ItinearyProgressThree"
         android:label="ItinearyProgressThree" />
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.tripsync.ChatFragment"
+        android:label="ChatFragment"
+        tools:layout="@layout/fragment_chats">
+        <action
+            android:id="@+id/action_chatFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 
 </navigation>

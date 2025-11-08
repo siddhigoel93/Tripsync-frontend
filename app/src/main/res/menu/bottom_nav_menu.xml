@@ -11,10 +11,11 @@
     <item
         android:id="@+id/nav_store_placeholder"
         android:title=""
-        android:enabled="false" /> <item
-    android:id="@+id/nav_cart"
-    android:icon="@drawable/community"
-    android:title="Community" />
+        android:enabled="false" />
+    <item
+        android:id="@+id/nav_cart"
+        android:icon="@drawable/community"
+        android:title="Community" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/profile"
