@@ -1,5 +1,6 @@
 package com.example.tripsync.Auth
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
@@ -89,7 +90,6 @@ class FragmentOtp : Fragment() {
         et1.requestFocus()
         btnVerify.setOnClickListener { submitOtp() }
 
-        // ⬅️ updated click with cooldown check + start
         tvResend.setOnClickListener {
             val now = SystemClock.elapsedRealtime()
             if (now < resendCooldownUntil) {
@@ -120,7 +120,6 @@ class FragmentOtp : Fragment() {
         updateUnderlineVisuals()
     }
 
-    // ⬅️ added helper to start 10s window
     private fun startResendCooldown() {
         resendCooldownUntil = SystemClock.elapsedRealtime() + 10_000L
     }
@@ -273,6 +272,10 @@ class FragmentOtp : Fragment() {
                     val body: VerifyOtpResponse? = response.body()
                     val accessToken = body?.data?.tokens?.access
                     val refreshToken = body?.data?.tokens?.refresh
+                    requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
+                        .putString("currentUserEmail" , email)
+                        .putInt("self_id", body?.data?.user?.id ?: -1)
+                        .apply()
                     if (accessToken != null && refreshToken != null) {
                         val prefs = requireContext().getSharedPreferences("auth", 0)
                         prefs.edit().apply {
