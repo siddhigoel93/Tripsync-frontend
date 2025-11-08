@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/friend_profile_image"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/placeholder_image"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircularShape"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/friend_username_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Ketan Narula"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toEndOf="@id/friend_profile_image"
+        app:layout_constraintEnd_toStartOf="@id/action_icon"
+        app:layout_constraintTop_toTopOf="@id/friend_profile_image"
+        app:layout_constraintBottom_toTopOf="@id/friend_details_text"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/friend_details_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="More Details"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintStart_toStartOf="@id/friend_username_text"
+        app:layout_constraintEnd_toEndOf="@id/friend_username_text"
+        app:layout_constraintTop_toBottomOf="@id/friend_username_text"
+        app:layout_constraintBottom_toBottomOf="@id/friend_profile_image" />
+
+    <ImageView
+        android:id="@+id/action_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/chat"
+        android:contentDescription="Chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#EEEEEE"
+        app:layout_constraintStart_toStartOf="@id/friend_username_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

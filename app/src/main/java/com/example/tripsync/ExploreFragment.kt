@@ -63,8 +63,7 @@ class ExploreFragment : Fragment() {
 
         customHeader.visibility = if (isProfileCompleted ) View.GONE else View.VISIBLE
 
-        val sp = requireContext().getSharedPreferences("user", Context.MODE_PRIVATE)
-        val avatarUrl = sp.getString("userAvatarUrl", null)
+        val avatarUrl = sharedPrefs.getString("userAvatarUrl", null)
         val profileImageView = view.findViewById<ImageView>(R.id.profile_avatar)
         if (!avatarUrl.isNullOrEmpty()) {
             Glide.with(this)

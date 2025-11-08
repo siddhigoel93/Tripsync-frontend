@@ -119,7 +119,7 @@ class LoginFragment : Fragment() {
                         Log.d("LoginFragment", "Token found: $token")
 
                         requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
-                            .putString("userEmail" , emailText)
+                            .putString("currentUserEmail" , emailText)
                             .apply()
 
                         verified.visibility = View.VISIBLE
