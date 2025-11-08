@@ -24,6 +24,7 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
     private var lastSavedBudget: String = ""
     private var currentLocationArg: String = ""
     private var destinationArg: String = ""
+    private var tripTypeArg: String = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         title = view.findViewById(R.id.rwenfcmsasp)
@@ -36,6 +37,7 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
         preference = arguments?.getString("preference").orEmpty()
         currentLocationArg = arguments?.getString("currentLocation").orEmpty()
         destinationArg = arguments?.getString("destination").orEmpty()
+        tripTypeArg = arguments?.getString("tripType").orEmpty()
 
         if (tripName.isNotBlank()) title.text = tripName
 
@@ -88,6 +90,9 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
 
         view.findViewById<View>(R.id.r4d0brug0pm).setOnClickListener {
             val totalBudget = budgetInput.text.toString().trim()
+            findNavController().currentBackStackEntry?.savedStateHandle?.set("totalBudget", totalBudget)
+            findNavController().currentBackStackEntry?.savedStateHandle?.set("tripType", tripTypeArg)
+
             val bundle = Bundle().apply {
                 putString("tripName", tripName)
                 putString("startDate", startDate)
@@ -96,6 +101,7 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
                 putString("totalBudget", totalBudget)
                 putString("currentLocation", currentLocationArg)
                 putString("destination", destinationArg)
+                putString("tripType", tripTypeArg)
             }
             findNavController().navigate(R.id.action_budgetFragment_to_budgetOverviewFragment, bundle)
         }
@@ -109,6 +115,10 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
             budgetInput.setText(restoredBudget)
             budgetInput.setSelection(budgetInput.text.length)
             lastSavedBudget = restoredBudget
+        }
+        val restoredTripType = savedStateHandle?.get<String>("tripType")
+        if (!restoredTripType.isNullOrEmpty()) {
+            tripTypeArg = restoredTripType
         }
     }
 

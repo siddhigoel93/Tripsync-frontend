@@ -204,6 +204,10 @@
             android:name="preference"
             app:argType="string"
             android:defaultValue="" />
+        <argument
+            android:name="tripType"
+            app:argType="string"
+            android:defaultValue="" />
         <action
             android:id="@+id/action_budgetFragment_to_budgetOverviewFragment"
             app:destination="@id/budgetOverviewFragment" />
@@ -233,6 +237,10 @@
             android:name="totalBudget"
             app:argType="string"
             android:defaultValue="" />
+        <argument
+            android:name="tripType"
+            app:argType="string"
+            android:defaultValue="" />
         <action
             android:id="@+id/action_budgetOverviewFragment_to_itinearyProgressThree2"
             app:destination="@id/itinearyProgressThree2" />
@@ -242,4 +250,5 @@
         android:id="@+id/itinearyProgressThree2"
         android:name="com.example.tripsync.ItinearyProgressThree"
         android:label="ItinearyProgressThree" />
+
 </navigation>

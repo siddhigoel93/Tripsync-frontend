@@ -25,6 +25,7 @@ class AIItinearyPlannerFragment : Fragment() {
     private var editTextValue2: String = ""
     private var editTextValue3: String = ""
     private var selectedPreference: String = ""
+    private var selectedTripType: String = "" // NEW
 
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private val startCalendar: Calendar = Calendar.getInstance()
@@ -98,11 +99,15 @@ class AIItinearyPlannerFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        fun selectOnly(selected: View, group: List<View>) { group.forEach { it.isSelected = (it == selected) } }
-        tripBusiness.setOnClickListener { v -> selectOnly(v, listOf(tripBusiness, tripGroup, tripSolo)) }
-        tripGroup.setOnClickListener { v -> selectOnly(v, listOf(tripBusiness, tripGroup, tripSolo)) }
-        tripSolo.setOnClickListener { v -> selectOnly(v, listOf(tripBusiness, tripGroup, tripSolo)) }
+        fun selectOnlyType(selected: View, group: List<View>, label: String) {
+            group.forEach { it.isSelected = (it == selected) }
+            selectedTripType = label
+        }
+        tripBusiness.setOnClickListener { selectOnlyType(it, listOf(tripBusiness, tripGroup, tripSolo), "Business") }
+        tripGroup.setOnClickListener { selectOnlyType(it, listOf(tripBusiness, tripGroup, tripSolo), "Group") }
+        tripSolo.setOnClickListener { selectOnlyType(it, listOf(tripBusiness, tripGroup, tripSolo), "Solo") }
 
+        // Preference selection
         fun selectOnlyPref(selected: View, label: String) {
             listOf(prefAdventure, prefRelax, prefSpiritual).forEach { it.isSelected = (it == selected) }
             selectedPreference = label
@@ -182,7 +187,7 @@ class AIItinearyPlannerFragment : Fragment() {
             val startText = etStartDate.text.toString().trim()
             val endText = etEndDate.text.toString().trim()
 
-            val allFilled = tripName.isNotEmpty() && currentLocation.isNotEmpty() && destination.isNotEmpty() && startText.isNotEmpty() && endText.isNotEmpty() && selectedPreference.isNotEmpty()
+            val allFilled = tripName.isNotEmpty() && currentLocation.isNotEmpty() && destination.isNotEmpty() && startText.isNotEmpty() && endText.isNotEmpty() && selectedPreference.isNotEmpty() && selectedTripType.isNotEmpty()
             val datesValid = if (allFilled) {
                 val s = runCatching { dateFormat.parse(startText) }.getOrNull()
                 val e = runCatching { dateFormat.parse(endText) }.getOrNull()
@@ -190,7 +195,7 @@ class AIItinearyPlannerFragment : Fragment() {
             } else false
 
             if (!allFilled) {
-                Toast.makeText(requireContext(), "Please fill all required fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Please fill all required fields (including Trip Type and Preference)", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (!datesValid) {
@@ -205,6 +210,7 @@ class AIItinearyPlannerFragment : Fragment() {
                 putString("preference", selectedPreference)
                 putString("currentLocation", currentLocation)
                 putString("destination", destination)
+                putString("tripType", selectedTripType)
             }
             findNavController().navigate(R.id.action_AIItinearyPlannerFragment_to_budgetFragment, bundle)
         }
