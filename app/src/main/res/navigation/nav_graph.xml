@@ -115,6 +115,9 @@
         <action
             android:id="@+id/action_homeFragment_to_trendingDestinationFragment"
             app:destination="@id/trendingDestinationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_openProfileFragment"
+            app:destination="@id/openProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/emergencyFragment"
@@ -195,4 +198,8 @@
         android:id="@+id/trendingDestinationFragment"
         android:name="com.example.tripsync.TrendingDestinationFragment"
         android:label="TrendingDestinationFragment" />
+    <fragment
+        android:id="@+id/openProfileFragment"
+        android:name="com.example.tripsync.OpenProfileFragment"
+        android:label="openProfileFragment" />
 </navigation>

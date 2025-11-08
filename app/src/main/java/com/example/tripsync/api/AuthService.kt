@@ -162,4 +162,23 @@ interface AuthService {
 
     @GET("/api/trending/places/")
     suspend fun getTrendingPlaces(): List<TrendingPlace>
+
+    @Multipart
+    @PATCH("/api/personal/profile/")
+    suspend fun updateProfile(
+        @Part("fname") fname: RequestBody?,
+        @Part("lname") lname: RequestBody?,
+        @Part("date") date: RequestBody?,
+        @Part("gender") gender: RequestBody?,
+        @Part("bio") bio: RequestBody?,
+        @Part profile_pic: MultipartBody.Part?,
+        @Part("bgroup") bgroup: RequestBody?,
+        @Part("allergies") allergies: RequestBody?,
+        @Part("medical") medical: RequestBody?,
+        @Part("ename") ename: RequestBody?,
+        @Part("enumber") enumber: RequestBody?,
+        @Part("erelation") erelation: RequestBody?,
+        @Part("prefrence") prefrence: RequestBody?
+    ): Response<GetProfileResponse>
+
 }

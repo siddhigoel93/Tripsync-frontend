@@ -6,7 +6,7 @@
     android:paddingBottom="36dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/header_background">
+    android:background="#00C896">
 
     <ImageView
         android:id="@+id/profile_image"

@@ -1,5 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_profile" android:title="Profile" />
+    <item android:id="@+id/openProfileFragment" android:title="Profile" />
     <item android:id="@+id/nav_weather" android:title="Weather" />
     <item android:id="@+id/nav_add_tripmates" android:title="Add Tripmates" />
     <item android:id="@+id/nav_friends" android:title="Friends" />

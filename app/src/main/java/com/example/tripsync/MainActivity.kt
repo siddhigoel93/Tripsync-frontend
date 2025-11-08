@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         val menuSOS = drawerMenuView.findViewById<ImageView>(R.id.menu_sos)
 
         // Uncomment and implement your actual navigation here:
-        // menuProfile.setOnClickListener { handleNavigation(R.id.profileFragment) }
+        menuProfile.setOnClickListener { handleNavigation(R.id.openProfileFragment) }
         // menuWeather.setOnClickListener { handleNavigation(R.id.weatherFragment) }
         // menuLogout.setOnClickListener { logoutUser() }
         // menuSOS.setOnClickListener { handleNavigation(R.id.emergencyFragment) }
