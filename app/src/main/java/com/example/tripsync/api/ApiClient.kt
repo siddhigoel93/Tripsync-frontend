@@ -56,7 +56,7 @@ object ApiClient {
             .build()
     }
 
-    private fun getRetrofitInstance(context: Context, secure: Boolean): Retrofit {
+    fun getRetrofitInstance(context: Context, secure: Boolean): Retrofit {
         return if (secure) {
             retrofitSecure ?: synchronized(this) {
                 retrofitSecure ?: buildRetrofit(context, true).also { retrofitSecure = it }
@@ -76,7 +76,7 @@ object ApiClient {
     }
 
     fun <T> createService(context: Context, serviceClass: Class<T>): T {
-        return getRetrofitInstance(context, secure = false).create(serviceClass)
+        return getRetrofitInstance(context, secure = true).create(serviceClass)
     }
     fun getItineraryService(context: Context): ItineraryService {
         return getRetrofitInstance(context, secure = true).create(ItineraryService::class.java)

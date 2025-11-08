@@ -256,12 +256,15 @@
 
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.example.tripsync.chats.ChatFragment"
+        android:name="com.example.tripsync.ChatFragment"
         android:label="ChatFragment"
         tools:layout="@layout/fragment_chats">
         <action
             android:id="@+id/action_chatFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_searchUsersFragment"
+            app:destination="@id/searchUsersFragment" />
     </fragment>
 
     <fragment
@@ -296,4 +299,27 @@
         android:id="@+id/openProfileFragment"
         android:name="com.example.tripsync.OpenProfileFragment"
         android:label="openProfileFragment" />
+
+    <fragment
+        android:id="@+id/searchUsersFragment"
+        android:name="com.example.tripsync.SearchUsersFragment"
+        android:label="Search Users" >
+        <action
+            android:id="@+id/action_searchUsersFragment_to_chatThreadFragment"
+            app:destination="@id/chatThreadFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"/>
+    </fragment>
+    <fragment
+        android:id="@+id/chatThreadFragment"
+        android:name="com.example.tripsync.ChatThreadFragment"
+        android:label="ChatThreadFragment" >
+        <argument
+            android:name="conversationId"
+            app:argType="integer" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+    </fragment>
+
 </navigation>

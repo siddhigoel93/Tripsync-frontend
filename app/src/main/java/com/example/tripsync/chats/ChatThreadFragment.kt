@@ -111,7 +111,6 @@ class ChatThreadFragment : Fragment() {
             }
 
             override fun onMessageReceived(message: String) {
-                // Assuming message comes as JSON
                 val json = JSONObject(message)
                 val data = json.optJSONObject("data") ?: return
                 val msg = Message(

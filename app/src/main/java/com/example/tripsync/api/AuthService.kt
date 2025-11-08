@@ -181,4 +181,7 @@ interface AuthService {
         @Part("prefrence") prefrence: RequestBody?
     ): Response<GetProfileResponse>
 
+    @GET("api/personal/users/")
+    suspend fun getAllUsers(): Response<UsersResponse>
+
 }
