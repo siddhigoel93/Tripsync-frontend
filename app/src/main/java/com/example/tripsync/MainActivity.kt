@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
 
         menuProfile.setOnClickListener { handleNavigation(R.id.openProfileFragment) }
          menuLogout.setOnClickListener { logoutUser() }
-        menuSOS.setOnClickListener { handleNavigation(R.id.sosFragment) }
+        menuSOS.setOnClickListener { handleNavigation(R.id.emergencySosFragment) }
     }
 
 

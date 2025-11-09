@@ -1,6 +1,7 @@
 package com.example.tripsync.api
 
 import com.example.tripsync.api.models.*
+import okhttp3.Call
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -183,5 +184,8 @@ interface AuthService {
 
     @GET("api/personal/users/")
     suspend fun getAllUsers(): Response<UsersResponse>
+
+    @POST("/api/personal/emergency/sos/")
+    suspend fun sendEmergencySos(@Body request: SosRequest): Response<SosResponse>
 
 }

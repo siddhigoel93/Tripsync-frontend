@@ -124,6 +124,9 @@
         <action
             android:id="@+id/action_homeFragment_to_openProfileFragment"
             app:destination="@id/openProfileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_emergencySosFragment"
+            app:destination="@id/emergencySosFragment" />
     </fragment>
     <fragment
         android:id="@+id/emergencyFragment"
@@ -321,5 +324,9 @@
             android:name="name"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/emergencySosFragment"
+        android:name="com.example.tripsync.EmergencySosFragment"
+        android:label="EmergencySosFragment" />
 
 </navigation>

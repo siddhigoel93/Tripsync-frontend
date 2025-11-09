@@ -4,5 +4,5 @@
     <item android:id="@+id/nav_friends" android:title="Friends" />
     <item android:id="@+id/nav_delete" android:title="Delete account" />
     <item android:id="@+id/nav_logout" android:title="Logout" />
-    <item android:id="@+id/nav_sos" android:title="SOS" />
+    <item android:id="@+id/emergencySosFragment" android:title="SOS" />
 </menu>
