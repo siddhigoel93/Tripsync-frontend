@@ -32,12 +32,12 @@
             <TextView
                 android:id="@+id/menu_weather"
                 style="@style/DrawerMenuItem"
-                android:text="Weather" />
+                android:text="AI chatbot" />
 
             <TextView
                 android:id="@+id/menu_add_tripmates"
                 style="@style/DrawerMenuItem"
-                android:text="Add Tripmates" />
+                android:text="My trips" />
 
             <TextView
                 android:id="@+id/menu_friends"
@@ -70,6 +70,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/menu_sos"
            android:src="@drawable/sos_icon"
+            android:layout_marginTop="8dp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/menu_delete"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/delete_profile"
             android:layout_marginTop="8dp"/>
 
     </LinearLayout>

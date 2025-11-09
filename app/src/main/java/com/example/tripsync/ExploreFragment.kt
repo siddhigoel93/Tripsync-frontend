@@ -110,6 +110,9 @@ class ExploreFragment : Fragment() {
         appBarLayout.elevation = elevationInPixels
         appBarLayout.translationZ = elevationInPixels
         appBarLayout.bringToFront()
+
+        (activity as? MainActivity)?.addProfileObserver { newUrl ->
+            newUrl?.let { updateExploreProfileImage(it) }}
     }
 
     private fun fetchWeather(location: String) {
@@ -131,14 +134,18 @@ class ExploreFragment : Fragment() {
         }
     }
 
-    fun updateExploreProfileImage(url: String) {
+    fun updateExploreProfileImage(url: String?) {
         val exploreProfileImage = requireView().findViewById<ImageView>(R.id.profileImageView)
-        Glide.with(this)
-            .load(url)
-            .placeholder(R.drawable.profile)
-            .error(R.drawable.profile)
-            .circleCrop()
-            .into(exploreProfileImage)
+        if (!url.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(url)
+                .placeholder(R.drawable.profile)
+                .error(R.drawable.profile)
+                .circleCrop()
+                .into(exploreProfileImage)
+        } else {
+            exploreProfileImage.setImageResource(R.drawable.profile)
+        }
     }
 
 }

@@ -24,7 +24,6 @@ import com.example.tripsync.api.models.GetProfileResponse
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
@@ -284,6 +283,10 @@ class OpenProfileFragment : Fragment() {
                     requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
                         .putString("userAvatarUrl", response.body()?.data?.profile?.profile_pic_url)
                         .apply()
+                    val imgUrl = response.body()?.data?.profile?.profile_pic_url
+                    (activity as? MainActivity)?.updateDrawerProfileImage(imgUrl)
+
+
                     Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
                     fetchProfile()
                 } else {
