@@ -147,7 +147,6 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         view.findViewById<View>(R.id.btnCreateTrip).setOnClickListener {
             CongratsDialogFragment().show(parentFragmentManager, "congrats")
         }
-        view.findViewById<View>(R.id.btnSaveDraft).setOnClickListener { }
 
         view.findViewById<View>(R.id.btnDownload).setOnClickListener {
             val fileName = (if (argTripName.isNotBlank()) argTripName else "Trip Itinerary")

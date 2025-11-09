@@ -212,42 +212,19 @@
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"/>
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/btnDownload"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp">
-
-                <TextView
-                    android:id="@+id/btnSaveDraft"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Save Draft"
-                    android:textAllCaps="false"
-                    android:textColor="#00C896"
-                    android:background="@drawable/btn_outline_white_teal_selector"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"/>
-
-                <Space android:layout_width="12dp" android:layout_height="1dp"/>
-
-                <TextView
-                    android:id="@+id/btnDownload"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Download"
-                    android:textAllCaps="false"
-                    android:textColor="#00C896"
-                    android:background="@drawable/btn_outline_white_teal_selector"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"/>
-            </LinearLayout>
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Download"
+                android:textAllCaps="false"
+                android:textColor="#00C896"
+                android:background="@drawable/btn_outline_white_teal_selector"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"/>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
