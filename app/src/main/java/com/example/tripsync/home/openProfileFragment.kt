@@ -136,8 +136,8 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun setupGenderClicks() {
-        val normalBg = ContextCompat.getDrawable(requireContext(), R.drawable.gender_selector)
-        val selectedBg = ContextCompat.getDrawable(requireContext(), R.drawable.gender_selected)
+        val normalBg = ContextCompat.getDrawable(requireContext(), R.drawable.selected_gender)
+        val selectedBg = ContextCompat.getDrawable(requireContext(), R.drawable.selected_gender)
 
         genderM.setOnClickListener {
             if (isEditing) {

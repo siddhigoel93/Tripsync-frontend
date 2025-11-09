@@ -20,6 +20,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window.statusBarColor = Color.TRANSPARENT
+        window.statusBarColor = Color.BLACK
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
 
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
         bottom_nav_view.setupWithNavController(navController)
 
-//        fab_store.setOnClickListener { /* ... */ }
+
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {

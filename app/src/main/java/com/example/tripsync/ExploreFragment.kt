@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -50,6 +51,16 @@ class ExploreFragment : Fragment() {
             } else {
                 Toast.makeText(requireContext(), "DrawerLayout not found in Activity", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        val chatButton = view.findViewById<ImageButton>(R.id.toolbar_btn_chat)
+
+        // 2. Set the Click Listener and Navigate
+        chatButton.setOnClickListener {
+            // 3. Navigate to ChatFragment using its ID from your nav_graph.xml
+            findNavController().navigate(R.id.chatFragment)
+            // OR use Safe Args if you have created an action for it:
+            // findNavController().navigate(ExploreFragmentDirections.actionExploreFragmentToChatFragment())
         }
 
         // AI Planner Card

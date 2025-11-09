@@ -107,12 +107,8 @@ class PostAdapter(
 
         Log.d("PostAdapter", "Post ${post.id} owner: ${post.owner}")
 
-        if (post.owner) {
-            holder.optionsMenu.visibility = View.VISIBLE
             holder.optionsMenu.setOnClickListener { showPopupMenu(it, post) }
-        } else {
-            holder.optionsMenu.visibility = View.VISIBLE
-        }
+
     }
 
     private fun showPopupMenu(view: View, post: Post) {

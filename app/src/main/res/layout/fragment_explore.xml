@@ -58,6 +58,20 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <ImageButton
+        android:id="@+id/toolbar_btn_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/ic_chat_bubble"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 
         <ScrollView
         android:id="@+id/main_scroll_view"
@@ -70,6 +84,7 @@
         app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
         >
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -335,7 +350,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:alpha="0.8"
-                                android:text="Real-time destination forecast"
+                                android:text="Delhi"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -351,6 +366,7 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:tint="@color/white"
                                 tools:ignore="ContentDescription" />
+
 
                             <ImageView
                                 android:id="@+id/yesterday"
@@ -673,76 +689,7 @@
                 android:layout_height="0.5dp"
                 android:background="@color/gray_300" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="20dp">
 
-                <TextView
-                    android:id="@+id/connections_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:text="Connections and Collaboration"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    tools:ignore="HardcodedText" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="Collaborate and connect with different people with same travel choices"
-                    android:textColor="@color/gray_600"
-                    android:textSize="14sp"
-                    tools:ignore="HardcodedText" />
-
-                <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:paddingHorizontal="16dp">
-
-                    <include
-                        android:id="@+id/card_hikers"
-                        layout="@layout/item_community_card"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginEnd="8dp" />
-
-                    <include
-                        android:id="@+id/card_beach_lovers"
-                        layout="@layout/item_community_card"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginStart="8dp" />
-
-                    <include
-                        android:id="@+id/card_adventure"
-                        layout="@layout/item_community_card"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginEnd="8dp" />
-
-                    <include
-                        android:id="@+id/card_deserts"
-                        layout="@layout/item_community_card"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginStart="8dp" />
-                </GridLayout>
-
-            </LinearLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/safety_sos_section"
                 android:layout_width="match_parent"

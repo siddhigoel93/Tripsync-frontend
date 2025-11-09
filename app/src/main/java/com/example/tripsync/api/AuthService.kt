@@ -1,6 +1,8 @@
 package com.example.tripsync.api
 
 import com.example.tripsync.api.models.*
+import com.example.tripsync.chatbot.ChatRequest
+import com.example.tripsync.chatbot.ChatResponse
 import okhttp3.Call
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -187,5 +189,8 @@ interface AuthService {
 
     @POST("/api/personal/emergency/sos/")
     suspend fun sendEmergencySos(@Body request: SosRequest): Response<SosResponse>
+
+    @POST("/api/chatbot/")
+    suspend fun sendMessage(@Body request: ChatRequest): Response<ChatResponse>
 
 }
