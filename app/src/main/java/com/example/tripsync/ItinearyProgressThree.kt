@@ -7,9 +7,11 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.Space
 import android.widget.TextView
@@ -19,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.itinerary.ActivityItem
 import com.example.tripsync.itinerary.CreateTripRequest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
@@ -49,6 +52,8 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
 
     private var days: List<LocalDay> = emptyList()
     private var selectedDayIndex = 0
+
+    private var loadingOverlay: View? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -114,8 +119,30 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         tab4.setOnClickListener { selectDay(3) }
 
         insertDynamicTabsHolderIfMissing(view)
+        ensureLoadingOverlay(view as ViewGroup)
+        showLoading(true)
 
         fetchItineraryFromApi(tripName, startDate, endDate, preference, maybeBudget, currentLocArg, destinationArg)
+    }
+
+    private fun ensureLoadingOverlay(root: ViewGroup) {
+        if (loadingOverlay != null) return
+        val overlay = FrameLayout(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            setBackgroundColor(0x66FFFFFF)
+            isClickable = true
+            isFocusable = true
+            isFocusableInTouchMode = true
+            val spinner = ProgressBar(requireContext())
+            addView(spinner, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
+            visibility = View.GONE
+        }
+        root.addView(overlay)
+        loadingOverlay = overlay
+    }
+
+    private fun showLoading(show: Boolean) {
+        loadingOverlay?.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     private fun insertDynamicTabsHolderIfMissing(rootView: View) {
@@ -159,6 +186,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
             days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
             renderDynamicDayTabs(days.size)
             selectDay(0)
+            showLoading(false)
             return
         }
         lifecycleScope.launch {
@@ -231,11 +259,12 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                         trip_preferences = if (preference.isBlank()) "general" else preference,
                         budget = budgetStr?.toDoubleOrNull() ?: 0.0
                     )
-                    val createResp = try { service.createTrip(createBody) } catch (t: Throwable) { null }
+                    val createResp = try { service.createTrip(createBody) } catch (_: Throwable) { null }
                     if (createResp == null || !createResp.isSuccessful) {
                         days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                         renderDynamicDayTabs(days.size)
                         selectDay(0)
+                        showLoading(false)
                         return@launch
                     }
                     var id: Int? = createResp.body()?.data?.id
@@ -260,6 +289,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                         days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                         renderDynamicDayTabs(days.size)
                         selectDay(0)
+                        showLoading(false)
                         return@launch
                     }
                     id
@@ -322,6 +352,8 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                 renderDynamicDayTabs(days.size)
                 selectDay(0)
+            } finally {
+                showLoading(false)
             }
         }
     }
