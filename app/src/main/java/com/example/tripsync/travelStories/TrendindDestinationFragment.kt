@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.travelStories
 
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tripsync.R
+import com.example.tripsync.travelStories.TrendingDestinationAdapter
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.TrendingPlace
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +31,8 @@ class TrendingDestinationFragment : Fragment() {
         recyclerView = view.findViewById(R.id.destinations_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = TrendingDestinationAdapter(destinations) { destination ->
-            Toast.makeText(requireContext(), "Clicked: ${destination.name}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Clicked: ${destination.name}", Toast.LENGTH_SHORT)
+                .show()
         }
         return view
     }

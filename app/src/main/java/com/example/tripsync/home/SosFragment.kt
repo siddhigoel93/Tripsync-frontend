@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.home
 
 import android.content.Context
 import android.os.Bundle
@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.widget.ImageView
+import com.example.tripsync.R
+
 class EmergencySosFragment : Fragment() {
 
     private lateinit var sosButton: CardView

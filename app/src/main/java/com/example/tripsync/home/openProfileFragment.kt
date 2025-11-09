@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.home
 
 import android.Manifest
 import android.app.Activity
@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.tripsync.MainActivity
+import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.GetProfileResponse
 import kotlinx.coroutines.launch
@@ -333,7 +335,7 @@ class OpenProfileFragment : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data?.data != null) {
             imageUri = data.data

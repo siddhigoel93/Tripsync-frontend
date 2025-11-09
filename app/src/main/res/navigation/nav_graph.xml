@@ -296,11 +296,11 @@
     </fragment>
     <fragment
         android:id="@+id/trendingDestinationFragment"
-        android:name="com.example.tripsync.TrendingDestinationFragment"
+        android:name="com.example.tripsync.travelStories.TrendingDestinationFragment"
         android:label="TrendingDestinationFragment" />
     <fragment
         android:id="@+id/openProfileFragment"
-        android:name="com.example.tripsync.OpenProfileFragment"
+        android:name="com.example.tripsync.home.OpenProfileFragment"
         android:label="openProfileFragment" />
 
     <fragment
@@ -326,7 +326,7 @@
     </fragment>
     <fragment
         android:id="@+id/emergencySosFragment"
-        android:name="com.example.tripsync.EmergencySosFragment"
+        android:name="com.example.tripsync.home.EmergencySosFragment"
         android:label="EmergencySosFragment" />
 
 </navigation>
