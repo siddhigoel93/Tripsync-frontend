@@ -19,6 +19,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
+import android.util.Log
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -49,14 +50,15 @@ class FragmentOtp : Fragment() {
     private lateinit var backToLogin: TextView
     private lateinit var errorBadge: TextView
     private lateinit var email: String
-    private var isError: Boolean = false
-    private var isProgrammaticChange: Boolean = false
-    private var isSuccess: Boolean = false
+    private var isError = false
+    private var isProgrammaticChange = false
+    private var isSuccess = false
     private lateinit var successVideoContainer: View
     private lateinit var successVideoView: VideoView
     private lateinit var successVideoInner: FrameLayout
-
     private var resendCooldownUntil: Long = 0L
+    private val TAG = "FragmentOtp"
+    private var navigateToLoginAfterVideo = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_otp, container, false)
@@ -89,14 +91,14 @@ class FragmentOtp : Fragment() {
         et1.requestFocus()
         btnVerify.setOnClickListener { submitOtp() }
 
-        // ⬅️ updated click with cooldown check + start
         tvResend.setOnClickListener {
             val now = SystemClock.elapsedRealtime()
             if (now < resendCooldownUntil) {
-                Toast.makeText(requireContext(), "please wait...", Toast.LENGTH_SHORT).show()
+                val remaining = (resendCooldownUntil - now) / 1000
+                Toast.makeText(requireContext(), "Please wait $remaining seconds before retrying.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            startResendCooldown()
+            startResendCooldownDefault()
             resendOtp()
         }
 
@@ -120,13 +122,12 @@ class FragmentOtp : Fragment() {
         updateUnderlineVisuals()
     }
 
-    // ⬅️ added helper to start 10s window
-    private fun startResendCooldown() {
+    private fun startResendCooldownDefault() {
         resendCooldownUntil = SystemClock.elapsedRealtime() + 10_000L
     }
 
     private fun setupOtpBoxes() {
-        val pasteAwareFilter = InputFilter { source, start, end, dest, dstart, dend ->
+        val pasteAwareFilter = InputFilter { source, start, end, dest, _, _ ->
             val incoming = source.subSequence(start, end).toString()
             if (incoming.length > 1) {
                 val digits = incoming.filter { it.isDigit() }
@@ -144,7 +145,6 @@ class FragmentOtp : Fragment() {
             et.isCursorVisible = false
             et.setTextColor(resources.getColor(android.R.color.black))
             et.setBackgroundResource(R.drawable.otp_box_bg)
-            et.setPadding(et.paddingLeft, et.paddingTop, et.paddingRight, 0)
             et.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -215,34 +215,44 @@ class FragmentOtp : Fragment() {
             boxes.forEach { it.setBackgroundResource(R.drawable.otp_box_incorrect) }
             return
         }
-//        val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
-//        boxes.forEachIndexed { index, box ->
-//            if (index == lastFilledIndex && lastFilledIndex != -1)
-//                box.setBackgroundResource(R.drawable.otp_box_active)
-//            else box.setBackgroundResource(R.drawable.otp_box_bg)
-//            box.invalidate()
-//        }
-        boxes.forEach { box ->
-            val filled = box.text.toString().trim().isNotEmpty()
-            if (filled) {
+        val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
+        boxes.forEachIndexed { index, box ->
+            if (index == lastFilledIndex && lastFilledIndex != -1)
                 box.setBackgroundResource(R.drawable.otp_box_active)
-            } else {
-                box.setBackgroundResource(R.drawable.otp_box_bg)
-            }
+            else box.setBackgroundResource(R.drawable.otp_box_bg)
+            box.invalidate()
         }
     }
 
     private fun getOtp(): String = boxes.joinToString("") { it.text.toString().trim() }
 
-    private fun ResponseBody?.readApiError(): String? = try {
-        val text = this?.string() ?: return null
-        val obj = JSONObject(text)
-        when {
-            obj.has("message") -> obj.getString("message")
-            obj.has("detail") -> obj.getString("detail")
-            else -> null
+    private fun parseApiError(raw: String?): String? {
+        if (raw.isNullOrBlank()) return null
+        return try {
+            val obj = JSONObject(raw)
+            when {
+                obj.has("message") -> obj.getString("message")
+                obj.has("detail") -> obj.getString("detail")
+                else -> null
+            }
+        } catch (e: Exception) {
+            null
         }
-    } catch (_: Exception) { null }
+    }
+
+    private fun extractCooldownSeconds(rawError: String?): Long? {
+        if (rawError.isNullOrBlank()) return null
+        return try {
+            val obj = JSONObject(rawError)
+            if (obj.has("message")) {
+                val msg = obj.getString("message")
+                val regex = Regex("(\\d+)\\s*seconds?")
+                val m = regex.find(msg)
+                if (m != null) return m.groupValues[1].toLong()
+            }
+            null
+        } catch (e: Exception) { null }
+    }
 
     private fun showIncorrectOtpUi() {
         isError = true
@@ -258,6 +268,25 @@ class FragmentOtp : Fragment() {
         updateUnderlineVisuals()
     }
 
+    private fun humanMessageFromApiError(apiErr: String?, code: Int?): String {
+        if (apiErr.isNullOrBlank()) {
+            return when (code) {
+                429 -> "You’re trying too soon. Please wait a moment before retrying."
+                400, 401, 403 -> "Something went wrong with your request. Please check and try again."
+                404 -> "Server not found. Please try again later."
+                500, 502, 503 -> "Server is busy right now. Try again in a moment."
+                else -> "Couldn’t complete your request. Please try again."
+            }
+        }
+        val wait = extractCooldownSeconds(apiErr)
+        if (wait != null && wait > 0) return "Please wait $wait seconds before requesting another OTP."
+        if (apiErr.contains("invalid", true)) return "The information you entered seems invalid."
+        if (apiErr.contains("expired", true)) return "Your OTP has expired. Please request a new one."
+        if (apiErr.contains("not found", true)) return "No account found with that email."
+        if (apiErr.contains("cooldown", true)) return "Please wait a bit before trying again."
+        return apiErr.replaceFirstChar { it.uppercase() }
+    }
+
     private fun submitOtp() {
         val otp = getOtp()
         if (otp.length != 6) {
@@ -271,24 +300,26 @@ class FragmentOtp : Fragment() {
                 val response = api.verifyOtp(request)
                 if (response.isSuccessful) {
                     val body: VerifyOtpResponse? = response.body()
-                    val accessToken = body?.data?.tokens?.access
-                    val refreshToken = body?.data?.tokens?.refresh
-                    if (accessToken != null && refreshToken != null) {
-                        val prefs = requireContext().getSharedPreferences("auth", 0)
-                        prefs.edit().apply {
-                            putString("access_token", accessToken)
-                            putString("refresh_token", refreshToken)
-                            apply()
-                        }
+                    val statusOk = body?.status?.equals("success", true) == true
+                    val successFlag = body?.success == true
+                    val messageOk = body?.message?.contains("verified", true) == true
+                    if (statusOk || successFlag || messageOk) {
                         showOtpVerifiedUi()
+                        Toast.makeText(requireContext(), "Email verified successfully!", Toast.LENGTH_SHORT).show()
+                        navigateToLoginAfterVideo = true
                         playSuccessVideo()
+                    } else {
+                        Toast.makeText(requireContext(), "Invalid or expired OTP. Please try again.", Toast.LENGTH_SHORT).show()
+                        showIncorrectOtpUi()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Verification failed", Toast.LENGTH_SHORT).show()
+                    val rawErr = response.errorBody()?.string()
+                    val msg = humanMessageFromApiError(rawErr, response.code())
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     showIncorrectOtpUi()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Verification failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Network error. Please check your connection.", Toast.LENGTH_SHORT).show()
                 showIncorrectOtpUi()
             }
         }
@@ -298,7 +329,10 @@ class FragmentOtp : Fragment() {
         successVideoContainer.visibility = View.VISIBLE
         val rawId = resources.getIdentifier("success", "raw", requireContext().packageName)
         if (rawId == 0) {
-            navigateToWelcome()
+            if (navigateToLoginAfterVideo) {
+                navigateToLoginAfterVideo = false
+                findNavController().navigate(R.id.action_fragment_otp_to_login)
+            } else navigateToWelcome()
             return
         }
         val videoUri = Uri.parse("android.resource://${requireContext().packageName}/$rawId")
@@ -314,11 +348,17 @@ class FragmentOtp : Fragment() {
         }
         successVideoView.setOnCompletionListener {
             successVideoContainer.visibility = View.GONE
-            navigateToWelcome()
+            if (navigateToLoginAfterVideo) {
+                navigateToLoginAfterVideo = false
+                findNavController().navigate(R.id.action_fragment_otp_to_login)
+            } else navigateToWelcome()
         }
         successVideoView.setOnErrorListener { _, _, _ ->
             successVideoContainer.visibility = View.GONE
-            navigateToWelcome()
+            if (navigateToLoginAfterVideo) {
+                navigateToLoginAfterVideo = false
+                findNavController().navigate(R.id.action_fragment_otp_to_login)
+            } else navigateToWelcome()
             true
         }
     }
@@ -345,13 +385,19 @@ class FragmentOtp : Fragment() {
             try {
                 val api = ApiClient.getAuthService(requireContext())
                 val response = api.resendOtp(EmailRequest(email))
+                val rawError = response.errorBody()?.string()
                 if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "OTP resent successfully!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "A new OTP has been sent to your email.", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Failed to resend OTP", Toast.LENGTH_SHORT).show()
+                    val msg = humanMessageFromApiError(rawError, response.code())
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                    val wait = extractCooldownSeconds(rawError)
+                    val now = SystemClock.elapsedRealtime()
+                    if (wait != null && wait > 0) resendCooldownUntil = now + wait * 1000
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Connection problem. Please try again shortly.", Toast.LENGTH_SHORT).show()
+                resendCooldownUntil = SystemClock.elapsedRealtime() + 10_000L
             }
         }
     }

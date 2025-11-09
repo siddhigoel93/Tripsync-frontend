@@ -3,10 +3,16 @@ package com.example.tripsync
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.budget.CreateBudgetRequest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -70,18 +76,64 @@ class BudgetOverviewFragment : Fragment(R.layout.fragment_budget_overview) {
         }
 
         view.findViewById<View>(R.id.bo_continue).setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("tripName", tripName)
-                putString("startDate", startDate)
-                putString("endDate", endDate)
-                putString("preference", preference)
-                putString("currentLocation", currentLocation)
-                putString("destination", destination)
+            val budgetVal = totalBudget.toDoubleOrNull() ?: 0.0
+
+            if (budgetVal == 0.0) {
+                Toast.makeText(requireContext(), "budget cannot be 0", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            findNavController().navigate(
-                R.id.action_budgetOverviewFragment_to_itinearyProgressThree2,
-                bundle
-            )
+            if (budgetVal < 2000.0 || budgetVal > 100000.0) {
+                Toast.makeText(requireContext(), "Budget must be between 2000 and 100000", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val budgetService = ApiClient.getBudgetService(requireContext())
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                launch {
+                    try { budgetService.deleteBudget() } catch (_: Throwable) {}
+                }
+
+                delay(4000)
+
+                val createOk = try {
+                    val resp = budgetService.createBudget(CreateBudgetRequest(total = budgetVal))
+                    resp.isSuccessful
+                } catch (_: Throwable) {
+                    false
+                }
+
+                if (!createOk) {
+                    Toast.makeText(requireContext(), "budget creation failed", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                Toast.makeText(requireContext(), "Budget Created!!", Toast.LENGTH_SHORT).show()
+
+                val bundle = Bundle().apply {
+                    putString("tripName", tripName)
+                    putString("startDate", startDate)
+                    putString("endDate", endDate)
+                    putString("preference", preference)
+                    putString("currentLocation", currentLocation)
+                    putString("destination", destination)
+                    putString("totalBudget", totalBudget)
+                }
+                findNavController().navigate(
+                    R.id.action_budgetOverviewFragment_to_itinearyProgressThree2,
+                    bundle
+                )
+            }
+        }
+
+        setFragmentResultListener("budget_update") { _, bundle ->
+            val newBudget = bundle.getString("totalBudget").orEmpty()
+            if (newBudget.isNotBlank()) {
+                totalBudget = newBudget
+                renderTop()
+                adapter.setTotalBudget(newBudget.toLongOrNull() ?: 0L)
+                findNavController().previousBackStackEntry?.savedStateHandle?.set("totalBudget", newBudget)
+            }
         }
 
         listenCategoryResult("category_add_result")
@@ -95,19 +147,12 @@ class BudgetOverviewFragment : Fragment(R.layout.fragment_budget_overview) {
         setFragmentResultListener(requestKey) { _, bundle ->
             val pickedTitle = bundle.getString("title").orEmpty()
             val iconRes = bundle.getInt("iconRes", 0)
-
             val percentFromInt = bundle.getInt("percent", -1)
-            val percent = if (percentFromInt >= 0) {
-                percentFromInt
-            } else {
-                bundle.getString("percent")?.toIntOrNull() ?: 0
-            }
-
+            val percent = if (percentFromInt >= 0) percentFromInt
+            else bundle.getString("percent")?.toIntOrNull() ?: 0
             if (pickedTitle.isNotBlank() && iconRes != 0) {
                 adapter.addCategory(BudgetCategory(pickedTitle, percent, iconRes))
-                recycler.post {
-                    recycler.smoothScrollToPosition(adapter.itemCount - 1)
-                }
+                recycler.post { recycler.smoothScrollToPosition(adapter.itemCount - 1) }
             }
         }
     }

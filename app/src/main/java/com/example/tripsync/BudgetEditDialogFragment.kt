@@ -59,6 +59,7 @@ class BudgetEditDialogFragment : DialogFragment() {
             parentFragmentManager.setFragmentResult("budget_update", bundleOf("totalBudget" to value))
             dismiss()
         }
+
         cancel.setOnClickListener { dismiss() }
     }
 

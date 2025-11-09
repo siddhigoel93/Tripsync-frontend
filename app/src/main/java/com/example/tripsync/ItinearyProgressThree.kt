@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -24,7 +23,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -121,9 +120,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
 
     private fun insertDynamicTabsHolderIfMissing(rootView: View) {
         if (dynamicTabsScrollView != null && dynamicTabsContainer != null) return
-
         val parent = rootView as? ViewGroup ?: return
-
         val hsv = HorizontalScrollView(requireContext()).apply {
             isHorizontalScrollBarEnabled = false
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -135,10 +132,8 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
             gravity = Gravity.CENTER_VERTICAL
         }
         hsv.addView(ll)
-
-        val root = parent
+        val rv = parent.findViewById<View>(R.id.rvItinerary)
         var inserted = false
-        val rv = root.findViewById<View>(R.id.rvItinerary)
         if (rv != null && rv.parent is ViewGroup) {
             val rvParent = rv.parent as ViewGroup
             val index = rvParent.indexOfChild(rv)
@@ -147,10 +142,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 inserted = true
             }
         }
-        if (!inserted) {
-            root.addView(hsv)
-        }
-
+        if (!inserted) parent.addView(hsv)
         dynamicTabsScrollView = hsv
         dynamicTabsContainer = ll
     }
@@ -158,10 +150,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
     private fun toIsoDate(ddMMyyyy: String): String {
         val inFmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val outFmt = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return runCatching {
-            val d = inFmt.parse(ddMMyyyy)
-            outFmt.format(d)
-        }.getOrNull() ?: ddMMyyyy
+        return runCatching { outFmt.format(inFmt.parse(ddMMyyyy)!!) }.getOrNull() ?: ddMMyyyy
     }
 
     private fun fetchItineraryFromApi(tripName: String, startDate: String, endDate: String, preference: String, budgetStr: String?, currentLocArg: String, destinationArg: String) {
@@ -172,17 +161,13 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
             selectDay(0)
             return
         }
-
         lifecycleScope.launch {
             try {
                 val service = ApiClient.getItineraryService(requireContext())
-
                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                 val start = runCatching { sdf.parse(startDate) }.getOrNull()
                 val end = runCatching { sdf.parse(endDate) }.getOrNull()
-                val daysCount = if (start != null && end != null) {
-                    ((abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1).coerceAtLeast(1)
-                } else 1
+                val daysCount = if (start != null && end != null) ((abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1).coerceAtLeast(1) else 1
 
                 val listResp = try { service.listTrips() } catch (t: Throwable) {
                     Log.e(TAG, "listTrips exception", t)
@@ -230,9 +215,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                             }
                         }
                     }
-                } catch (t: Throwable) {
-                    Log.e(TAG, "Exception parsing listTrips body", t)
-                }
+                } catch (_: Throwable) { }
 
                 val tripId: Int = if (matchedTripId != null) {
                     matchedTripId
@@ -248,17 +231,8 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                         trip_preferences = if (preference.isBlank()) "general" else preference,
                         budget = budgetStr?.toDoubleOrNull() ?: 0.0
                     )
-                    val createResp = try { service.createTrip(createBody) } catch (t: Throwable) {
-                        Log.e(TAG, "createTrip exception", t)
-                        null
-                    }
-                    if (createResp == null) {
-                        days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
-                        renderDynamicDayTabs(days.size)
-                        selectDay(0)
-                        return@launch
-                    }
-                    if (!createResp.isSuccessful) {
+                    val createResp = try { service.createTrip(createBody) } catch (t: Throwable) { null }
+                    if (createResp == null || !createResp.isSuccessful) {
                         days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                         renderDynamicDayTabs(days.size)
                         selectDay(0)
@@ -280,9 +254,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                                     if (arr.length() > 0) id = arr.optJSONObject(0)?.optInt("id")
                                 }
                             }
-                        } catch (t: Throwable) {
-                            Log.e(TAG, "Failed to parse createResp raw body", t)
-                        }
+                        } catch (_: Throwable) { }
                     }
                     if (id == null || id == 0) {
                         days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
@@ -338,7 +310,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                         } else {
                             fetchedDays.add(LocalDay(d, "Day $d", emptyList()))
                         }
-                    } catch (t: Throwable) {
+                    } catch (_: Throwable) {
                         fetchedDays.add(LocalDay(d, "Day $d", emptyList()))
                     }
                 }
@@ -346,7 +318,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 days = fetchedDays
                 renderDynamicDayTabs(days.size)
                 selectDay(0)
-            } catch (t: Throwable) {
+            } catch (_: Throwable) {
                 days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                 renderDynamicDayTabs(days.size)
                 selectDay(0)
@@ -356,12 +328,9 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
 
     private fun renderDynamicDayTabs(count: Int) {
         val container = dynamicTabsContainer ?: return
-
         dynamicTabViews.clear()
         container.removeAllViews()
-
         if (count <= 0) return
-
         for (i in 1..count) {
             val tv = TextView(requireContext()).apply {
                 text = "Day $i"
@@ -371,9 +340,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                     rightMargin = dpToPx(requireContext(), 8)
                 }
-                try {
-                    setBackgroundResource(R.drawable.day_tab_inactive)
-                } catch (_: Exception) {
+                try { setBackgroundResource(R.drawable.day_tab_inactive) } catch (_: Exception) {
                     val bg = GradientDrawable().apply {
                         cornerRadius = dpToPx(requireContext(), 8).toFloat()
                         setColor(0xFFEFEFEF.toInt())
@@ -382,15 +349,11 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 }
                 setTextColor(0xFF000000.toInt())
                 tag = i - 1
-                setOnClickListener {
-                    val idx = (it.tag as? Int) ?: 0
-                    selectDay(idx)
-                }
+                setOnClickListener { selectDay((it.tag as? Int) ?: 0) }
             }
             dynamicTabViews.add(tv)
             container.addView(tv)
         }
-
         if (selectedDayIndex < 0 || selectedDayIndex >= dynamicTabViews.size) selectedDayIndex = 0
         updateDynamicTabSelection()
     }
@@ -451,41 +414,31 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
     private fun selectDay(index: Int) {
         if (index < 0) return
         if (index >= days.size) return
-
         selectedDayIndex = index
         val d = days[index]
         dayTitle.text = d.title
-
         updateDynamicTabSelection()
-
         setTabActive(tab1, index == 0)
         setTabActive(tab2, index == 1)
         setTabActive(tab3, index == 2)
         setTabActive(tab4, index == 3)
-
         rvContainer.removeAllViews()
-
         for (s in d.sections) {
             val outerRow = LinearLayout(requireContext()).apply {
                 orientation = LinearLayout.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             }
-
             val leftCol = LinearLayout(requireContext()).apply {
                 orientation = LinearLayout.VERTICAL
                 layoutParams = LinearLayout.LayoutParams(dpToPx(requireContext(), 44), ViewGroup.LayoutParams.MATCH_PARENT)
                 gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
             }
-
             val iconView = ImageView(requireContext()).apply {
                 val size = dpToPx(requireContext(), 28)
-                layoutParams = LinearLayout.LayoutParams(size, size).apply {
-                    topMargin = dpToPx(requireContext(), 6)
-                }
+                layoutParams = LinearLayout.LayoutParams(size, size).apply { topMargin = dpToPx(requireContext(), 6) }
                 val res = resIdOrZero(s.iconName)
                 if (res != 0) setImageResource(res) else setImageResource(0)
             }
-
             val lineView = View(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(dpToPx(requireContext(), 2), ViewGroup.LayoutParams.MATCH_PARENT).apply {
                     topMargin = dpToPx(requireContext(), 6)
@@ -498,15 +451,12 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 }
                 background = dash
             }
-
             leftCol.addView(iconView)
             leftCol.addView(lineView)
-
             val rightCol = LinearLayout(requireContext()).apply {
                 orientation = LinearLayout.VERTICAL
                 layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
             }
-
             val label = TextView(requireContext()).apply {
                 text = s.label
                 textSize = 14f
@@ -516,7 +466,6 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                     bottomMargin = dpToPx(requireContext(), 6)
                 }
             }
-
             val sectionBox = LinearLayout(requireContext()).apply {
                 orientation = LinearLayout.VERTICAL
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
@@ -530,10 +479,8 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 background = bg
                 setPadding(dpToPx(requireContext(), 14), dpToPx(requireContext(), 12), dpToPx(requireContext(), 14), dpToPx(requireContext(), 12))
             }
-
             rightCol.addView(label)
             rightCol.addView(sectionBox)
-
             var first = true
             for (c in s.cards) {
                 val card = LinearLayout(requireContext()).apply {
@@ -541,14 +488,13 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                     layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                         if (!first) topMargin = dpToPx(requireContext(), 10)
                     }
-                    val bgc = GradientDrawable().apply {
-                        cornerRadius = dpToPx(requireContext(), 10).toFloat()
-                        setColor(0xFFDAF5F8.toInt())
-                    }
-                    background = bgc
-                    setPadding(dpToPx(requireContext(), 12), dpToPx(requireContext(), 10), dpToPx(requireContext(), 12), dpToPx(requireContext(), 10))
                 }
-
+                val bgc = GradientDrawable().apply {
+                    cornerRadius = dpToPx(requireContext(), 10).toFloat()
+                    setColor(0xFFDAF5F8.toInt())
+                }
+                card.background = bgc
+                card.setPadding(dpToPx(requireContext(), 12), dpToPx(requireContext(), 10), dpToPx(requireContext(), 12), dpToPx(requireContext(), 10))
                 val t = TextView(requireContext()).apply {
                     text = c.title
                     textSize = 16f
@@ -561,30 +507,23 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                     setTextColor(0xFF2E2E2E.toInt())
                     layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 }
-
                 card.addView(t)
                 card.addView(sub)
                 sectionBox.addView(card)
-
                 first = false
             }
-
             outerRow.addView(leftCol)
             outerRow.addView(rightCol)
-
             rvContainer.addView(outerRow)
-
             val spacer = Space(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(requireContext(), 10))
             }
             rvContainer.addView(spacer)
         }
-
         val bottomSpacer = Space(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(requireContext(), 24))
         }
         rvContainer.addView(bottomSpacer)
-
         val parentScroll = view?.findViewById<ScrollView>(R.id.pageScroll)
         parentScroll?.post { parentScroll.fullScroll(View.FOCUS_UP) }
     }

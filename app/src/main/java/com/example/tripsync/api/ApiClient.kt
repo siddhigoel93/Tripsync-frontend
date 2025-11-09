@@ -3,6 +3,7 @@ package com.example.tripsync.api
 import android.content.Context
 import android.util.Log
 import com.example.tripsync.api.interceptors.AuthInterceptor
+import com.example.tripsync.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -15,7 +16,6 @@ object ApiClient {
     private const val DEFAULT_BASE_URL = "http://51.20.254.52/"
     private var retrofitSecure: Retrofit? = null
     private var retrofitInsecure: Retrofit? = null
-
 
     private fun getBaseUrl(context: Context): String {
         val properties = Properties()
@@ -30,19 +30,25 @@ object ApiClient {
         } catch (e: IOException) {
             Log.e("ApiClient", "Error loading BASE_URL", e)
         }
-       return DEFAULT_BASE_URL
+        return DEFAULT_BASE_URL
     }
 
     private fun buildRetrofit(context: Context, secure: Boolean): Retrofit {
         val baseUrl = getBaseUrl(context)
-        val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+
+        val logging = HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+            else HttpLoggingInterceptor.Level.NONE
+        }
+
         val clientBuilder = OkHttpClient.Builder()
-//            .addInterceptor(AuthInterceptor(context.applicationContext))
-//            .addInterceptor(logging)
             .connectTimeout(25, TimeUnit.SECONDS)
             .readTimeout(25, TimeUnit.SECONDS)
             .writeTimeout(25, TimeUnit.SECONDS)
 
+        if (BuildConfig.DEBUG) {
+            clientBuilder.addInterceptor(logging)
+        }
 
         if (secure) {
             clientBuilder.addInterceptor(AuthInterceptor(context.applicationContext))
@@ -71,6 +77,7 @@ object ApiClient {
     fun getAuthService(context: Context): AuthService {
         return getRetrofitInstance(context, secure = false).create(AuthService::class.java)
     }
+
     fun getTokenService(context: Context): AuthService {
         return getRetrofitInstance(context, secure = true).create(AuthService::class.java)
     }
@@ -78,7 +85,12 @@ object ApiClient {
     fun <T> createService(context: Context, serviceClass: Class<T>): T {
         return getRetrofitInstance(context, secure = false).create(serviceClass)
     }
+
     fun getItineraryService(context: Context): ItineraryService {
         return getRetrofitInstance(context, secure = true).create(ItineraryService::class.java)
+    }
+
+    fun getBudgetService(context: Context): com.example.tripsync.api.budget.BudgetService {
+        return getRetrofitInstance(context, secure = true).create(com.example.tripsync.api.budget.BudgetService::class.java)
     }
 }
