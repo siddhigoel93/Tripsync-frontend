@@ -1,4 +1,4 @@
-package com.example.tripsync
+package com.example.tripsync.home
 
 import android.Manifest
 import android.app.Activity
@@ -19,12 +19,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.tripsync.MainActivity
+import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.GetProfileResponse
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
@@ -284,6 +285,10 @@ class OpenProfileFragment : Fragment() {
                     requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
                         .putString("userAvatarUrl", response.body()?.data?.profile?.profile_pic_url)
                         .apply()
+                    val imgUrl = response.body()?.data?.profile?.profile_pic_url
+                    (activity as? MainActivity)?.updateDrawerProfileImage(imgUrl)
+
+
                     Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
                     fetchProfile()
                 } else {
@@ -330,7 +335,7 @@ class OpenProfileFragment : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data?.data != null) {
             imageUri = data.data

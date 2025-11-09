@@ -33,8 +33,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var bottom_app_bar_wrapper: BottomAppBar
     lateinit var bottom_nav_view: BottomNavigationView
     lateinit var fab_store: FloatingActionButton
-
-    // All members below this line are properly initialized/used in the fix.
+    private val profileObservers = mutableListOf<(String?) -> Unit>()
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navController: NavController
 
@@ -48,7 +47,10 @@ class MainActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, window.decorView).apply {
             isAppearanceLightStatusBars = false
             isAppearanceLightNavigationBars = false
+
+
         }
+
 
 
 
@@ -137,20 +139,17 @@ class MainActivity : AppCompatActivity() {
             profileImage.setImageResource(R.drawable.profile)
         }
 
-        // Find menu items by their IDs from layout_drawer_menu.xml
         val menuProfile = drawerMenuView.findViewById<TextView>(R.id.menu_profile)
-        val menuWeather = drawerMenuView.findViewById<TextView>(R.id.menu_weather)
-        val menuAddTripmates = drawerMenuView.findViewById<TextView>(R.id.menu_add_tripmates)
-        val menuFriends = drawerMenuView.findViewById<TextView>(R.id.menu_friends)
-        val menuTrainInfo = drawerMenuView.findViewById<TextView>(R.id.menu_train_info)
+        val menuDelete = drawerMenuView.findViewById<ImageView>(R.id.menu_delete)
         val menuLogout = drawerMenuView.findViewById<ImageView>(R.id.menu_logout)
         val menuSOS = drawerMenuView.findViewById<ImageView>(R.id.menu_sos)
 
-        // Uncomment and implement your actual navigation here:
         menuProfile.setOnClickListener { handleNavigation(R.id.openProfileFragment) }
-        // menuWeather.setOnClickListener { handleNavigation(R.id.weatherFragment) }
-        // menuLogout.setOnClickListener { logoutUser() }
-        // menuSOS.setOnClickListener { handleNavigation(R.id.emergencyFragment) }
+         menuLogout.setOnClickListener { logoutUser() }
+        menuDelete.setOnClickListener {
+            showDeleteConfirmationDialog()
+        }
+        menuSOS.setOnClickListener { handleNavigation(R.id.emergencySosFragment) }
     }
 
 
@@ -282,7 +281,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, callback)
     }
 
-    fun updateDrawerProfileImage(url: String) {
+    fun updateDrawerProfileImage(url: String?) {
         val drawerMenuView = findViewById<View>(R.id.drawer_menu_include)
         val profileImage = drawerMenuView.findViewById<ImageView>(R.id.profile_image)
         Glide.with(this)
@@ -291,6 +290,40 @@ class MainActivity : AppCompatActivity() {
             .error(R.drawable.profile)
             .circleCrop()
             .into(profileImage)
+
+        profileObservers.forEach { it(url) }
+    }
+    private fun showDeleteConfirmationDialog() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Delete Profile")
+            .setMessage("Are you sure you want to permanently delete your account ?.")
+            .setPositiveButton("Delete") { dialog, which ->
+                // User confirmed deletion
+                deleteUserAccount()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    private fun deleteUserAccount() {
+        val sharedPrefsAuth = getSharedPreferences("auth", Context.MODE_PRIVATE)
+        sharedPrefsAuth.edit().clear().apply()
+
+        val sharedPrefsApp = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        sharedPrefsApp.edit().clear().apply()
+
+        Toast.makeText(this, "Profile permanently deleted.", Toast.LENGTH_LONG).show()
+
+        navController.navigate(R.id.loginFragment)
+
+        drawerLayout.closeDrawers()
+    }
+
+    fun addProfileObserver(observer: (String?) -> Unit) {
+        profileObservers.add(observer)
+    }
+
+    fun removeProfileObserver(observer: (String?) -> Unit) {
+        profileObservers.remove(observer)
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.tripsync.Auth
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
@@ -56,6 +57,7 @@ class FragmentOtp : Fragment() {
     private lateinit var successVideoContainer: View
     private lateinit var successVideoView: VideoView
     private lateinit var successVideoInner: FrameLayout
+
     private var resendCooldownUntil: Long = 0L
     private val TAG = "FragmentOtp"
     private var navigateToLoginAfterVideo = false
