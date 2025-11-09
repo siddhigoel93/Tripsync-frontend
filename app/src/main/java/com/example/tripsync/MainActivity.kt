@@ -139,18 +139,15 @@ class MainActivity : AppCompatActivity() {
 
         // Find menu items by their IDs from layout_drawer_menu.xml
         val menuProfile = drawerMenuView.findViewById<TextView>(R.id.menu_profile)
-        val menuWeather = drawerMenuView.findViewById<TextView>(R.id.menu_weather)
         val menuAddTripmates = drawerMenuView.findViewById<TextView>(R.id.menu_add_tripmates)
         val menuFriends = drawerMenuView.findViewById<TextView>(R.id.menu_friends)
         val menuTrainInfo = drawerMenuView.findViewById<TextView>(R.id.menu_train_info)
         val menuLogout = drawerMenuView.findViewById<ImageView>(R.id.menu_logout)
         val menuSOS = drawerMenuView.findViewById<ImageView>(R.id.menu_sos)
 
-        // Uncomment and implement your actual navigation here:
         menuProfile.setOnClickListener { handleNavigation(R.id.openProfileFragment) }
-        // menuWeather.setOnClickListener { handleNavigation(R.id.weatherFragment) }
-        // menuLogout.setOnClickListener { logoutUser() }
-        // menuSOS.setOnClickListener { handleNavigation(R.id.emergencyFragment) }
+         menuLogout.setOnClickListener { logoutUser() }
+        menuSOS.setOnClickListener { handleNavigation(R.id.sosFragment) }
     }
 
 
