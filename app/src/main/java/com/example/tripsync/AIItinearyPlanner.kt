@@ -62,24 +62,22 @@ class AIItinearyPlannerFragment : Fragment() {
         val prefRelax: View = view.findViewById(R.id.rqwfe5qhxt1)
         val prefSpiritual: View = view.findViewById(R.id.r30npb48x1w7)
 
-        val emojiAndOnlySpacesFilter = InputFilter { source, start, end, dest, dstart, dend ->
+        val lettersOnlyFilter = InputFilter { source, start, end, _, _, _ ->
             val sb = StringBuilder()
             var i = start
             while (i < end) {
                 val cp = Character.codePointAt(source, i)
-                val charCount = Character.charCount(cp)
-                if (!Character.isSupplementaryCodePoint(cp)) {
-                    sb.appendCodePoint(cp)
-                }
-                i += charCount
+                val cc = Character.charCount(cp)
+                val ch = cp.toChar()
+                if (Character.isLetter(cp) || ch == ' ') sb.appendCodePoint(cp)
+                i += cc
             }
-            val filtered = sb.toString()
-            if (dest.isEmpty() && filtered.trim().isEmpty()) "" else if (filtered == source.toString()) null else filtered
+            sb.toString()
         }
 
-        etTripName.filters = arrayOf(emojiAndOnlySpacesFilter)
-        etCurrentLocation.filters = arrayOf(emojiAndOnlySpacesFilter)
-        etDestination.filters = arrayOf(emojiAndOnlySpacesFilter)
+        etTripName.filters = arrayOf(lettersOnlyFilter, InputFilter.LengthFilter(60))
+        etCurrentLocation.filters = arrayOf(lettersOnlyFilter, InputFilter.LengthFilter(60))
+        etDestination.filters = arrayOf(lettersOnlyFilter, InputFilter.LengthFilter(60))
 
         etTripName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -204,15 +202,17 @@ class AIItinearyPlannerFragment : Fragment() {
             val startText = etStartDate.text.toString().trim()
             val endText = etEndDate.text.toString().trim()
 
+            val hasLetters = { s: String -> s.any { it.isLetter() } }
             val allFilled = tripName.isNotEmpty() && currentLocation.isNotEmpty() && destination.isNotEmpty() && startText.isNotEmpty() && endText.isNotEmpty() && selectedPreference.isNotEmpty() && selectedTripType.isNotEmpty()
+            val onlyLettersOk = hasLetters(tripName) && hasLetters(currentLocation) && hasLetters(destination)
             val datesValid = if (allFilled) {
                 val s = runCatching { dateFormat.parse(startText) }.getOrNull()
                 val e = runCatching { dateFormat.parse(endText) }.getOrNull()
                 s != null && e != null && e.time >= s.time
             } else false
 
-            if (!allFilled) {
-                Toast.makeText(requireContext(), "Please fill all required fields (including Trip Type and Preference)", Toast.LENGTH_SHORT).show()
+            if (!allFilled || !onlyLettersOk) {
+                Toast.makeText(requireContext(), "Please enter letters only and fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (!datesValid) {
@@ -229,7 +229,7 @@ class AIItinearyPlannerFragment : Fragment() {
                 putString("tripName", tripName)
                 putString("startDate", startText)
                 putString("endDate", endText)
-                putString("preference", selectedPreference)
+                putString("preference", selectedPreference.lowercase(Locale.getDefault()))
                 putString("currentLocation", currentLocation)
                 putString("destination", destination)
                 putString("tripType", selectedTripType)

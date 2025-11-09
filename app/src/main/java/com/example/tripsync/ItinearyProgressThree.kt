@@ -15,16 +15,19 @@ import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.Space
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.itinerary.ActivityItem
 import com.example.tripsync.itinerary.CreateTripRequest
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.OutputStreamWriter
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.abs
@@ -55,6 +58,34 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
 
     private var loadingOverlay: View? = null
 
+    private var argTripName: String = ""
+    private var argStartDate: String = ""
+    private var argEndDate: String = ""
+    private var argPreference: String = ""
+    private var argBudget: String = ""
+    private var argCurrentLoc: String = ""
+    private var argDestination: String = ""
+
+    private val createDocLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("text/plain")
+    ) { uri ->
+        if (uri == null) {
+            Toast.makeText(requireContext(), "Download cancelled", Toast.LENGTH_SHORT).show()
+            return@registerForActivityResult
+        }
+        try {
+            requireContext().contentResolver.openOutputStream(uri)?.use { out ->
+                OutputStreamWriter(out, Charsets.UTF_8).use { writer ->
+                    writer.write(buildItineraryText())
+                    writer.flush()
+                }
+            }
+            Toast.makeText(requireContext(), "Itinerary saved", Toast.LENGTH_SHORT).show()
+        } catch (t: Throwable) {
+            Toast.makeText(requireContext(), "Could not save file", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -78,27 +109,33 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         val tripCard = view.findViewById<LinearLayout>(R.id.tripCard)
         tripCard?.setPadding(dpToPx(requireContext(), 16), dpToPx(requireContext(), 12), dpToPx(requireContext(), 16), dpToPx(requireContext(), 12))
 
-        val tripName = arguments?.getString("tripName").orEmpty()
-        val startDate = arguments?.getString("startDate").orEmpty()
-        val endDate = arguments?.getString("endDate").orEmpty()
-        val preference = arguments?.getString("preference").orEmpty()
-        val maybeBudget = arguments?.getString("totalBudget").orEmpty()
-        val currentLocArg = arguments?.getString("currentLocation").orEmpty()
-        val destinationArg = arguments?.getString("destination").orEmpty()
+        argTripName = arguments?.getString("tripName").orEmpty()
+        argStartDate = arguments?.getString("startDate").orEmpty()
+        argEndDate = arguments?.getString("endDate").orEmpty()
+        argPreference = arguments?.getString("preference").orEmpty()
+        argBudget = arguments?.getString("totalBudget").orEmpty()
+        argCurrentLoc = arguments?.getString("currentLocation").orEmpty()
+        argDestination = arguments?.getString("destination").orEmpty()
 
-        if (tripName.isNotBlank()) tripTitle.text = tripName
+        if (argTripName.isNotBlank()) tripTitle.text = argTripName
 
-        if (startDate.isNotBlank() && endDate.isNotBlank()) {
+        if (argStartDate.isNotBlank() && argEndDate.isNotBlank()) {
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val start = runCatching { sdf.parse(startDate) }.getOrNull()
-            val end = runCatching { sdf.parse(endDate) }.getOrNull()
+            val start = runCatching { sdf.parse(argStartDate) }.getOrNull()
+            val end = runCatching { sdf.parse(argEndDate) }.getOrNull()
             if (start != null && end != null) {
-                val diffDays = (abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt()
-                val pref = if (preference.isBlank()) "Adventure" else preference
+                val diffDays = (abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1
+                val pref = if (argPreference.isBlank()) "Adventure" else argPreference.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                }
                 tripMeta.text = "$diffDays days  •  $pref"
                 val fmtStart = SimpleDateFormat("MMM d", Locale.getDefault()).format(start)
-                val sameMonth = SimpleDateFormat("MM", Locale.getDefault()).format(start) == SimpleDateFormat("MM", Locale.getDefault()).format(end)
-                val fmtEnd = if (sameMonth) SimpleDateFormat("d", Locale.getDefault()).format(end) else SimpleDateFormat("MMM d", Locale.getDefault()).format(end)
+                val sameMonth = SimpleDateFormat("MM", Locale.getDefault()).format(start) ==
+                        SimpleDateFormat("MM", Locale.getDefault()).format(end)
+                val fmtEnd = if (sameMonth)
+                    SimpleDateFormat("d", Locale.getDefault()).format(end)
+                else
+                    SimpleDateFormat("MMM d", Locale.getDefault()).format(end)
                 tripDate.text = "$fmtStart - $fmtEnd"
             }
         }
@@ -111,7 +148,13 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
             CongratsDialogFragment().show(parentFragmentManager, "congrats")
         }
         view.findViewById<View>(R.id.btnSaveDraft).setOnClickListener { }
-        view.findViewById<View>(R.id.btnDownload).setOnClickListener { }
+
+        view.findViewById<View>(R.id.btnDownload).setOnClickListener {
+            val fileName = (if (argTripName.isNotBlank()) argTripName else "Trip Itinerary")
+                .replace(Regex("""[\\/:*?"<>|]"""), "_")
+                .plus(".txt")
+            createDocLauncher.launch(fileName)
+        }
 
         tab1.setOnClickListener { selectDay(0) }
         tab2.setOnClickListener { selectDay(1) }
@@ -122,7 +165,15 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         ensureLoadingOverlay(view as ViewGroup)
         showLoading(true)
 
-        fetchItineraryFromApi(tripName, startDate, endDate, preference, maybeBudget, currentLocArg, destinationArg)
+        fetchItineraryFromApi(
+            argTripName,
+            argStartDate,
+            argEndDate,
+            argPreference,
+            argBudget,
+            argCurrentLoc,
+            argDestination
+        )
     }
 
     private fun ensureLoadingOverlay(root: ViewGroup) {
@@ -180,7 +231,15 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         return runCatching { outFmt.format(inFmt.parse(ddMMyyyy)!!) }.getOrNull() ?: ddMMyyyy
     }
 
-    private fun fetchItineraryFromApi(tripName: String, startDate: String, endDate: String, preference: String, budgetStr: String?, currentLocArg: String, destinationArg: String) {
+    private fun fetchItineraryFromApi(
+        tripName: String,
+        startDate: String,
+        endDate: String,
+        preference: String,
+        budgetStr: String?,
+        currentLocArg: String,
+        destinationArg: String
+    ) {
         val TAG = "ItineraryAPI"
         if (tripName.isBlank() || startDate.isBlank() || endDate.isBlank()) {
             days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
@@ -195,7 +254,9 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                 val start = runCatching { sdf.parse(startDate) }.getOrNull()
                 val end = runCatching { sdf.parse(endDate) }.getOrNull()
-                val daysCount = if (start != null && end != null) ((abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1).coerceAtLeast(1) else 1
+                val daysCount = if (start != null && end != null)
+                    ((abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1).coerceAtLeast(1)
+                else 1
 
                 val listResp = try { service.listTrips() } catch (t: Throwable) {
                     Log.e(TAG, "listTrips exception", t)
@@ -256,7 +317,7 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                         end_date = toIsoDate(endDate),
                         days = daysCount,
                         trip_type = "General",
-                        trip_preferences = if (preference.isBlank()) "general" else preference,
+                        trip_preferences = if (preference.isBlank()) "general" else preference.lowercase(Locale.getDefault()),
                         budget = budgetStr?.toDoubleOrNull() ?: 0.0
                     )
                     val createResp = try { service.createTrip(createBody) } catch (_: Throwable) { null }
@@ -296,7 +357,9 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                 }
 
                 val fetchedDays = mutableListOf<LocalDay>()
-                val targetDays = max(1, if (start != null && end != null) ((abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1) else 1)
+                val targetDays = max(1, if (start != null && end != null)
+                    ((abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1) else 1
+                )
 
                 for (d in 1..targetDays) {
                     try {
@@ -577,5 +640,56 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         return try { resources.getIdentifier(name, "drawable", requireContext().packageName) } catch (_: Exception) { 0 }
     }
 
-    private fun dpToPx(ctx: android.content.Context, dp: Int) = (dp * ctx.resources.displayMetrics.density).toInt()
+    private fun dpToPx(ctx: android.content.Context, dp: Int) =
+        (dp * ctx.resources.displayMetrics.density).toInt()
+
+
+    private fun buildItineraryText(): String {
+        val sb = StringBuilder()
+        val nf = NumberFormat.getInstance(Locale("en", "IN"))
+        val budgetLong = argBudget.toLongOrNull()
+
+        sb.appendLine("==== AI Itinerary ====")
+        sb.appendLine("Trip: ${if (argTripName.isBlank()) "Untitled Trip" else argTripName}")
+        sb.appendLine("From: $argCurrentLoc")
+        sb.appendLine("To: $argDestination")
+        sb.appendLine("Dates: ${argStartDate} to ${argEndDate}")
+        sb.appendLine("Preference: ${if (argPreference.isBlank()) "Adventure" else argPreference}")
+        sb.appendLine("Budget: ${budgetLong?.let { "₹" + nf.format(it) } ?: (if (argBudget.isBlank()) "—" else argBudget)}")
+        sb.appendLine()
+
+        if (days.isEmpty()) {
+            sb.appendLine("No itinerary available.")
+            return sb.toString()
+        }
+
+        for (day in days) {
+            sb.appendLine("Day ${day.dayNumber}: ${day.title}")
+            if (day.sections.isEmpty()) {
+                sb.appendLine("  (No activities)")
+            } else {
+                for (section in day.sections) {
+                    val label = section.label.ifBlank { "Activities" }
+                    sb.appendLine("  $label")
+                    if (section.cards.isEmpty()) {
+                        sb.appendLine("    - (No items)")
+                    } else {
+                        for (card in section.cards) {
+                            val title = card.title.ifBlank { "Untitled activity" }
+                            val sub = card.subtitle.ifBlank { "" }
+                            if (sub.isBlank()) {
+                                sb.appendLine("    • $title")
+                            } else {
+                                sb.appendLine("    • $title")
+                                sb.appendLine("      $sub")
+                            }
+                        }
+                    }
+                }
+            }
+            sb.appendLine()
+        }
+        sb.appendLine("Generated by TripSync")
+        return sb.toString()
+    }
 }
