@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.math.max
 
 class BudgetFragment : Fragment(R.layout.activity_budget) {
 
@@ -46,9 +47,13 @@ class BudgetFragment : Fragment(R.layout.activity_budget) {
             val start = runCatching { sdf.parse(startDate) }.getOrNull()
             val end = runCatching { sdf.parse(endDate) }.getOrNull()
             if (start != null && end != null) {
-                val diffDays = (abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt()
+                // --------- FIX: inclusive (+1) day count ----------
+                val dayMillis = 1000L * 60 * 60 * 24
+                val diffDaysInclusive = max(1, (abs(end.time - start.time) / dayMillis).toInt() + 1)
                 val pref = if (preference.isBlank()) "Adventure" else preference
-                daysText.text = "$diffDays days  •  $pref"
+                daysText.text = "$diffDaysInclusive days  •  $pref"
+                // ---------------------------------------------------
+
                 val fmtStart = SimpleDateFormat("MMM d", Locale.getDefault()).format(start)
                 val sameMonth = SimpleDateFormat("MM", Locale.getDefault()).format(start) ==
                         SimpleDateFormat("MM", Locale.getDefault()).format(end)
