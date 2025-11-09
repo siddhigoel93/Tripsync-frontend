@@ -19,20 +19,21 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlin.math.max
+import kotlin.math.min
 
 class AIItinearyPlannerFragment : Fragment() {
     private var editTextValue1: String = ""
     private var editTextValue2: String = ""
     private var editTextValue3: String = ""
     private var selectedPreference: String = ""
-    private var selectedTripType: String = "" // NEW
-
+    private var selectedTripType: String = ""
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     private val startCalendar: Calendar = Calendar.getInstance()
     private val endCalendar: Calendar = Calendar.getInstance()
-
     private lateinit var tripLenTitle: TextView
     private lateinit var tripLenSubtitle: TextView
+    private val oneDayMillis = 24L * 60L * 60L * 1000L
+    private val maxDays = 6
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.activity_a_i_itineary_planner, container, false)
@@ -107,7 +108,6 @@ class AIItinearyPlannerFragment : Fragment() {
         tripGroup.setOnClickListener { selectOnlyType(it, listOf(tripBusiness, tripGroup, tripSolo), "Group") }
         tripSolo.setOnClickListener { selectOnlyType(it, listOf(tripBusiness, tripGroup, tripSolo), "Solo") }
 
-        // Preference selection
         fun selectOnlyPref(selected: View, label: String) {
             listOf(prefAdventure, prefRelax, prefSpiritual).forEach { it.isSelected = (it == selected) }
             selectedPreference = label
@@ -129,9 +129,14 @@ class AIItinearyPlannerFragment : Fragment() {
         etEndDate.isFocusable = false
         etEndDate.isClickable = true
 
-        fun updateTripLength() {
+        fun inclusiveDays(): Int {
             val diff = max(0L, endCalendar.timeInMillis - startCalendar.timeInMillis)
-            val days = (diff / (1000L * 60 * 60 * 24)).toInt()
+            val days = (diff / oneDayMillis).toInt() + 1
+            return min(days, maxDays)
+        }
+
+        fun updateTripLength() {
+            val days = inclusiveDays()
             val label = if (days == 1) "1 Day Trip" else "$days Day Trip"
             tripLenTitle.text = label
         }
@@ -143,8 +148,12 @@ class AIItinearyPlannerFragment : Fragment() {
                 { _, year, month, dayOfMonth ->
                     startCalendar.set(year, month, dayOfMonth, 0, 0, 0)
                     etStartDate.setText(dateFormat.format(startCalendar.time))
+                    val maxEndAllowed = startCalendar.timeInMillis + (maxDays - 1) * oneDayMillis
                     if (endCalendar.timeInMillis < startCalendar.timeInMillis) {
                         endCalendar.timeInMillis = startCalendar.timeInMillis
+                        etEndDate.setText(dateFormat.format(endCalendar.time))
+                    } else if (endCalendar.timeInMillis > maxEndAllowed) {
+                        endCalendar.timeInMillis = maxEndAllowed
                         etEndDate.setText(dateFormat.format(endCalendar.time))
                     }
                     updateTripLength()
@@ -160,6 +169,7 @@ class AIItinearyPlannerFragment : Fragment() {
 
         val endClick = View.OnClickListener {
             val minDate = if (etStartDate.text.isNullOrBlank()) Calendar.getInstance().timeInMillis else startCalendar.timeInMillis
+            val maxEndAllowed = if (etStartDate.text.isNullOrBlank()) Long.MAX_VALUE else startCalendar.timeInMillis + (maxDays - 1) * oneDayMillis
             val dp = DatePickerDialog(
                 requireContext(),
                 { _, year, month, dayOfMonth ->
@@ -167,6 +177,12 @@ class AIItinearyPlannerFragment : Fragment() {
                     if (endCalendar.timeInMillis < startCalendar.timeInMillis) {
                         Toast.makeText(requireContext(), "End date must be after start date", Toast.LENGTH_SHORT).show()
                         return@DatePickerDialog
+                    }
+                    val diffMillis = endCalendar.timeInMillis - startCalendar.timeInMillis
+                    val daysInc = (diffMillis / oneDayMillis).toInt() + 1
+                    if (daysInc > maxDays) {
+                        Toast.makeText(requireContext(), "Trip length cannot exceed $maxDays days", Toast.LENGTH_SHORT).show()
+                        endCalendar.timeInMillis = startCalendar.timeInMillis + (maxDays - 1) * oneDayMillis
                     }
                     etEndDate.setText(dateFormat.format(endCalendar.time))
                     updateTripLength()
@@ -176,6 +192,7 @@ class AIItinearyPlannerFragment : Fragment() {
                 endCalendar.get(Calendar.DAY_OF_MONTH)
             )
             dp.datePicker.minDate = minDate
+            if (maxEndAllowed != Long.MAX_VALUE) dp.datePicker.maxDate = maxEndAllowed
             dp.show()
         }
         etEndDate.setOnClickListener(endClick)
@@ -200,6 +217,11 @@ class AIItinearyPlannerFragment : Fragment() {
             }
             if (!datesValid) {
                 Toast.makeText(requireContext(), "Select valid travel dates", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val totalDays = inclusiveDays()
+            if (totalDays > maxDays) {
+                Toast.makeText(requireContext(), "Trip length cannot exceed $maxDays days", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
