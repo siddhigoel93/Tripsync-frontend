@@ -87,6 +87,7 @@ class CommentAdapter(
     fun addComment(newComment: CommentData) {
         comments.add(0, newComment)
         notifyItemInserted(0)
+        notifyItemRangeChanged(0, comments.size)
     }
 
     fun removeComment(position: Int) {
@@ -95,8 +96,10 @@ class CommentAdapter(
     }
 
     fun updateComment(updatedComment: CommentData, position: Int) {
-        comments[position] = updatedComment
-        notifyItemChanged(position)
+        if (position >= 0 && position < comments.size) {
+            comments[position] = updatedComment
+            notifyItemChanged(position)
+        }
     }
 
 

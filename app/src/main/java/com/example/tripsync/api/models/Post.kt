@@ -11,7 +11,7 @@ data class Post(
     val vid: String?,
     val img_url: String?,
     val vid_url: String?,
-    val likes: Int,
+    var likes: Int,
     val dislikes: Int,
     val total_comments: Int,
     val reaction: String?,

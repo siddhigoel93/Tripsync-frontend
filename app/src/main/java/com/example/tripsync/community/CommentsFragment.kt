@@ -27,6 +27,7 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
     private lateinit var recyclerView: RecyclerView
 
     private val commentsList = mutableListOf<CommentData>()
+    private var commentCountUpdateListener: ((Int) -> Unit)? = null
 
     companion object {
         const val TAG = "CommentsBottomSheet"
@@ -39,6 +40,9 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
             fragment.arguments = args
             return fragment
         }
+    }
+    fun setCommentCountUpdateListener(listener: (Int) -> Unit) {
+        commentCountUpdateListener = listener
     }
     override fun onStart() {
         super.onStart()
@@ -100,6 +104,7 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
                         commentsList.addAll(comments.reversed())
 
                         commentsAdapter.notifyDataSetChanged()
+                        commentCountUpdateListener?.invoke(comments.size)
 
                         if (comments.isNotEmpty()) {
                             recyclerView.scrollToPosition(0)
@@ -127,8 +132,10 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
                     val newCommentData = response.body()?.data
                     if (newCommentData != null) {
                         commentsAdapter.addComment(newCommentData)
+
                         inputField.setText("")
                         recyclerView.scrollToPosition(0)
+                        commentCountUpdateListener?.invoke(commentsList.size)
                         Toast.makeText(context, "Comment added successfully!", Toast.LENGTH_SHORT).show()
                     }
                 } else {
@@ -178,7 +185,11 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
                 val response = api.deleteComment(commentId)
 
                 if (response.isSuccessful) {
+                    commentsList.removeAt(position)
                     commentsAdapter.removeComment(position)
+
+                    commentCountUpdateListener?.invoke(commentsList.size)
+
                     Toast.makeText(context, "Comment deleted successfully.", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Failed to delete comment.", Toast.LENGTH_SHORT).show()

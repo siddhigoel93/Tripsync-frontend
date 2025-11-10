@@ -34,8 +34,6 @@ class CommunityFragment : Fragment(), PostActionListener {
 
     private var apiService: AuthService? = null
     private var api: AuthService? = null
-    lateinit var likeCount : TextView
-    lateinit var commentCount : TextView
 
 
     companion object {
@@ -61,8 +59,6 @@ class CommunityFragment : Fragment(), PostActionListener {
         toolbar = appBarLayout.findViewById(R.id.toolbar)
         searchIcon = toolbar?.findViewById(R.id.search)
         createIcon = toolbar?.findViewById(R.id.create)
-          likeCount = view.findViewById<TextView>(R.id.like_count)
-          commentCount = view.findViewById<TextView>(R.id.comment_count)
 
 
         val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -104,7 +100,10 @@ class CommunityFragment : Fragment(), PostActionListener {
                 val response = api.likePost(postId, requestBody)
 
                 if (response.isSuccessful) {
-                    likeCount.text = response.body()?.data?.likes.toString()
+                    val newLikeCount = response.body()?.data?.likes
+                    if (newLikeCount != null) {
+                        postAdapter?.updatePostCounts(postId, likes = newLikeCount)
+                    }
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("CommunityFragment", "API Error: ${response.code()} - $errorBody")
@@ -122,6 +121,11 @@ class CommunityFragment : Fragment(), PostActionListener {
 
     override fun onComment(postId: Int) {
         val commentsFragment = CommentsFragment.newInstance(postId)
+
+        commentsFragment.setCommentCountUpdateListener { updatedCount ->
+            postAdapter?.updatePostCounts(postId, commentCount = updatedCount)
+        }
+
         commentsFragment.show(parentFragmentManager, CommentsFragment.TAG)
     }
 

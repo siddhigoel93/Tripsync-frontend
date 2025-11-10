@@ -40,6 +40,8 @@ class PostAdapter(
         val mediaImage: ImageView = itemView.findViewById(R.id.post_media_image)
         val iconLike: ImageView = itemView.findViewById(R.id.icon_like)
         val iconComment: ImageView = itemView.findViewById(R.id.icon_comment)
+        var likeCount: TextView = itemView.findViewById(R.id.like_count)
+        var commentCount: TextView = itemView.findViewById(R.id.comment_count)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -51,6 +53,8 @@ class PostAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
         val context = holder.itemView.context
+        holder.likeCount.text = post.likes?.toString() ?: "0"
+        holder.commentCount.text = post.total_comments.toString() ?: "0"
 
 
         val user = post.user
@@ -186,6 +190,20 @@ class PostAdapter(
         } catch (e: Exception) {
             Log.e("TimeFormat", "Error parsing time: ${e.message}")
             "Unknown time"
+        }
+    }
+    fun updatePostCounts(postId: Int, likes: Int? = null, commentCount: Int? = null) {
+        val position = posts.indexOfFirst { it.id == postId }
+        if (position != -1) {
+            likes?.let {
+                posts[position].likes = it
+                notifyItemChanged(position, "likes")
+            }
+            commentCount?.let {
+                // If your Post model has a comment count field, update it here
+                // For now, we'll just notify the change
+                notifyItemChanged(position, "comments")
+            }
         }
     }
 }
