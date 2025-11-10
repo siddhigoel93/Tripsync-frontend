@@ -41,8 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window.statusBarColor = Color.BLACK
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
         setContentView(R.layout.activity_main)
 
         WindowInsetsControllerCompat(window, window.decorView).apply {
@@ -245,21 +244,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleNavigation(destinationId: Int) {
-        // Navigate using the NavController
         navController.navigate(destinationId)
 
-        // Close the drawer immediately after starting navigation
         drawerLayout.closeDrawers()
     }
 
     private fun logoutUser() {
-        // Clear stored tokens (reusing your commented-out logic from ExploreFragment)
         val sharedPrefs = getSharedPreferences("auth", Context.MODE_PRIVATE)
         sharedPrefs.edit().clear().apply()
 
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
 
-        // Navigate to the Login screen (ensure R.id.loginFragment exists in nav_graph)
         navController.navigate(R.id.loginFragment)
 
         drawerLayout.closeDrawers()
@@ -299,7 +294,6 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Delete Profile")
             .setMessage("Are you sure you want to permanently delete your account ?.")
             .setPositiveButton("Delete") { dialog, which ->
-                // User confirmed deletion
                 deleteUserAccount()
             }
             .setNegativeButton("Cancel", null)

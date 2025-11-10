@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -34,6 +34,9 @@ class CommunityFragment : Fragment(), PostActionListener {
 
     private var apiService: AuthService? = null
     private var api: AuthService? = null
+    lateinit var likeCount : TextView
+    lateinit var commentCount : TextView
+
 
     companion object {
         const val POST_CREATION_REQUEST_KEY = "post_creation_request"
@@ -58,6 +61,9 @@ class CommunityFragment : Fragment(), PostActionListener {
         toolbar = appBarLayout.findViewById(R.id.toolbar)
         searchIcon = toolbar?.findViewById(R.id.search)
         createIcon = toolbar?.findViewById(R.id.create)
+          likeCount = view.findViewById<TextView>(R.id.like_count)
+          commentCount = view.findViewById<TextView>(R.id.comment_count)
+
 
         val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val currentUserEmail = sharedPref.getString("userEmail", null)
@@ -98,7 +104,7 @@ class CommunityFragment : Fragment(), PostActionListener {
                 val response = api.likePost(postId, requestBody)
 
                 if (response.isSuccessful) {
-//                    Toast.makeText(requireContext(), "Like synced with server!", Toast.LENGTH_SHORT).show()
+                    likeCount.text = response.body()?.data?.likes.toString()
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
                     Log.e("CommunityFragment", "API Error: ${response.code()} - $errorBody")

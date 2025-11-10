@@ -52,6 +52,7 @@ class PostAdapter(
         val post = posts[position]
         val context = holder.itemView.context
 
+
         val user = post.user
         holder.userName.text = if (user != null) {
             val fullName = "${user.fname ?: ""} ${user.lname ?: ""}".trim()

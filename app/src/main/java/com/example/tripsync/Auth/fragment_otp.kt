@@ -219,7 +219,7 @@ class FragmentOtp : Fragment() {
         }
         val lastFilledIndex = boxes.indexOfLast { it.text.toString().trim().isNotEmpty() }
         boxes.forEachIndexed { index, box ->
-            if (index == lastFilledIndex && lastFilledIndex != -1)
+            if (index <= lastFilledIndex && lastFilledIndex != -1)
                 box.setBackgroundResource(R.drawable.otp_box_active)
             else box.setBackgroundResource(R.drawable.otp_box_bg)
             box.invalidate()

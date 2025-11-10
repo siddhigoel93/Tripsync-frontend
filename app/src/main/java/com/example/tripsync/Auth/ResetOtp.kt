@@ -53,7 +53,6 @@ class ResetOTP : Fragment() {
                 if (isError) {
                     val errorMessage = findNavController().currentBackStackEntry?.savedStateHandle?.get<String>("otp_error_message")
                     showOtpError(errorMessage ?: "Invalid OTP")
-                    // consume event
                     findNavController().currentBackStackEntry?.savedStateHandle?.remove<Boolean>("otp_error")
                     findNavController().currentBackStackEntry?.savedStateHandle?.remove<String>("otp_error_message")
                 }
@@ -116,12 +115,6 @@ class ResetOTP : Fragment() {
             val email = arguments?.getString("email") ?: ""
             val pass1 = arguments?.getString("new_password") ?: ""
             val pass2 = arguments?.getString("confirm_password")?: ""
-
-
-//            val bundle = Bundle().apply {
-//                putString("email", email)
-//                putString("otp", otp)
-//            }
             btnVerify.isEnabled = false
             btnVerify.text = "Verifying..."
             resetPassword(email, otp, pass1, pass2)

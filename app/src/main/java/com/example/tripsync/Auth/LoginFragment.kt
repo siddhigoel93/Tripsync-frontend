@@ -126,7 +126,11 @@ class LoginFragment : Fragment() {
                         verified.visibility = View.VISIBLE
                         val profileCompleted = checkProfileCompletion()
                         Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
-                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                        if(profileCompleted){
+                            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                        }else{
+                            findNavController().navigate(R.id.welcomeFragment)
+                        }
                     } else {
                         showFieldError(usernameError, etUsername, "(Incorrect email or password)")
                         showFieldError(passwordError, passwordField, "")
