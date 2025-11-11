@@ -93,6 +93,9 @@ class ExploreFragment : Fragment() {
 
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
+        val savedUrl = sharedPrefs.getString("userAvatarUrl", null)
+        updateExploreProfileImage(savedUrl)
+
 
         customHeader.visibility = if (isProfileCompleted) View.GONE else View.VISIBLE
         if (args.showHeader) {
@@ -137,8 +140,9 @@ class ExploreFragment : Fragment() {
                     if (!isAdded || view == null) return@launch
                     val weather = weatherResponse.data
                     view?.findViewById<TextView>(R.id.temp_yesterday)?.text = "${weather.wind} km/h"
-                    view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.temperature}°"
-                    view?.findViewById<TextView>(R.id.temp_tomorrow)?.text = "${weather.chance_of_rain}%"
+                    view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.chance_of_rain}%"
+                    view?.findViewById<TextView>(R.id.temp_tomorrow)?.text = "${weather.temperature}°"
+
 
                 } catch (e: Exception) {
                     if (isAdded && context != null) {
@@ -154,7 +158,8 @@ class ExploreFragment : Fragment() {
     }
 
     fun updateExploreProfileImage(url: String?) {
-        val exploreProfileImage = requireView().findViewById<ImageView>(R.id.profileImageView)
+        val exploreProfileImage = requireView().findViewById<ImageView>(R.id.menu_icon)
+
         if (!url.isNullOrEmpty()) {
             Glide.with(this)
                 .load(url)

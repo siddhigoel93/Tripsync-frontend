@@ -41,7 +41,7 @@ class ChatFragment : Fragment() {
                 putString("name", conversation.name)
                 putInt("conversationId", conversation.id)
             }
-//            findNavController().navigate(R.id.action_chatFragment_to_chatThreadFragment, bundle)
+           findNavController().navigate(R.id.action_chatFragment_to_chatThreadFragment, bundle)
         }
 
         recycler.adapter = adapter

@@ -271,6 +271,9 @@
         <action
             android:id="@+id/action_chatFragment_to_searchUsersFragment"
             app:destination="@id/searchUsersFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_chatThreadFragment"
+            app:destination="@id/chatThreadFragment" />
     </fragment>
 
     <fragment
@@ -312,9 +315,8 @@
         android:label="Search Users" >
         <action
             android:id="@+id/action_searchUsersFragment_to_chatThreadFragment"
-            app:destination="@id/chatThreadFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"/>
+            app:destination="@id/chatThreadFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/chatThreadFragment"

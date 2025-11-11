@@ -21,6 +21,6 @@ interface ChatApi {
     @POST("/api/chat/conversations/")
     suspend fun createConversation(
         @Body body: CreateConversationRequest
-    ): Response<CreateConversationResponse>
+    ): Response<Conversation>
 
 }

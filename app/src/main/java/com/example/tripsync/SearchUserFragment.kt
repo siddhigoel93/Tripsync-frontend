@@ -2,7 +2,6 @@ package com.example.tripsync
 
 import android.os.Bundle
 import android.util.Log
-import android.util.Log.e
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -93,28 +92,47 @@ class SearchUsersFragment : Fragment() {
                     CreateConversationRequest(listOf(user.id))
                 )
 
+                Log.d("SearchUsers", "Response code: ${response.code()}")
+                Log.d("SearchUsers", "Response body: ${response.body()}")
+
                 if (response.isSuccessful) {
-                    val conversation = response.body()?.data
+                    // The API returns the Conversation object DIRECTLY, not wrapped
+                    val conversation = response.body()
+
                     if (conversation != null) {
+                        // Get the display name - either conversation name or user's full name
+                        val displayName = if (conversation.name.isNullOrEmpty()) {
+                            // Find the other participant (not yourself)
+                            val otherParticipant = conversation.participants.find {
+                                it.id == user.id
+                            }
+                            otherParticipant?.email?.substringBefore("@") ?: user.fullName
+                        } else {
+                            conversation.name
+                        }
+
+                        Log.d("SearchUsers", "Navigating with conversationId: ${conversation.id}, name: $displayName")
+
                         val action = SearchUsersFragmentDirections
                             .actionSearchUsersFragmentToChatThreadFragment(
                                 conversationId = conversation.id,
-                                name = conversation.name ?: user.fullName
+                                name = displayName
                             )
                         findNavController().navigate(action)
                     } else {
+                        Log.e("SearchUsers", "Conversation body is null")
                         Toast.makeText(requireContext(), "Conversation returned null", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to create conversation", Toast.LENGTH_SHORT).show()
+                    Log.e("SearchUsers", "Response failed: ${response.errorBody()?.string()}")
+                    Toast.makeText(requireContext(), "Failed to create conversation: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
 
             } catch (e: Exception) {
                 e.printStackTrace()
+                Log.e("SearchUsers", "Exception: ${e.message}", e)
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
-
 }

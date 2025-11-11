@@ -78,6 +78,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
+            android:textColor="@color/black"
             android:hint="Type a message..."
             android:background="@drawable/edittext_simple"
             android:paddingStart="12dp"
@@ -85,10 +86,10 @@
 
         <ImageView
             android:id="@+id/button_send"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:src="@drawable/send"
-            android:padding="8dp"
+            android:layout_marginStart="2dp"
             android:contentDescription="Send" />
     </LinearLayout>
 
