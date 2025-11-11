@@ -138,8 +138,7 @@ class ExploreFragment : Fragment() {
                     val weather = weatherResponse.data
                     view?.findViewById<TextView>(R.id.temp_yesterday)?.text = "${weather.wind} km/h"
                     view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.temperature}°"
-                    view?.findViewById<TextView>(R.id.temp_tomorrow)?.text =
-                        "${weather.chance_of_rain}%"
+                    view?.findViewById<TextView>(R.id.temp_tomorrow)?.text = "${weather.chance_of_rain}%"
 
                 } catch (e: Exception) {
                     if (isAdded && context != null) {

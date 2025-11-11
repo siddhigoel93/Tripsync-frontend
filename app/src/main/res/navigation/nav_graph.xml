@@ -36,8 +36,8 @@
         android:name="com.example.tripsync.onboarding.OnboardingFragment"
         android:label="Onboarding">
         <action
-            android:id="@+id/action_onboarding_to_login"
-            app:destination="@id/loginFragment"
+            android:id="@+id/action_onboarding_to_signup"
+            app:destination="@id/fragment_signup"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
         <action
@@ -159,6 +159,9 @@
         <action
             android:id="@+id/action_welcomeFragment_to_fragment_personal_details"
             app:destination="@id/fragment_personal_details" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragment_personal_details"

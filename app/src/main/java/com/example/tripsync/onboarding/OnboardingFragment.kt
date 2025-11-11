@@ -19,6 +19,7 @@ class OnboardingFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private var slideRunnable: Runnable? = null
     private val slideInterval = 1800L
+    private var isUserInteracting = false // Add this flag
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +28,7 @@ class OnboardingFragment : Fragment() {
         val accessToken = sharedPrefs.getString("access_token", null)
 
         if (accessToken != null) {
-
-           findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
+            findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
         }
     }
 
@@ -40,15 +40,18 @@ class OnboardingFragment : Fragment() {
         val view = inflater.inflate(R.layout.onboarding_fragment, container, false)
         viewPager = view.findViewById(R.id.viewPager)
 
-        adapter = OnboardingAdapter(requireActivity(), OnboardingSlides.slides)
+        adapter = OnboardingAdapter(requireActivity(), OnboardingSlides.slides) {
+            stopAutoSlide()
+        }
         viewPager.adapter = adapter
         viewPager.offscreenPageLimit = 1
         viewPager.clipToPadding = true
         viewPager.clipChildren = true
 
+        // Smoother page transformer
         viewPager.setPageTransformer { page, position ->
-            page.translationX = -position * page.width
-            page.alpha = 1 - kotlin.math.abs(position)
+            page.alpha = 1 - kotlin.math.abs(position) * 0.5f
+            page.scaleY = 0.85f + (1 - kotlin.math.abs(position)) * 0.15f
         }
 
         startAutoSlide()
@@ -59,12 +62,9 @@ class OnboardingFragment : Fragment() {
     private fun startAutoSlide() {
         slideRunnable = object : Runnable {
             override fun run() {
-                if (viewPager.currentItem < adapter.itemCount - 1) {
+                if (!isUserInteracting && viewPager.currentItem < adapter.itemCount - 1) {
                     viewPager.setCurrentItem(viewPager.currentItem + 1, true)
                     handler.postDelayed(this, slideInterval)
-                } else {
-
-                    handler.removeCallbacks(this)
                 }
             }
         }
@@ -72,12 +72,19 @@ class OnboardingFragment : Fragment() {
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                handler.removeCallbacks(slideRunnable!!)
-                if (position < adapter.itemCount - 1) {
-                    handler.postDelayed(slideRunnable!!, slideInterval)
+                if (!isUserInteracting) {
+                    handler.removeCallbacks(slideRunnable!!)
+                    if (position < adapter.itemCount - 1) {
+                        handler.postDelayed(slideRunnable!!, slideInterval)
+                    }
                 }
             }
         })
+    }
+
+    fun stopAutoSlide() {
+        isUserInteracting = true
+        slideRunnable?.let { handler.removeCallbacks(it) }
     }
 
     override fun onDestroyView() {

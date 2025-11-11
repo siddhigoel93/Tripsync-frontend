@@ -14,7 +14,8 @@ import androidx.navigation.findNavController
 
 class OnboardingAdapter(
     private val activity: androidx.fragment.app.FragmentActivity,
-    private val slides: List<OnboardingData>
+    private val slides: List<OnboardingData>,
+    private val onUserInteraction: () -> Unit = {} // Add callback
 ) : RecyclerView.Adapter<OnboardingAdapter.OnboardingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -54,20 +55,22 @@ class OnboardingAdapter(
             updateProgress(index)
 
             btnNext.setOnClickListener {
+                onUserInteraction() // Stop auto-slide
                 val viewPager = activity.findViewById<ViewPager2>(R.id.viewPager)
                 if (index < slides.lastIndex) {
                     viewPager.setCurrentItem(index + 1, true)
                 } else {
-                    itemView.findNavController().navigate(R.id.action_onboarding_to_login)
+                    itemView.findNavController().navigate(R.id.action_onboarding_to_signup)
                 }
             }
 
             skip.setOnClickListener {
-                itemView.findNavController().navigate(R.id.action_onboarding_to_login)
+                onUserInteraction() // Stop auto-slide
+                itemView.findNavController().navigate(R.id.action_onboarding_to_signup)
             }
         }
 
-         fun updateProgress(index: Int) {
+        fun updateProgress(index: Int) {
             progressBars.forEachIndexed { i, bar ->
                 bar.setBackgroundResource(
                     if (i == index) R.drawable.progress_selected

@@ -282,15 +282,25 @@ class OpenProfileFragment : Fragment() {
                 )
 
                 if (response.isSuccessful) {
-                    requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
-                        .putString("userAvatarUrl", response.body()?.data?.profile?.profile_pic_url)
-                        .apply()
-                    val imgUrl = response.body()?.data?.profile?.profile_pic_url
-                    (activity as? MainActivity)?.updateDrawerProfileImage(imgUrl)
+                    val updatedProfile = response.body()?.data?.profile
 
+                    if (updatedProfile != null) {
+                        val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                        with(sharedPref.edit()) {
+                            putString("fname", updatedProfile.fname ?: "")
+                            putString("lname", updatedProfile.lname ?: "")
+                            putString("currentUserEmail", sharedPref.getString("currentUserEmail", ""))
+                            putString("userAvatarUrl", updatedProfile.profile_pic_url ?: "")
+                            apply()
+                        }
+
+                        // Update drawer profile immediately
+                        (activity as? MainActivity)?.updateDrawerProfileImage(updatedProfile.profile_pic_url)
+                    }
 
                     Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
                     fetchProfile()
+
                 } else {
                     Toast.makeText(requireContext(), "Update failed: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }

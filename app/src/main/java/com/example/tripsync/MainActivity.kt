@@ -21,7 +21,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -45,18 +44,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
 
-        WindowInsetsControllerCompat(window, window.decorView).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = false
-
-
-        }
-
-
-
+//        WindowInsetsControllerCompat(window, window.decorView).apply {
+//            isAppearanceLightStatusBars = false
+//            isAppearanceLightNavigationBars = false
+//        }
 
         progressLayout = findViewById(R.id.profileProgressLayout)
         app_bar_layout = findViewById(R.id.app_bar_layout)
@@ -65,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         fab_store = findViewById(R.id.fab_store)
 
         drawerLayout = findViewById(R.id.drawer_layout)
-
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -76,8 +69,6 @@ class MainActivity : AppCompatActivity() {
         setupDrawerBackButtonHandling()
 
         bottom_nav_view.setupWithNavController(navController)
-
-
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
@@ -120,6 +111,34 @@ class MainActivity : AppCompatActivity() {
     private fun setupDrawerMenuListeners() {
         val drawerMenuView = findViewById<View>(R.id.drawer_menu_include)
 
+        refreshDrawerProfile()
+
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+
+            override fun onDrawerOpened(drawerView: View) {
+                refreshDrawerProfile()
+            }
+
+            override fun onDrawerClosed(drawerView: View) {}
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
+
+        val menuProfile = drawerMenuView.findViewById<TextView>(R.id.menu_profile)
+        val menuDelete = drawerMenuView.findViewById<ImageView>(R.id.menu_delete)
+        val menuLogout = drawerMenuView.findViewById<ImageView>(R.id.menu_logout)
+        val menuSOS = drawerMenuView.findViewById<ImageView>(R.id.menu_sos)
+
+        menuProfile.setOnClickListener { handleNavigation(R.id.openProfileFragment) }
+        menuLogout.setOnClickListener { logoutUser() }
+        menuDelete.setOnClickListener {
+            showDeleteConfirmationDialog()
+        }
+        menuSOS.setOnClickListener { handleNavigation(R.id.emergencySosFragment) }
+    }
+
+    private fun refreshDrawerProfile() {
+        val drawerMenuView = findViewById<View>(R.id.drawer_menu_include)
         val profileName = drawerMenuView.findViewById<TextView>(R.id.profile_name)
         val profileEmail = drawerMenuView.findViewById<TextView>(R.id.profile_email)
         val profileImage = drawerMenuView.findViewById<ImageView>(R.id.profile_image)
@@ -130,8 +149,10 @@ class MainActivity : AppCompatActivity() {
         val email = sharedPref.getString("currentUserEmail", "example@email.com")
         val avatarUrl = sharedPref.getString("userAvatarUrl", null)
 
-        profileName.text = "$fname"
+        val fullName = "$fname $lname".trim()
+        profileName.text = fname
         profileEmail.text = email
+
         if (!avatarUrl.isNullOrEmpty()) {
             Glide.with(this)
                 .load(avatarUrl)
@@ -142,20 +163,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             profileImage.setImageResource(R.drawable.profile)
         }
-
-        val menuProfile = drawerMenuView.findViewById<TextView>(R.id.menu_profile)
-        val menuDelete = drawerMenuView.findViewById<ImageView>(R.id.menu_delete)
-        val menuLogout = drawerMenuView.findViewById<ImageView>(R.id.menu_logout)
-        val menuSOS = drawerMenuView.findViewById<ImageView>(R.id.menu_sos)
-
-        menuProfile.setOnClickListener { handleNavigation(R.id.openProfileFragment) }
-         menuLogout.setOnClickListener { logoutUser() }
-        menuDelete.setOnClickListener {
-            showDeleteConfirmationDialog()
-        }
-        menuSOS.setOnClickListener { handleNavigation(R.id.emergencySosFragment) }
     }
-
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
@@ -173,7 +181,6 @@ class MainActivity : AppCompatActivity() {
         }
         return super.dispatchTouchEvent(ev)
     }
-
 
     private fun updateProgress(fragmentId: Int) {
         val circles = listOf(
@@ -198,7 +205,6 @@ class MainActivity : AppCompatActivity() {
             it.setBackgroundResource(R.drawable.rounded_progress_line)
             it.scaleX = 1f
         }
-
 
         val currentIndex = when (fragmentId) {
             R.id.fragment_personal_details -> 0
@@ -225,7 +231,6 @@ class MainActivity : AppCompatActivity() {
                     circle.text = (index + 1).toString()
                     circle.setTextColor(Color.WHITE)
                     texts[index].setTextColor(Color.parseColor("#00C896"))
-
                 }
             }
         }
@@ -244,24 +249,19 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 
     private fun handleNavigation(destinationId: Int) {
         navController.navigate(destinationId)
-
         drawerLayout.closeDrawers()
     }
-
 
     private fun setupDrawerBackButtonHandling() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // If the drawer is open, consume the back event and close it.
                 if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
                     drawerLayout.closeDrawer(GravityCompat.END)
                 } else {
-                    // If the drawer is closed, allow the default system back behavior
                     isEnabled = false
                     onBackPressedDispatcher.onBackPressed()
                 }
@@ -272,27 +272,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updateDrawerProfileImage(url: String?) {
-        val drawerMenuView = findViewById<View>(R.id.drawer_menu_include)
-        val profileImage = drawerMenuView.findViewById<ImageView>(R.id.profile_image)
-        Glide.with(this)
-            .load(url)
-            .placeholder(R.drawable.profile)
-            .error(R.drawable.profile)
-            .circleCrop()
-            .into(profileImage)
-
+        refreshDrawerProfile()
         profileObservers.forEach { it(url) }
     }
+
     private fun showDeleteConfirmationDialog() {
         androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Delete Profile")
-            .setMessage("Are you sure you want to permanently delete your account ?.")
-            .setPositiveButton("Delete") { dialog, which ->
+            .setTitle("Delete Account")
+            .setMessage("Are you sure you want to permanently delete your account? This action cannot be undone.")
+            .setPositiveButton("Delete") { dialog, _ ->
                 deleteUserAccount()
+                dialog.dismiss()
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
+
     private fun deleteUserAccount() {
         lifecycleScope.launch {
             try {
@@ -336,6 +331,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun clearAllUserData() {
         val sharedPrefsAuth = getSharedPreferences("auth", Context.MODE_PRIVATE)
         sharedPrefsAuth.edit().clear().apply()
@@ -366,6 +362,7 @@ class MainActivity : AppCompatActivity() {
                     drawerLayout.closeDrawers()
                     return@launch
                 }
+
                 val api = ApiClient.getTokenService(this@MainActivity)
                 val request = LogoutRequest(refresh = refreshToken)
                 val response = api.logout(request)
@@ -374,34 +371,28 @@ class MainActivity : AppCompatActivity() {
                     val body = response.body()
                     if (body?.status == "success") {
                         clearAuthData()
-
-                        Toast.makeText(this@MainActivity, "Logged out successfully", Toast.LENGTH_SHORT).show()
-
+                        Toast.makeText(this@MainActivity, body.message ?: "Logged out successfully", Toast.LENGTH_SHORT).show()
                         navController.navigate(R.id.loginFragment)
                         drawerLayout.closeDrawers()
                     } else {
                         clearAuthData()
-                        Toast.makeText(this@MainActivity, "Logged out (with warning)", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "Logged out", Toast.LENGTH_SHORT).show()
                         navController.navigate(R.id.loginFragment)
                         drawerLayout.closeDrawers()
                     }
                 } else {
-                    val errorBody = response.errorBody()?.string()
-
                     clearAuthData()
-
                     val errorMsg = when (response.code()) {
                         400 -> "Invalid session. Logged out locally."
                         else -> "Logged out locally"
                     }
-
                     Toast.makeText(this@MainActivity, errorMsg, Toast.LENGTH_SHORT).show()
                     navController.navigate(R.id.loginFragment)
                     drawerLayout.closeDrawers()
                 }
             } catch (e: Exception) {
                 clearAuthData()
-                Toast.makeText(this@MainActivity, "Logged out locally (network error)", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Logged out locally", Toast.LENGTH_SHORT).show()
                 navController.navigate(R.id.loginFragment)
                 drawerLayout.closeDrawers()
             }
@@ -414,6 +405,4 @@ class MainActivity : AppCompatActivity() {
         val sharedPrefsApp = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         sharedPrefsApp.edit().clear().apply()
     }
-
-
 }
