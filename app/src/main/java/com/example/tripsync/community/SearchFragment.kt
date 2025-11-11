@@ -142,16 +142,18 @@ class SearchFragment : Fragment(), PostActionListener {
             img_url = item.img_url ?: "",
             vid = item.vid ?: "",
             vid_url = item.vid_url ?: "",
-            likes = item.likes ,
-            dislikes = item.dislikes ,
-            rating = item.rating ,
+            likes = item.likes,
+            dislikes = item.dislikes,
+            rating = item.rating,
             loc = item.loc ?: "",
             created = item.created ?: "",
             updated = item.updated ?: "",
             total_comments = item.total_comments ?: 0,
             reaction = item.reaction ?: "",
             user = null as UserP?,
-            owner = item.owner ?: false
+            owner = item.owner ?: false,
+            comments = null,
+            commentCount = item.total_comments
         )
     }
 

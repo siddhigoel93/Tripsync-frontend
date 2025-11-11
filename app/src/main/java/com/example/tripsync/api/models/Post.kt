@@ -11,11 +11,13 @@ data class Post(
     val vid: String?,
     val img_url: String?,
     val vid_url: String?,
-    var likes: Int,
+    var likes: Int?,
     val dislikes: Int,
-    val total_comments: Int,
+    val total_comments: Int?,
     val reaction: String?,
     val owner: Boolean,
+    val comments: List<CommentData>?,
+    var commentCount: Int? = comments?.size,
     val created: String,
     val updated: String
 )

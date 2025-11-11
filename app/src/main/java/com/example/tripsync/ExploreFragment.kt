@@ -94,10 +94,7 @@ class ExploreFragment : Fragment() {
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
 
-        // Show/hide header
         customHeader.visibility = if (isProfileCompleted) View.GONE else View.VISIBLE
-
-        // Header setup
         if (args.showHeader) {
             val avatarUrl = sharedPrefs.getString("userAvatarUrl", null)
             val profileImageView = view.findViewById<ImageView>(R.id.menu_icon)
@@ -113,7 +110,7 @@ class ExploreFragment : Fragment() {
             }
             customHeader.visibility = View.GONE
         } else {
-            fetchWeather("Delhi") // Example location
+            fetchWeather("Delhi")
         }
 
         // AppBar elevation
@@ -128,21 +125,33 @@ class ExploreFragment : Fragment() {
 
     private fun fetchWeather(location: String) {
         lifecycleScope.launch {
-            try {
-                val api = ApiClient.getAuthService(requireContext())
-                val weatherResponse: WeatherResponse = withContext(Dispatchers.IO) {
-                    api.getWeather(location)
+                try {
+                    if (!isAdded) return@launch
+
+                    val api = ApiClient.getAuthService(requireContext())
+                    val weatherResponse: WeatherResponse = withContext(Dispatchers.IO) {
+                        api.getWeather(location)
+
+                    }
+
+                    if (!isAdded || view == null) return@launch
+                    val weather = weatherResponse.data
+                    view?.findViewById<TextView>(R.id.temp_yesterday)?.text = "${weather.wind} km/h"
+                    view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.temperature}°"
+                    view?.findViewById<TextView>(R.id.temp_tomorrow)?.text =
+                        "${weather.chance_of_rain}%"
+
+                } catch (e: Exception) {
+                    if (isAdded && context != null) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${e.localizedMessage}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-
-                val weather = weatherResponse.data
-                view?.findViewById<TextView>(R.id.temp_yesterday)?.text = "${weather.wind} km/h"
-                view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.temperature}°"
-                view?.findViewById<TextView>(R.id.temp_tomorrow)?.text = "${weather.chance_of_rain}%"
-
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
-        }
+
     }
 
     fun updateExploreProfileImage(url: String?) {

@@ -193,4 +193,10 @@ interface AuthService {
     @POST("/api/chatbot/")
     suspend fun sendMessage(@Body request: ChatRequest): Response<ChatResponse>
 
+    @DELETE("api/personal/profile/")
+    suspend fun deleteProfile(): Response<DeleteProfileResponse>
+
+    @POST("api/account/logout/")
+    suspend fun logout(@Body request: LogoutRequest): Response<LogoutResponse>
+
 }

@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.google.android.material.appbar.AppBarLayout
@@ -27,6 +28,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.models.LogoutRequest
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     lateinit var progressLayout: View
@@ -249,16 +253,6 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.closeDrawers()
     }
 
-    private fun logoutUser() {
-        val sharedPrefs = getSharedPreferences("auth", Context.MODE_PRIVATE)
-        sharedPrefs.edit().clear().apply()
-
-        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
-
-        navController.navigate(R.id.loginFragment)
-
-        drawerLayout.closeDrawers()
-    }
 
     private fun setupDrawerBackButtonHandling() {
         val callback = object : OnBackPressedCallback(true) {
@@ -300,17 +294,55 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
     private fun deleteUserAccount() {
+        lifecycleScope.launch {
+            try {
+                val api = ApiClient.getTokenService(this@MainActivity)
+                val response = api.deleteProfile()
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    if (body?.success == true) {
+                        clearAllUserData()
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Account deleted successfully",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        navController.navigate(R.id.loginFragment)
+                        drawerLayout.closeDrawers()
+                    } else {
+                        Toast.makeText(
+                            this@MainActivity,
+                            body?.message ?: "Failed to delete account",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                    val errorMsg = when (response.code()) {
+                        404 -> "Profile not found"
+                        500 -> "Server error. Please try again later."
+                        else -> "Failed to delete account: ${response.code()}"
+                    }
+                    Toast.makeText(this@MainActivity, errorMsg, Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Network error: ${e.localizedMessage}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+    private fun clearAllUserData() {
         val sharedPrefsAuth = getSharedPreferences("auth", Context.MODE_PRIVATE)
         sharedPrefsAuth.edit().clear().apply()
-
         val sharedPrefsApp = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         sharedPrefsApp.edit().clear().apply()
-
-        Toast.makeText(this, "Profile permanently deleted.", Toast.LENGTH_LONG).show()
-
-        navController.navigate(R.id.loginFragment)
-
-        drawerLayout.closeDrawers()
+        val sharedPrefsLiked = getSharedPreferences("liked_posts", Context.MODE_PRIVATE)
+        sharedPrefsLiked.edit().clear().apply()
     }
 
     fun addProfileObserver(observer: (String?) -> Unit) {
@@ -319,6 +351,68 @@ class MainActivity : AppCompatActivity() {
 
     fun removeProfileObserver(observer: (String?) -> Unit) {
         profileObservers.remove(observer)
+    }
+
+    private fun logoutUser() {
+        lifecycleScope.launch {
+            try {
+                val sharedPrefsAuth = getSharedPreferences("auth", Context.MODE_PRIVATE)
+                val refreshToken = sharedPrefsAuth.getString("refresh_token", null)
+
+                if (refreshToken.isNullOrEmpty()) {
+                    clearAuthData()
+                    Toast.makeText(this@MainActivity, "Logged out successfully", Toast.LENGTH_SHORT).show()
+                    navController.navigate(R.id.loginFragment)
+                    drawerLayout.closeDrawers()
+                    return@launch
+                }
+                val api = ApiClient.getTokenService(this@MainActivity)
+                val request = LogoutRequest(refresh = refreshToken)
+                val response = api.logout(request)
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    if (body?.status == "success") {
+                        clearAuthData()
+
+                        Toast.makeText(this@MainActivity, "Logged out successfully", Toast.LENGTH_SHORT).show()
+
+                        navController.navigate(R.id.loginFragment)
+                        drawerLayout.closeDrawers()
+                    } else {
+                        clearAuthData()
+                        Toast.makeText(this@MainActivity, "Logged out (with warning)", Toast.LENGTH_SHORT).show()
+                        navController.navigate(R.id.loginFragment)
+                        drawerLayout.closeDrawers()
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+
+                    clearAuthData()
+
+                    val errorMsg = when (response.code()) {
+                        400 -> "Invalid session. Logged out locally."
+                        else -> "Logged out locally"
+                    }
+
+                    Toast.makeText(this@MainActivity, errorMsg, Toast.LENGTH_SHORT).show()
+                    navController.navigate(R.id.loginFragment)
+                    drawerLayout.closeDrawers()
+                }
+            } catch (e: Exception) {
+                clearAuthData()
+                Toast.makeText(this@MainActivity, "Logged out locally (network error)", Toast.LENGTH_SHORT).show()
+                navController.navigate(R.id.loginFragment)
+                drawerLayout.closeDrawers()
+            }
+        }
+    }
+
+    private fun clearAuthData() {
+        val sharedPrefsAuth = getSharedPreferences("auth", Context.MODE_PRIVATE)
+        sharedPrefsAuth.edit().clear().apply()
+        val sharedPrefsApp = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        sharedPrefsApp.edit().clear().apply()
     }
 
 

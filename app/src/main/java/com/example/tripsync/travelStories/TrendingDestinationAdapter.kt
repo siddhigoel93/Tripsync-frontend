@@ -18,18 +18,17 @@ class TrendingDestinationAdapter(
     inner class DestinationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val destinationImage: ImageView = itemView.findViewById(R.id.destination_image)
         val destinationTitle: TextView = itemView.findViewById(R.id.destination_title)
-        val destinationDescription: TextView = itemView.findViewById(R.id.destination_description)
+//        val destinationDescription: TextView = itemView.findViewById(R.id.destination_description)
         val actionArrow: ImageView = itemView.findViewById(R.id.action_arrow)
 
         fun bind(destination: TrendingPlace) {
             destinationTitle.text = destination.name
-            destinationDescription.text = destination.fun_facts.joinToString("\n") { it.title }
+//            destinationDescription.text = destination.fun_facts.joinToString("\n") { it.title }
 
             Glide.with(itemView.context)
                 .load(destination.main)
                 .placeholder(R.drawable.placeholder_image)
                 .error(R.drawable.placeholder_image)
-                .circleCrop() // optional, remove if rectangular is desired
                 .into(destinationImage)
 
             itemView.setOnClickListener { clickListener(destination) }
