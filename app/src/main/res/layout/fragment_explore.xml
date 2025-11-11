@@ -62,14 +62,11 @@
         android:id="@+id/toolbar_btn_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="8dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
+        android:paddingVertical="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_chat_bubble"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 

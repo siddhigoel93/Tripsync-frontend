@@ -127,6 +127,9 @@
         <action
             android:id="@+id/action_homeFragment_to_emergencySosFragment"
             app:destination="@id/emergencySosFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_AIchatFragment"
+            app:destination="@id/AIchatFragment" />
     </fragment>
     <fragment
         android:id="@+id/emergencyFragment"
@@ -333,5 +336,9 @@
         android:id="@+id/emergencySosFragment"
         android:name="com.example.tripsync.home.EmergencySosFragment"
         android:label="EmergencySosFragment" />
+    <fragment
+        android:id="@+id/AIchatFragment"
+        android:name="AIchatFragment"
+        android:label="AIchatFragment" />
 
 </navigation>

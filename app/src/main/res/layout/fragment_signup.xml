@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/signupScrollRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     android:background="#D9F3FD"
     android:clipToPadding="false">
 
@@ -456,4 +456,4 @@
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

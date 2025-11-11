@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -18,6 +19,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -52,6 +55,25 @@ class MainActivity : AppCompatActivity() {
 //            isAppearanceLightNavigationBars = false
 //        }
 
+        val windowInsetsController = WindowInsetsControllerCompat(window, window.decorView)
+        windowInsetsController.isAppearanceLightStatusBars = false
+
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_content_container)) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            view.setPadding(0, statusBarHeight, 0, 0)
+            insets
+        }
+        WindowInsetsControllerCompat(window, window.decorView)
+            .isAppearanceLightStatusBars = true
+
+
+
         progressLayout = findViewById(R.id.profileProgressLayout)
         app_bar_layout = findViewById(R.id.app_bar_layout)
         bottom_app_bar_wrapper = findViewById(R.id.bottom_app_bar)
@@ -59,6 +81,8 @@ class MainActivity : AppCompatActivity() {
         fab_store = findViewById(R.id.fab_store)
 
         drawerLayout = findViewById(R.id.drawer_layout)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END)
+
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

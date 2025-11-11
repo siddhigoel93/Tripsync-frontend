@@ -90,6 +90,7 @@ class ExploreFragment : Fragment() {
 
         val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
         val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
+        val chatbot = view.findViewById<ImageButton>(R.id.toolbar_btn_chat)
 
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
@@ -121,6 +122,12 @@ class ExploreFragment : Fragment() {
         appBarLayout.elevation = elevationInPixels
         appBarLayout.translationZ = elevationInPixels
         appBarLayout.bringToFront()
+
+        chatbot.bringToFront()
+
+        chatbot.setOnClickListener {
+            findNavController().navigate(R.id.AIchatFragment)
+        }
 
         (activity as? MainActivity)?.addProfileObserver { newUrl ->
             newUrl?.let { updateExploreProfileImage(it) }}
