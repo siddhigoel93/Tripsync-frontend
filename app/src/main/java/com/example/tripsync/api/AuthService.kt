@@ -199,4 +199,7 @@ interface AuthService {
     @POST("api/account/logout/")
     suspend fun logout(@Body request: LogoutRequest): Response<LogoutResponse>
 
+    @GET("/api/users/search/")
+    suspend fun searchUsers(@Query("q") query: String): Response<List<User>>
+
 }

@@ -1,4 +1,3 @@
-// Conversation.kt
 package com.example.tripsync.api.models
 
 data class Conversation(
@@ -15,7 +14,8 @@ data class Conversation(
 
 data class Participant(
     val id: Int,
-    val email: String
+    val email: String,
+    val name: String? = null
 )
 
 data class Message(
@@ -27,11 +27,13 @@ data class Message(
 
 data class MessageSender(
     val id: Int,
-    val email: String
+    val email: String,
+    val name: String? = null
 )
 
 data class CreateConversationRequest(
-    val participant_ids: List<Int>
+    val participant_ids: List<Int>,
+    val name: String? = null
 )
 
 data class CreateConversationResponse(
@@ -39,11 +41,22 @@ data class CreateConversationResponse(
     val message: String?,
     val data: Conversation?
 )
+
 data class MessagesResponse(
     val status: String?,
     val message: String?,
     val data: List<Message>?
 )
+
 data class SendMessageRequest(
     val content: String
+)
+
+data class UserSearchResponse(
+    val id: Int,
+    val email: String?,
+    val name: String? = null,
+    val first_name: String? = null,
+    val last_name: String? = null,
+    val profile_picture: String? = null
 )

@@ -32,6 +32,7 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
     private lateinit var sendButton: ImageView
     private var webSocketManager: WebSocketManager? = null
     private var selfEmail: String? = null
+    private var selfId: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,10 +49,10 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
 
         Log.d("ChatThread", "ConversationId: $conversationId")
 
-        back.setOnClickListener { requireActivity().onBackPressed() }
+        back.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 
         val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val selfId = prefs.getInt("self_id", -1)
+        selfId = prefs.getInt("self_id", -1)
         selfEmail = prefs.getString("currentUserEmail", null)
 
         recycler = v.findViewById(R.id.recycler_messages)
@@ -142,13 +143,13 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
         try {
             val json = JSONObject(message)
             val msg = Message(
-                id = json.optInt("id"),
-                content = json.optString("message"),
+                id = json.optInt("id", 0),
+                content = json.optString("message", ""),
                 sender = MessageSender(
-                    id = json.optInt("sender_id"),
-                    email = json.optString("sender")
+                    id = json.optInt("sender_id", 0),
+                    email = json.optString("sender", "")
                 ),
-                timestamp = json.optString("timestamp")
+                timestamp = json.optString("timestamp", "")
             )
 
             requireActivity().runOnUiThread {
