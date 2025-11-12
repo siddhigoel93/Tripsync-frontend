@@ -1,39 +1,37 @@
 package com.example.tripsync.api.models
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import android.widget.*
 import com.bumptech.glide.Glide
 import com.example.tripsync.R
 
 class TravelStoryAdapter(
-private val stories: List<Place>,
-private val onStoryClick: (Place) -> Unit
+    private val stories: List<TravelStory>,
+    private val onStoryClick: (TravelStory) -> Unit
 ) : RecyclerView.Adapter<TravelStoryAdapter.StoryViewHolder>() {
 
     inner class StoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val image: ImageView = itemView.findViewById(R.id.story_image)
-        private val title: TextView = itemView.findViewById(R.id.story_title)
-        private val desc: TextView = itemView.findViewById(R.id.story_desc)
+        private val storyImage: ImageView = itemView.findViewById(R.id.story_image)
+        private val cityName: TextView = itemView.findViewById(R.id.story_city_name)
 
-        fun bind(story: Place) {
-            // Load main image
+        fun bind(story: TravelStory) {
+            Log.d("TravelStoryAdapter", "Binding story: ${story.cityName} imageUrl=${story.imageUrl}")
+
             Glide.with(itemView.context)
-                .load(story.main)
+                .load(story.imageUrl)
+                .centerCrop()
                 .placeholder(R.drawable.placeholder_image)
-                .into(image)
+                .error(R.drawable.placeholder_image)
+                .into(storyImage)
 
-            // Title
-            title.text = story.name
+            cityName.text = story.cityName
 
-            // Random fun fact description
-            desc.text = if (story.fun_facts.isNotEmpty()) story.fun_facts.random().desc else ""
-
-            itemView.setOnClickListener {
-                onStoryClick(story)
-            }
+            itemView.setOnClickListener { onStoryClick(story) }
         }
     }
 

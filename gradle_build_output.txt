@@ -1,0 +1,1323 @@
+﻿Initialized native services in: C:\Users\noors\.gradle\native
+Initialized jansi services in: C:\Users\noors\.gradle\native
+Found daemon DaemonInfo{pid=3736, address=[637fe15e-2643-4483-933f-201606bcd30f port:64099, addresses:[/127.0.0.1]], state=Idle, lastBusy=1762902530655, context=DefaultDaemonContext[uid=a9551762-0f4f-4b62-90b7-397f0ea1ba47,javaHome=C:\Program Files\Android\Android Studio1\jbr,javaVersion=21,javaVendor=JetBrains s.r.o.,daemonRegistryDir=C:\Users\noors\.gradle\daemon,pid=3736,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{jvmCriteria=C:\Program Files\Android\Android Studio\jbr (no JDK specified, using current Java home), daemonOpts=[-Xmx2048m, -Dfile.encoding=UTF-8, -Duser.country=US, -Duser.language=en, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=a9551762-0f4f-4b62-90b7-397f0ea1ba47,javaHome=C:\Program Files\Android\Android Studio1\jbr,javaVersion=21,javaVendor=JetBrains s.r.o.,daemonRegistryDir=C:\Users\noors\.gradle\daemon,pid=3736,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx2048m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+Removing 0 daemon stop events from registry
+Starting a Gradle Daemon, 1 incompatible Daemon could not be reused, use --status for details
+Starting process 'Gradle build daemon'. Working directory: C:\Users\noors\.gradle\daemon\8.13 Command: C:\Program Files\Android\Android Studio\jbr\bin\java.exe --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED -Xmx2048m -Dfile.encoding=UTF-8 -Duser.country=US -Duser.language=en -Duser.variant -cp C:\Users\noors\.gradle\wrapper\dists\gradle-8.13-bin\5xuhj0ry160q40clulazy9h7d\gradle-8.13\lib\gradle-daemon-main-8.13.jar -javaagent:C:\Users\noors\.gradle\wrapper\dists\gradle-8.13-bin\5xuhj0ry160q40clulazy9h7d\gradle-8.13\lib\agents\gradle-instrumentation-agent-8.13.jar org.gradle.launcher.daemon.bootstrap.GradleDaemon 8.13
+Successfully started process 'Gradle build daemon'
+An attempt to start the daemon took 1.737 secs.
+The client will now receive all logging from the daemon (pid: 19048). The daemon log file: C:\Users\noors\.gradle\daemon\8.13\daemon-19048.out.log
+Starting build in new daemon [memory: 2 GiB]
+Using 12 worker leases.
+Received JVM installation metadata from 'C:\Program Files\Android\Android Studio\jbr': {JAVA_HOME=C:\Program Files\Android\Android Studio\jbr, JAVA_VERSION=21.0.7, JAVA_VENDOR=JetBrains s.r.o., RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=21.0.7+-13880790-b1038.58, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=21.0.7+-13880790-b1038.58, VM_VENDOR=JetBrains s.r.o., OS_ARCH=amd64}
+Watching the file system is configured to be enabled if available
+Now considering [C:\Users\noors\AndroidStudioProjects\Tripsync-2.0] as hierarchies to watch
+File system watching is active
+Starting Build
+Settings evaluated using settings file 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\settings.gradle.kts'.
+Projects loaded. Root project using build file 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\build.gradle.kts'.
+Included projects: [root project 'TripSync', project ':app']
+
+> Configure project :
+Evaluating root project 'TripSync' using build file 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\build.gradle.kts'.
+Resolved plugin [id: 'com.android.application', version: '8.13.0', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.android', version: '2.0.21', apply: false]
+
+> Configure project :app
+Evaluating project ':app' using build file 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build.gradle.kts'.
+Resolved plugin [id: 'com.android.application', version: '8.13.0']
+Resolved plugin [id: 'org.jetbrains.kotlin.android', version: '2.0.21']
+Resolved plugin [id: 'androidx.navigation.safeargs.kotlin', version: '2.9.5']
+Resolved plugin [id: 'kotlin-kapt']
+Using default execution profile
+Using Kotlin Gradle Plugin gradle85 variant
+All projects evaluated.
+Task path ':app:assembleDebug' matched project ':app'
+Task name matched 'assembleDebug'
+Selected primary task 'assembleDebug' from project :app
+Adding -Xuse-inline-scopes-numbers Kotlin compiler flag for task :app:compileDebugKotlin
+Tasks to be executed: [task ':app:preBuild', task ':app:preDebugBuild', task ':app:mergeDebugNativeDebugMetadata', task ':app:checkKotlinGradlePluginConfigurationErrors', task ':app:dataBindingMergeDependencyArtifactsDebug', task ':app:generateDebugResValues', task ':app:generateDebugResources', task ':app:mergeDebugResources', task ':app:packageDebugResources', task ':app:processDebugNavigationResources', task ':app:parseDebugLocalResources', task ':app:dataBindingGenBaseClassesDebug', task ':app:generateDebugBuildConfig', task ':app:generateSafeArgsDebug', task ':app:checkDebugAarMetadata', task ':app:compileDebugNavigationResources', task ':app:mapDebugSourceSetPaths', task ':app:createDebugCompatibleScreenManifests', task ':app:extractDeepLinksDebug', task ':app:processDebugMainManifest', task ':app:processDebugManifest', task ':app:processDebugManifestForPackage', task ':app:processDebugResources', task ':app:kaptGenerateStubsDebugKotlin', task ':app:kaptDebugKotlin', task ':app:compileDebugKotlin', task ':app:javaPreCompileDebug', task ':app:compileDebugJavaWithJavac', task ':app:mergeDebugShaders', task ':app:compileDebugShaders', task ':app:generateDebugAssets', task ':app:mergeDebugAssets', task ':app:compressDebugAssets', task ':app:processDebugJavaRes', task ':app:mergeDebugJavaResource', task ':app:checkDebugDuplicateClasses', task ':app:desugarDebugFileDependencies', task ':app:mergeExtDexDebug', task ':app:mergeLibDexDebug', task ':app:dexBuilderDebug', task ':app:mergeProjectDexDebug', task ':app:mergeDebugJniLibFolders', task ':app:mergeDebugNativeLibs', task ':app:stripDebugDebugSymbols', task ':app:validateSigningDebug', task ':app:writeDebugAppMetadata', task ':app:writeDebugSigningConfigVersions', task ':app:packageDebug', task ':app:createDebugApkListingFileRedirect', task ':app:assembleDebug']
+Tasks that were excluded: []
+Resolve mutations for :app:preBuild (Thread[#119,Execution worker,5,main]) started.
+:app:preBuild (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:preBuild UP-TO-DATE
+Skipping task ':app:preBuild' as it has no actions.
+Resolve mutations for :app:preDebugBuild (Thread[#119,Execution worker,5,main]) started.
+:app:preDebugBuild (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:preDebugBuild UP-TO-DATE
+Skipping task ':app:preDebugBuild' as it has no actions.
+Resolve mutations for :app:mergeDebugNativeDebugMetadata (Thread[#119,Execution worker,5,main]) started.
+:app:mergeDebugNativeDebugMetadata (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+Skipping task ':app:mergeDebugNativeDebugMetadata' as it has no source files and no previous output files.
+Resolve mutations for :app:checkKotlinGradlePluginConfigurationErrors (Thread[#119,Execution worker,5,main]) started.
+:app:checkKotlinGradlePluginConfigurationErrors (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+Skipping task ':app:checkKotlinGradlePluginConfigurationErrors' as task onlyIf 'errorDiagnostics are present' is false.
+Resolve mutations for :app:dataBindingMergeDependencyArtifactsDebug (Thread[#119,Execution worker,5,main]) started.
+:app:dataBindingMergeDependencyArtifactsDebug (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:dataBindingMergeDependencyArtifactsDebug UP-TO-DATE
+Caching disabled for task ':app:dataBindingMergeDependencyArtifactsDebug' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:dataBindingMergeDependencyArtifactsDebug' as it is up-to-date.
+Resolve mutations for :app:generateDebugResValues (Thread[#119,Execution worker,5,main]) started.
+:app:generateDebugResValues (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:generateDebugResValues UP-TO-DATE
+Caching disabled for task ':app:generateDebugResValues' because:
+  Build cache is disabled
+Skipping task ':app:generateDebugResValues' as it is up-to-date.
+Resolve mutations for :app:generateDebugResources (Thread[#119,Execution worker,5,main]) started.
+:app:generateDebugResources (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:generateDebugResources UP-TO-DATE
+Caching disabled for task ':app:generateDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:generateDebugResources' as it is up-to-date.
+Resolve mutations for :app:mergeDebugResources (Thread[#119,Execution worker,5,main]) started.
+:app:mergeDebugResources (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:mergeDebugResources UP-TO-DATE
+Caching disabled for task ':app:mergeDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:mergeDebugResources' as it is up-to-date.
+Resolve mutations for :app:packageDebugResources (Thread[#119,Execution worker,5,main]) started.
+:app:packageDebugResources (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:packageDebugResources UP-TO-DATE
+Caching disabled for task ':app:packageDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:packageDebugResources' as it is up-to-date.
+Resolve mutations for :app:processDebugNavigationResources (Thread[#119,Execution worker,5,main]) started.
+:app:processDebugNavigationResources (Thread[#119,Execution worker,5,main]) started.
+
+> Task :app:processDebugNavigationResources UP-TO-DATE
+Caching disabled for task ':app:processDebugNavigationResources' because:
+  Build cache is disabled
+Skipping task ':app:processDebugNavigationResources' as it is up-to-date.
+Resolve mutations for :app:parseDebugLocalResources (Thread[#119,Execution worker,5,main]) started.
+:app:parseDebugLocalResources (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:parseDebugLocalResources UP-TO-DATE
+Caching disabled for task ':app:parseDebugLocalResources' because:
+  Build cache is disabled
+Skipping task ':app:parseDebugLocalResources' as it is up-to-date.
+Resolve mutations for :app:dataBindingGenBaseClassesDebug (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:dataBindingGenBaseClassesDebug (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:dataBindingGenBaseClassesDebug UP-TO-DATE
+Caching disabled for task ':app:dataBindingGenBaseClassesDebug' because:
+  Build cache is disabled
+Skipping task ':app:dataBindingGenBaseClassesDebug' as it is up-to-date.
+Resolve mutations for :app:generateDebugBuildConfig (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:generateDebugBuildConfig (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+Caching disabled for task ':app:generateDebugBuildConfig' because:
+  Build cache is disabled
+Skipping task ':app:generateDebugBuildConfig' as it is up-to-date.
+Resolve mutations for :app:generateSafeArgsDebug (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:generateSafeArgsDebug (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:generateSafeArgsDebug UP-TO-DATE
+Caching disabled for task ':app:generateSafeArgsDebug' because:
+  Build cache is disabled
+Skipping task ':app:generateSafeArgsDebug' as it is up-to-date.
+Resolve mutations for :app:checkDebugAarMetadata (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:checkDebugAarMetadata (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+Caching disabled for task ':app:checkDebugAarMetadata' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:checkDebugAarMetadata' as it is up-to-date.
+Resolve mutations for :app:compileDebugNavigationResources (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:compileDebugNavigationResources (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+Caching disabled for task ':app:compileDebugNavigationResources' because:
+  Build cache is disabled
+Skipping task ':app:compileDebugNavigationResources' as it is up-to-date.
+Resolve mutations for :app:mapDebugSourceSetPaths (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:mapDebugSourceSetPaths (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+Caching disabled for task ':app:mapDebugSourceSetPaths' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:mapDebugSourceSetPaths' as it is up-to-date.
+Resolve mutations for :app:createDebugCompatibleScreenManifests (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:createDebugCompatibleScreenManifests (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+Caching disabled for task ':app:createDebugCompatibleScreenManifests' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:createDebugCompatibleScreenManifests' as it is up-to-date.
+Resolve mutations for :app:extractDeepLinksDebug (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:extractDeepLinksDebug (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+Caching disabled for task ':app:extractDeepLinksDebug' because:
+  Build cache is disabled
+Skipping task ':app:extractDeepLinksDebug' as it is up-to-date.
+Resolve mutations for :app:processDebugMainManifest (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:processDebugMainManifest (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:processDebugMainManifest
+Caching disabled for task ':app:processDebugMainManifest' because:
+  Build cache is disabled
+Task ':app:processDebugMainManifest' is not up-to-date because:
+  Value of input property 'optionalFeatures' has changed for task ':app:processDebugMainManifest'
+package="com.example.tripsync" found in source AndroidManifest.xml: C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="com.example.tripsync" from the source AndroidManifest.xml: C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml.
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\1b56dcef62b8d419c4b98e9be83dfe1c\transformed\viewbinding-8.13.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\0b7d01a6fe4ea67afafac0e962a9f664\transformed\navigation-runtime-release\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\c3b81f20745d51001b283cb3e9526d16\transformed\navigation-common-release\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\aee0cc16632782d49cd3c79e623ecf4c\transformed\navigation-fragment-2.9.6\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\571ef5db18b01b628315226f846bf79e\transformed\navigation-fragment-ktx-2.9.6\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\82a0b1a4ff781ca89797d582e5ab7d8d\transformed\navigation-ui-ktx-2.9.6\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\8824a2739bf92ceaf91ac6b5cfddb871\transformed\navigation-ui-2.9.6\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\b8000f9acfba553e7f8d0982e3112ca4\transformed\material-1.13.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\b581ee3b5550506489b7fd453fd16177\transformed\constraintlayout-2.2.1\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\5f0304b76e8ac08f78a1f622048c4410\transformed\appcompat-resources-1.7.1\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\8976043dff146331b1dba0d337b14911\transformed\appcompat-1.7.1\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\29d82ad5a1ece5dfe4861ccc217c8f4b\transformed\recyclerview-1.3.1\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\08f4dccd55694a171dd5e44becbb92cd\transformed\viewpager2-1.1.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\4d9b77e2b1a8e28b01d3c4ac38a43337\transformed\glide-4.16.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\a0b9af35c8807fed72ba07a07787af1a\transformed\fragment-ktx-1.8.9\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\5e6194fc457960604fe5e3a15e2ab1ac\transformed\fragment-1.8.9\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\fe1c6fe3acb5b6b2ebadb141383921b2\transformed\activity-ktx-1.11.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\e4746c1fc58f954766ce90beb0d7746e\transformed\activity-1.11.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\953a2e51151c2c231c99ecdf0cd4901b\transformed\gridlayout-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\97f6b6f0a2324610605762f33ee07c11\transformed\emoji2-views-helper-1.3.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\57f2def8581897684192a79e085a89de\transformed\legacy-support-core-ui-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\7d81a35b79945b9ffb69734a24a2d8ae\transformed\drawerlayout-1.1.1\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\370c20f9f04f82a266df8039a52e5b0d\transformed\coordinatorlayout-1.1.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\5c40d8d30ca4d304bea392d4e29859cc\transformed\slidingpanelayout-1.2.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\9063eb14e3ffb83cf43dd7942d83052a\transformed\transition-1.5.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\2e5cfd38c527d600642036cfc6f6d474\transformed\dynamicanimation-1.1.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\ed2574e2c4ec3ea54367f18f8f2c15f7\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\152997540f612a6a9b762fb54234586c\transformed\vectordrawable-1.1.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\96b109401513e6f7749a96081516274d\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\5586fc7ae57c598872adbc4c92ec2f9e\transformed\loader-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\dab859717cc8a76f0bfb972683274236\transformed\viewpager-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\fa95f7be0a7d7fbe429603491ef79f97\transformed\customview-1.1.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\211d1b9cac2194ba6cec41e07edb054d\transformed\swiperefreshlayout-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\6cd2787e0d96a064479a43a2eac3253d\transformed\asynclayoutinflater-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\6ea2ebde753c9aa1703054c7ac643f3d\transformed\window-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\3d338e1716303647e460248f743a253d\transformed\core-1.17.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\af7d8c6d25c70ec65a8b2669c74ac555\transformed\graphics-shapes-release\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\843975fbe9592d7dbd358f83538ea74f\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\81ca2d4c4395cdf8c803a25261498033\transformed\lifecycle-runtime-ktx\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\58e14266b8508a440d3702466f1d44fe\transformed\lifecycle-viewmodel-ktx-2.9.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\744ef6f5e41bcd565801e9e1bdbde3e4\transformed\lifecycle-process-2.9.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\3c4a28aab2f218853718827585cfbc46\transformed\lifecycle-livedata-core-ktx-2.9.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\27239d7819a1f2cce72718e63d5b9bf6\transformed\lifecycle-livedata-core-2.9.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\c668afab7cb5541d89c1d67ec022262d\transformed\lifecycle-livedata-2.9.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\1228395649c7eb213cbb636de62a7c9e\transformed\lifecycle-viewmodel-2.9.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\10c0615c8542c3c4606290f62a926626\transformed\lifecycle-viewmodel-release\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\0a5d1366d5d9673c03eaed7056061906\transformed\lifecycle-runtime-release\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\f254de544461bc2eae282519489969ea\transformed\savedstate-ktx-1.3.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\dea5c229422f19169fe395cb7f5e7f19\transformed\savedstate-release\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\48a83a4ec8e77302fd9d750061d8762e\transformed\lifecycle-viewmodel-savedstate-release\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\70a8329209b50f8c5fa9a4bae0c4f5d9\transformed\core-ktx-1.17.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\e8c5003b59d9a83d2b22e2e43240a7b5\transformed\core-viewtree-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\fce291af79019566fb5da6205edd2cb4\transformed\annotation-experimental-1.4.1\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\f88d7ac10d1e806ab368fd45ecf9a0c1\transformed\versionedparcelable-1.1.1\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\00dd051038ae60c425906ab881764b37\transformed\cardview-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\38ac338c1480645ca619b5907a234184\transformed\cursoradapter-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\644e6d9cf952a59b3f8d896c51483b52\transformed\gifdecoder-4.16.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\58d68a5a9913c825db84da5485229dc8\transformed\exifinterface-1.3.6\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\e75571b9c1be3117d0b536b9dd8cf309\transformed\startup-runtime-1.1.1\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\6ee18d3d98aa1c99d0bad3aa2f31c456\transformed\tracing-1.2.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\4dbf61abee67c235d67b0190d051d7f4\transformed\interpolator-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\3263cb4cb47c6c9de217b23101fa8e76\transformed\documentfile-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\bcfa48ec817e4460db6e72a3ee154802\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\1fdeb15574818a304f26801392cbeb9e\transformed\print-1.0.0\AndroidManifest.xml
+Loading library manifest C:\Users\noors\.gradle\caches\8.13\transforms\87cb6c753f9d623bd3a3488830c34aa0\transformed\core-runtime-2.2.0\AndroidManifest.xml
+Merging main manifest C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml
+
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\1b56dcef62b8d419c4b98e9be83dfe1c\transformed\viewbinding-8.13.0\AndroidManifest.xml
+Merging manifest with lower [androidx.databinding:viewbinding:8.13.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.databinding:viewbinding:8.13.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\0b7d01a6fe4ea67afafac0e962a9f664\transformed\navigation-runtime-release\AndroidManifest.xml
+Merging manifest with lower [androidx.navigation:navigation-runtime-android:2.9.6] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.navigation:navigation-runtime-android:2.9.6] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\c3b81f20745d51001b283cb3e9526d16\transformed\navigation-common-release\AndroidManifest.xml
+Merging manifest with lower [androidx.navigation:navigation-common-android:2.9.6] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.navigation:navigation-common-android:2.9.6] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\aee0cc16632782d49cd3c79e623ecf4c\transformed\navigation-fragment-2.9.6\AndroidManifest.xml
+Merging manifest with lower [androidx.navigation:navigation-fragment:2.9.6] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.navigation:navigation-fragment:2.9.6] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\571ef5db18b01b628315226f846bf79e\transformed\navigation-fragment-ktx-2.9.6\AndroidManifest.xml
+Merging manifest with lower [androidx.navigation:navigation-fragment-ktx:2.9.6] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.navigation:navigation-fragment-ktx:2.9.6] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\82a0b1a4ff781ca89797d582e5ab7d8d\transformed\navigation-ui-ktx-2.9.6\AndroidManifest.xml
+Merging manifest with lower [androidx.navigation:navigation-ui-ktx:2.9.6] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.navigation:navigation-ui-ktx:2.9.6] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\8824a2739bf92ceaf91ac6b5cfddb871\transformed\navigation-ui-2.9.6\AndroidManifest.xml
+Merging manifest with lower [androidx.navigation:navigation-ui:2.9.6] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.navigation:navigation-ui:2.9.6] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\b8000f9acfba553e7f8d0982e3112ca4\transformed\material-1.13.0\AndroidManifest.xml
+Merging manifest with lower [com.google.android.material:material:1.13.0] AndroidManifest.xml:17:1-24:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [com.google.android.material:material:1.13.0] AndroidManifest.xml:20:5-44
+application defined in both files...
+Merging application with lower [com.google.android.material:material:1.13.0] AndroidManifest.xml:22:5-20
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\b581ee3b5550506489b7fd453fd16177\transformed\constraintlayout-2.2.1\AndroidManifest.xml
+Merging manifest with lower [androidx.constraintlayout:constraintlayout:2.2.1] AndroidManifest.xml:2:1-9:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.constraintlayout:constraintlayout:2.2.1] AndroidManifest.xml:5:5-44
+application defined in both files...
+Merging application with lower [androidx.constraintlayout:constraintlayout:2.2.1] AndroidManifest.xml:7:5-20
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\5f0304b76e8ac08f78a1f622048c4410\transformed\appcompat-resources-1.7.1\AndroidManifest.xml
+Merging manifest with lower [androidx.appcompat:appcompat-resources:1.7.1] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.appcompat:appcompat-resources:1.7.1] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\8976043dff146331b1dba0d337b14911\transformed\appcompat-1.7.1\AndroidManifest.xml
+Merging manifest with lower [androidx.appcompat:appcompat:1.7.1] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.appcompat:appcompat:1.7.1] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\29d82ad5a1ece5dfe4861ccc217c8f4b\transformed\recyclerview-1.3.1\AndroidManifest.xml
+Merging manifest with lower [androidx.recyclerview:recyclerview:1.3.1] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.recyclerview:recyclerview:1.3.1] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\08f4dccd55694a171dd5e44becbb92cd\transformed\viewpager2-1.1.0\AndroidManifest.xml
+Merging manifest with lower [androidx.viewpager2:viewpager2:1.1.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.viewpager2:viewpager2:1.1.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\4d9b77e2b1a8e28b01d3c4ac38a43337\transformed\glide-4.16.0\AndroidManifest.xml
+Merging manifest with lower [com.github.bumptech.glide:glide:4.16.0] AndroidManifest.xml:2:1-9:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [com.github.bumptech.glide:glide:4.16.0] AndroidManifest.xml:5:5-7:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\a0b9af35c8807fed72ba07a07787af1a\transformed\fragment-ktx-1.8.9\AndroidManifest.xml
+Merging manifest with lower [androidx.fragment:fragment-ktx:1.8.9] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.fragment:fragment-ktx:1.8.9] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\5e6194fc457960604fe5e3a15e2ab1ac\transformed\fragment-1.8.9\AndroidManifest.xml
+Merging manifest with lower [androidx.fragment:fragment:1.8.9] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.fragment:fragment:1.8.9] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\fe1c6fe3acb5b6b2ebadb141383921b2\transformed\activity-ktx-1.11.0\AndroidManifest.xml
+Merging manifest with lower [androidx.activity:activity-ktx:1.11.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.activity:activity-ktx:1.11.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\e4746c1fc58f954766ce90beb0d7746e\transformed\activity-1.11.0\AndroidManifest.xml
+Merging manifest with lower [androidx.activity:activity:1.11.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.activity:activity:1.11.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\953a2e51151c2c231c99ecdf0cd4901b\transformed\gridlayout-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.gridlayout:gridlayout:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.gridlayout:gridlayout:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\97f6b6f0a2324610605762f33ee07c11\transformed\emoji2-views-helper-1.3.0\AndroidManifest.xml
+Merging manifest with lower [androidx.emoji2:emoji2-views-helper:1.3.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.emoji2:emoji2-views-helper:1.3.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml
+Merging manifest with lower [androidx.emoji2:emoji2:1.3.0] AndroidManifest.xml:17:1-35:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.emoji2:emoji2:1.3.0] AndroidManifest.xml:21:5-44
+application defined in both files...
+Merging application with lower [androidx.emoji2:emoji2:1.3.0] AndroidManifest.xml:23:5-33:19
+Adopted [provider: null]
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\57f2def8581897684192a79e085a89de\transformed\legacy-support-core-ui-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.legacy:legacy-support-core-ui:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.legacy:legacy-support-core-ui:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\7d81a35b79945b9ffb69734a24a2d8ae\transformed\drawerlayout-1.1.1\AndroidManifest.xml
+Merging manifest with lower [androidx.drawerlayout:drawerlayout:1.1.1] AndroidManifest.xml:17:1-24:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.drawerlayout:drawerlayout:1.1.1] AndroidManifest.xml:20:5-22:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\370c20f9f04f82a266df8039a52e5b0d\transformed\coordinatorlayout-1.1.0\AndroidManifest.xml
+Merging manifest with lower [androidx.coordinatorlayout:coordinatorlayout:1.1.0] AndroidManifest.xml:17:1-24:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.coordinatorlayout:coordinatorlayout:1.1.0] AndroidManifest.xml:20:5-22:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\5c40d8d30ca4d304bea392d4e29859cc\transformed\slidingpanelayout-1.2.0\AndroidManifest.xml
+Merging manifest with lower [androidx.slidingpanelayout:slidingpanelayout:1.2.0] AndroidManifest.xml:17:1-24:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.slidingpanelayout:slidingpanelayout:1.2.0] AndroidManifest.xml:20:5-22:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\9063eb14e3ffb83cf43dd7942d83052a\transformed\transition-1.5.0\AndroidManifest.xml
+Merging manifest with lower [androidx.transition:transition:1.5.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.transition:transition:1.5.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\2e5cfd38c527d600642036cfc6f6d474\transformed\dynamicanimation-1.1.0\AndroidManifest.xml
+Merging manifest with lower [androidx.dynamicanimation:dynamicanimation:1.1.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.dynamicanimation:dynamicanimation:1.1.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\ed2574e2c4ec3ea54367f18f8f2c15f7\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml
+Merging manifest with lower [androidx.vectordrawable:vectordrawable-animated:1.1.0] AndroidManifest.xml:17:1-24:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.vectordrawable:vectordrawable-animated:1.1.0] AndroidManifest.xml:20:5-22:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\152997540f612a6a9b762fb54234586c\transformed\vectordrawable-1.1.0\AndroidManifest.xml
+Merging manifest with lower [androidx.vectordrawable:vectordrawable:1.1.0] AndroidManifest.xml:17:1-24:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.vectordrawable:vectordrawable:1.1.0] AndroidManifest.xml:20:5-22:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\96b109401513e6f7749a96081516274d\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.legacy:legacy-support-core-utils:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.legacy:legacy-support-core-utils:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\5586fc7ae57c598872adbc4c92ec2f9e\transformed\loader-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.loader:loader:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.loader:loader:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\dab859717cc8a76f0bfb972683274236\transformed\viewpager-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.viewpager:viewpager:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.viewpager:viewpager:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\fa95f7be0a7d7fbe429603491ef79f97\transformed\customview-1.1.0\AndroidManifest.xml
+Merging manifest with lower [androidx.customview:customview:1.1.0] AndroidManifest.xml:17:1-24:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.customview:customview:1.1.0] AndroidManifest.xml:20:5-22:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\211d1b9cac2194ba6cec41e07edb054d\transformed\swiperefreshlayout-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\6cd2787e0d96a064479a43a2eac3253d\transformed\asynclayoutinflater-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\6ea2ebde753c9aa1703054c7ac643f3d\transformed\window-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.window:window:1.0.0] AndroidManifest.xml:17:1-33:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.window:window:1.0.0] AndroidManifest.xml:20:5-22:41
+application defined in both files...
+Merging application with lower [androidx.window:window:1.0.0] AndroidManifest.xml:24:5-31:19
+Adopted [uses-library: null]
+Adopted [uses-library: null]
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\3d338e1716303647e460248f743a253d\transformed\core-1.17.0\AndroidManifest.xml
+Merging manifest with lower [androidx.core:core:1.17.0] AndroidManifest.xml:17:1-30:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.core:core:1.17.0] AndroidManifest.xml:20:5-44
+Adopted [permission: null]
+Adopted [uses-permission: null]
+application defined in both files...
+Merging application with lower [androidx.core:core:1.17.0] AndroidManifest.xml:28:5-89
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\af7d8c6d25c70ec65a8b2669c74ac555\transformed\graphics-shapes-release\AndroidManifest.xml
+Merging manifest with lower [androidx.graphics:graphics-shapes-android:1.0.1] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.graphics:graphics-shapes-android:1.0.1] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\843975fbe9592d7dbd358f83538ea74f\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.customview:customview-poolingcontainer:1.0.0] AndroidManifest.xml:17:1-23:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.customview:customview-poolingcontainer:1.0.0] AndroidManifest.xml:20:5-21:38
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\81ca2d4c4395cdf8c803a25261498033\transformed\lifecycle-runtime-ktx\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-runtime-ktx-android:2.9.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-runtime-ktx-android:2.9.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\58e14266b8508a440d3702466f1d44fe\transformed\lifecycle-viewmodel-ktx-2.9.0\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\744ef6f5e41bcd565801e9e1bdbde3e4\transformed\lifecycle-process-2.9.0\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-process:2.9.0] AndroidManifest.xml:17:1-35:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-process:2.9.0] AndroidManifest.xml:21:5-44
+application defined in both files...
+Merging application with lower [androidx.lifecycle:lifecycle-process:2.9.0] AndroidManifest.xml:23:5-33:19
+provider#androidx.startup.InitializationProvider defined in both files...
+Merging provider#androidx.startup.InitializationProvider with lower [androidx.lifecycle:lifecycle-process:2.9.0] AndroidManifest.xml:24:9-32:20
+Adopted [meta-data: null]
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\3c4a28aab2f218853718827585cfbc46\transformed\lifecycle-livedata-core-ktx-2.9.0\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\27239d7819a1f2cce72718e63d5b9bf6\transformed\lifecycle-livedata-core-2.9.0\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-livedata-core:2.9.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-livedata-core:2.9.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\c668afab7cb5541d89c1d67ec022262d\transformed\lifecycle-livedata-2.9.0\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-livedata:2.9.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-livedata:2.9.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\1228395649c7eb213cbb636de62a7c9e\transformed\lifecycle-viewmodel-2.9.0\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-viewmodel:2.9.0] AndroidManifest.xml:2:1-5:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-viewmodel:2.9.0] AndroidManifest.xml:4:5-43
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\10c0615c8542c3c4606290f62a926626\transformed\lifecycle-viewmodel-release\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-viewmodel-android:2.9.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-viewmodel-android:2.9.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\0a5d1366d5d9673c03eaed7056061906\transformed\lifecycle-runtime-release\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-runtime-android:2.9.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-runtime-android:2.9.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\f254de544461bc2eae282519489969ea\transformed\savedstate-ktx-1.3.0\AndroidManifest.xml
+Merging manifest with lower [androidx.savedstate:savedstate-ktx:1.3.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.savedstate:savedstate-ktx:1.3.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\dea5c229422f19169fe395cb7f5e7f19\transformed\savedstate-release\AndroidManifest.xml
+Merging manifest with lower [androidx.savedstate:savedstate-android:1.3.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.savedstate:savedstate-android:1.3.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\48a83a4ec8e77302fd9d750061d8762e\transformed\lifecycle-viewmodel-savedstate-release\AndroidManifest.xml
+Merging manifest with lower [androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.9.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.lifecycle:lifecycle-viewmodel-savedstate-android:2.9.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\70a8329209b50f8c5fa9a4bae0c4f5d9\transformed\core-ktx-1.17.0\AndroidManifest.xml
+Merging manifest with lower [androidx.core:core-ktx:1.17.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.core:core-ktx:1.17.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\e8c5003b59d9a83d2b22e2e43240a7b5\transformed\core-viewtree-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.core:core-viewtree:1.0.0] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.core:core-viewtree:1.0.0] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\fce291af79019566fb5da6205edd2cb4\transformed\annotation-experimental-1.4.1\AndroidManifest.xml
+Merging manifest with lower [androidx.annotation:annotation-experimental:1.4.1] AndroidManifest.xml:2:1-7:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.annotation:annotation-experimental:1.4.1] AndroidManifest.xml:5:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\f88d7ac10d1e806ab368fd45ecf9a0c1\transformed\versionedparcelable-1.1.1\AndroidManifest.xml
+Merging manifest with lower [androidx.versionedparcelable:versionedparcelable:1.1.1] AndroidManifest.xml:17:1-27:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.versionedparcelable:versionedparcelable:1.1.1] AndroidManifest.xml:20:5-22:41
+application defined in both files...
+Merging application with lower [androidx.versionedparcelable:versionedparcelable:1.1.1] AndroidManifest.xml:24:5-25:19
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\00dd051038ae60c425906ab881764b37\transformed\cardview-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.cardview:cardview:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.cardview:cardview:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\38ac338c1480645ca619b5907a234184\transformed\cursoradapter-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.cursoradapter:cursoradapter:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.cursoradapter:cursoradapter:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml
+Merging manifest with lower [androidx.profileinstaller:profileinstaller:1.4.0] AndroidManifest.xml:17:1-55:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.profileinstaller:profileinstaller:1.4.0] AndroidManifest.xml:21:5-44
+application defined in both files...
+Merging application with lower [androidx.profileinstaller:profileinstaller:1.4.0] AndroidManifest.xml:23:5-53:19
+provider#androidx.startup.InitializationProvider defined in both files...
+Merging provider#androidx.startup.InitializationProvider with lower [androidx.profileinstaller:profileinstaller:1.4.0] AndroidManifest.xml:24:9-32:20
+Adopted [meta-data: null]
+Adopted [receiver: null]
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\644e6d9cf952a59b3f8d896c51483b52\transformed\gifdecoder-4.16.0\AndroidManifest.xml
+Merging manifest with lower [com.github.bumptech.glide:gifdecoder:4.16.0] AndroidManifest.xml:2:1-9:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [com.github.bumptech.glide:gifdecoder:4.16.0] AndroidManifest.xml:5:5-7:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\58d68a5a9913c825db84da5485229dc8\transformed\exifinterface-1.3.6\AndroidManifest.xml
+Merging manifest with lower [androidx.exifinterface:exifinterface:1.3.6] AndroidManifest.xml:17:1-24:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.exifinterface:exifinterface:1.3.6] AndroidManifest.xml:20:5-22:41
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\e75571b9c1be3117d0b536b9dd8cf309\transformed\startup-runtime-1.1.1\AndroidManifest.xml
+Merging manifest with lower [androidx.startup:startup-runtime:1.1.1] AndroidManifest.xml:17:1-33:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.startup:startup-runtime:1.1.1] AndroidManifest.xml:21:5-23:41
+application defined in both files...
+Merging application with lower [androidx.startup:startup-runtime:1.1.1] AndroidManifest.xml:25:5-31:19
+provider#androidx.startup.InitializationProvider defined in both files...
+Merging provider#androidx.startup.InitializationProvider with lower [androidx.startup:startup-runtime:1.1.1] AndroidManifest.xml:26:9-30:34
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\6ee18d3d98aa1c99d0bad3aa2f31c456\transformed\tracing-1.2.0\AndroidManifest.xml
+Merging manifest with lower [androidx.tracing:tracing:1.2.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.tracing:tracing:1.2.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\4dbf61abee67c235d67b0190d051d7f4\transformed\interpolator-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.interpolator:interpolator:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.interpolator:interpolator:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\3263cb4cb47c6c9de217b23101fa8e76\transformed\documentfile-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.documentfile:documentfile:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.documentfile:documentfile:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\bcfa48ec817e4460db6e72a3ee154802\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\1fdeb15574818a304f26801392cbeb9e\transformed\print-1.0.0\AndroidManifest.xml
+Merging manifest with lower [androidx.print:print:1.0.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.print:print:1.0.0] AndroidManifest.xml:20:5-44
+Merging library manifest C:\Users\noors\.gradle\caches\8.13\transforms\87cb6c753f9d623bd3a3488830c34aa0\transformed\core-runtime-2.2.0\AndroidManifest.xml
+Merging manifest with lower [androidx.arch.core:core-runtime:2.2.0] AndroidManifest.xml:17:1-22:12
+uses-sdk defined in both files...
+Merging uses-sdk with lower [androidx.arch.core:core-runtime:2.2.0] AndroidManifest.xml:20:5-44
+Merging result: SUCCESS
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.tripsync"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="36" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:5:5-67
+11-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:5:22-64
+12    <uses-permission
+12-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:6:5-106
+13        android:name="android.permission.READ_EXTERNAL_STORAGE"
+13-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:6:22-77
+14        android:maxSdkVersion="32" />
+14-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:6:78-104
+15    <uses-permission
+15-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:7:5-107
+16        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+16-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:7:22-78
+17        android:maxSdkVersion="29" />
+17-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:7:79-105
+18    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+18-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:9:5-76
+18-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:9:22-73
+19    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+19-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:10:5-75
+19-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:10:22-72
+20
+21    <permission
+21-->[androidx.core:core:1.17.0] C:\Users\noors\.gradle\caches\8.13\transforms\3d338e1716303647e460248f743a253d\transformed\core-1.17.0\AndroidManifest.xml:22:5-24:47
+22        android:name="com.example.tripsync.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+22-->[androidx.core:core:1.17.0] C:\Users\noors\.gradle\caches\8.13\transforms\3d338e1716303647e460248f743a253d\transformed\core-1.17.0\AndroidManifest.xml:23:9-81
+23        android:protectionLevel="signature" />
+23-->[androidx.core:core:1.17.0] C:\Users\noors\.gradle\caches\8.13\transforms\3d338e1716303647e460248f743a253d\transformed\core-1.17.0\AndroidManifest.xml:24:9-44
+24
+25    <uses-permission android:name="com.example.tripsync.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+25-->[androidx.core:core:1.17.0] C:\Users\noors\.gradle\caches\8.13\transforms\3d338e1716303647e460248f743a253d\transformed\core-1.17.0\AndroidManifest.xml:26:5-97
+25-->[androidx.core:core:1.17.0] C:\Users\noors\.gradle\caches\8.13\transforms\3d338e1716303647e460248f743a253d\transformed\core-1.17.0\AndroidManifest.xml:26:22-94
+26
+27    <application
+27-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:12:5-48:19
+28        android:allowBackup="true"
+28-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:15:9-35
+29        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+29-->[androidx.core:core:1.17.0] C:\Users\noors\.gradle\caches\8.13\transforms\3d338e1716303647e460248f743a253d\transformed\core-1.17.0\AndroidManifest.xml:28:18-86
+30        android:debuggable="true"
+31        android:extractNativeLibs="false"
+32        android:icon="@mipmap/ic_launcher"
+32-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:16:9-43
+33        android:label="@string/app_name"
+33-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:17:9-41
+34        android:networkSecurityConfig="@xml/network_security_config"
+34-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:14:9-69
+35        android:roundIcon="@mipmap/ic_launcher_round"
+35-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:18:9-54
+36        android:supportsRtl="true"
+36-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:19:9-35
+37        android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+37-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:20:9-68
+38        android:usesCleartextTraffic="true" >
+38-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:13:9-44
+39        <activity
+39-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:22:9-31:20
+40            android:name="com.example.tripsync.SplashActivity"
+40-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:23:13-43
+41            android:exported="true"
+41-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:24:13-36
+42            android:resizeableActivity="true"
+42-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:25:13-46
+43            android:theme="@style/Theme.Material3.DayNight.NoActionBar" >
+43-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:26:13-72
+44            <intent-filter>
+44-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:27:13-30:29
+45                <action android:name="android.intent.action.MAIN" />
+45-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:28:17-68
+45-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:28:25-66
+46
+47                <category android:name="android.intent.category.LAUNCHER" />
+47-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:29:17-76
+47-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:29:27-74
+48            </intent-filter>
+49        </activity>
+50        <activity
+50-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:33:9-39:67
+51            android:name="com.example.tripsync.MainActivity"
+51-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:34:13-41
+52            android:configChanges="orientation|keyboardHidden|screenSize"
+52-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:38:13-74
+53            android:exported="true"
+53-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:35:13-36
+54            android:launchMode="singleTop"
+54-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:37:13-43
+55            android:resizeableActivity="true"
+55-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:36:13-46
+56            android:windowSoftInputMode="adjustPan|stateHidden" />
+56-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:39:13-64
+57
+58        <meta-data
+58-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:41:9-43:35
+59            android:name="android.max_aspect"
+59-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:42:13-46
+60            android:value="2.6" />
+60-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:43:13-32
+61        <meta-data
+61-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:44:9-46:57
+62            android:name="preloaded_fonts"
+62-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:45:13-43
+63            android:resource="@array/preloaded_fonts" />
+63-->C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\AndroidManifest.xml:46:13-54
+64
+65        <provider
+65-->[androidx.emoji2:emoji2:1.3.0] C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+66            android:name="androidx.startup.InitializationProvider"
+66-->[androidx.emoji2:emoji2:1.3.0] C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+67            android:authorities="com.example.tripsync.androidx-startup"
+67-->[androidx.emoji2:emoji2:1.3.0] C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+68            android:exported="false" >
+68-->[androidx.emoji2:emoji2:1.3.0] C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+69            <meta-data
+69-->[androidx.emoji2:emoji2:1.3.0] C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+70                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+70-->[androidx.emoji2:emoji2:1.3.0] C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+71                android:value="androidx.startup" />
+71-->[androidx.emoji2:emoji2:1.3.0] C:\Users\noors\.gradle\caches\8.13\transforms\14c51ff7d4b4c56454b30614b042a86b\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+72            <meta-data
+72-->[androidx.lifecycle:lifecycle-process:2.9.0] C:\Users\noors\.gradle\caches\8.13\transforms\744ef6f5e41bcd565801e9e1bdbde3e4\transformed\lifecycle-process-2.9.0\AndroidManifest.xml:29:13-31:52
+73                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+73-->[androidx.lifecycle:lifecycle-process:2.9.0] C:\Users\noors\.gradle\caches\8.13\transforms\744ef6f5e41bcd565801e9e1bdbde3e4\transformed\lifecycle-process-2.9.0\AndroidManifest.xml:30:17-78
+74                android:value="androidx.startup" />
+74-->[androidx.lifecycle:lifecycle-process:2.9.0] C:\Users\noors\.gradle\caches\8.13\transforms\744ef6f5e41bcd565801e9e1bdbde3e4\transformed\lifecycle-process-2.9.0\AndroidManifest.xml:31:17-49
+75            <meta-data
+75-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
+76                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+76-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
+77                android:value="androidx.startup" />
+77-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
+78        </provider>
+79
+80        <uses-library
+80-->[androidx.window:window:1.0.0] C:\Users\noors\.gradle\caches\8.13\transforms\6ea2ebde753c9aa1703054c7ac643f3d\transformed\window-1.0.0\AndroidManifest.xml:25:9-27:40
+81            android:name="androidx.window.extensions"
+81-->[androidx.window:window:1.0.0] C:\Users\noors\.gradle\caches\8.13\transforms\6ea2ebde753c9aa1703054c7ac643f3d\transformed\window-1.0.0\AndroidManifest.xml:26:13-54
+82            android:required="false" />
+82-->[androidx.window:window:1.0.0] C:\Users\noors\.gradle\caches\8.13\transforms\6ea2ebde753c9aa1703054c7ac643f3d\transformed\window-1.0.0\AndroidManifest.xml:27:13-37
+83        <uses-library
+83-->[androidx.window:window:1.0.0] C:\Users\noors\.gradle\caches\8.13\transforms\6ea2ebde753c9aa1703054c7ac643f3d\transformed\window-1.0.0\AndroidManifest.xml:28:9-30:40
+84            android:name="androidx.window.sidecar"
+84-->[androidx.window:window:1.0.0] C:\Users\noors\.gradle\caches\8.13\transforms\6ea2ebde753c9aa1703054c7ac643f3d\transformed\window-1.0.0\AndroidManifest.xml:29:13-51
+85            android:required="false" />
+85-->[androidx.window:window:1.0.0] C:\Users\noors\.gradle\caches\8.13\transforms\6ea2ebde753c9aa1703054c7ac643f3d\transformed\window-1.0.0\AndroidManifest.xml:30:13-37
+86
+87        <receiver
+87-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
+88            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+88-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
+89            android:directBootAware="false"
+89-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
+90            android:enabled="true"
+90-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
+91            android:exported="true"
+91-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
+92            android:permission="android.permission.DUMP" >
+92-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
+93            <intent-filter>
+93-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
+94                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+94-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
+94-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
+95            </intent-filter>
+96            <intent-filter>
+96-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
+97                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+97-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
+97-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
+98            </intent-filter>
+99            <intent-filter>
+99-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
+100                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+100-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
+100-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
+101            </intent-filter>
+102            <intent-filter>
+102-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
+103                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+103-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
+103-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\noors\.gradle\caches\8.13\transforms\f03fa946135fe63869d1d935ae208c2f\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
+104            </intent-filter>
+105        </receiver>
+106    </application>
+107
+108</manifest>
+
+Merged manifest saved to C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\intermediates\merged_manifest\debug\processDebugMainManifest\AndroidManifest.xml
+Resolve mutations for :app:processDebugManifest (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:processDebugManifest (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:processDebugManifest
+Caching disabled for task ':app:processDebugManifest' because:
+  Build cache is disabled
+Task ':app:processDebugManifest' is not up-to-date because:
+  Input property 'mainMergedManifest' file C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\intermediates\merged_manifest\debug\processDebugMainManifest\AndroidManifest.xml has changed.
+Resolve mutations for :app:processDebugManifestForPackage (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:processDebugManifestForPackage (Thread[#123,Execution worker Thread 5,5,main]) started.
+Resolve mutations for :app:javaPreCompileDebug (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:javaPreCompileDebug (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:javaPreCompileDebug UP-TO-DATE
+Caching disabled for task ':app:javaPreCompileDebug' because:
+  Build cache is disabled
+Skipping task ':app:javaPreCompileDebug' as it is up-to-date.
+Resolve mutations for :app:mergeDebugShaders (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:mergeDebugShaders (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:mergeDebugShaders UP-TO-DATE
+Caching disabled for task ':app:mergeDebugShaders' because:
+  Build cache is disabled
+  Simple merging task
+Skipping task ':app:mergeDebugShaders' as it is up-to-date.
+Resolve mutations for :app:compileDebugShaders (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:compileDebugShaders (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:compileDebugShaders NO-SOURCE
+Skipping task ':app:compileDebugShaders' as it has no source files and no previous output files.
+Resolve mutations for :app:generateDebugAssets (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:generateDebugAssets (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:generateDebugAssets UP-TO-DATE
+Skipping task ':app:generateDebugAssets' as it has no actions.
+Resolve mutations for :app:mergeDebugAssets (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:mergeDebugAssets (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:mergeDebugAssets UP-TO-DATE
+Caching disabled for task ':app:mergeDebugAssets' because:
+  Build cache is disabled
+  Simple merging task
+Skipping task ':app:mergeDebugAssets' as it is up-to-date.
+Resolve mutations for :app:compressDebugAssets (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:compressDebugAssets (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:compressDebugAssets UP-TO-DATE
+Caching disabled for task ':app:compressDebugAssets' because:
+  Build cache is disabled
+Skipping task ':app:compressDebugAssets' as it is up-to-date.
+Resolve mutations for :app:checkDebugDuplicateClasses (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:checkDebugDuplicateClasses (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+Caching disabled for task ':app:checkDebugDuplicateClasses' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:checkDebugDuplicateClasses' as it is up-to-date.
+Resolve mutations for :app:desugarDebugFileDependencies (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:desugarDebugFileDependencies (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+Caching disabled for task ':app:desugarDebugFileDependencies' because:
+  Build cache is disabled
+Skipping task ':app:desugarDebugFileDependencies' as it is up-to-date.
+Resolve mutations for :app:mergeExtDexDebug (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:mergeExtDexDebug (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:mergeExtDexDebug UP-TO-DATE
+Caching disabled for task ':app:mergeExtDexDebug' because:
+  Build cache is disabled
+Skipping task ':app:mergeExtDexDebug' as it is up-to-date.
+Resolve mutations for :app:mergeLibDexDebug (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:mergeLibDexDebug (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:mergeLibDexDebug UP-TO-DATE
+Caching disabled for task ':app:mergeLibDexDebug' because:
+  Build cache is disabled
+Skipping task ':app:mergeLibDexDebug' as it is up-to-date.
+Resolve mutations for :app:mergeDebugJniLibFolders (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:mergeDebugJniLibFolders (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+Caching disabled for task ':app:mergeDebugJniLibFolders' because:
+  Build cache is disabled
+  Simple merging task
+Skipping task ':app:mergeDebugJniLibFolders' as it is up-to-date.
+Resolve mutations for :app:mergeDebugNativeLibs (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:mergeDebugNativeLibs (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+Skipping task ':app:mergeDebugNativeLibs' as it has no source files and no previous output files.
+Resolve mutations for :app:stripDebugDebugSymbols (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:stripDebugDebugSymbols (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+Skipping task ':app:stripDebugDebugSymbols' as it has no source files and no previous output files.
+Resolve mutations for :app:validateSigningDebug (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:validateSigningDebug (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:validateSigningDebug UP-TO-DATE
+Caching disabled for task ':app:validateSigningDebug' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:validateSigningDebug' as it is up-to-date.
+Resolve mutations for :app:writeDebugAppMetadata (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:writeDebugAppMetadata (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+Caching disabled for task ':app:writeDebugAppMetadata' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:writeDebugAppMetadata' as it is up-to-date.
+Resolve mutations for :app:writeDebugSigningConfigVersions (Thread[#126,Execution worker Thread 8,5,main]) started.
+:app:writeDebugSigningConfigVersions (Thread[#126,Execution worker Thread 8,5,main]) started.
+
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+Caching disabled for task ':app:writeDebugSigningConfigVersions' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:writeDebugSigningConfigVersions' as it is up-to-date.
+
+> Task :app:processDebugManifestForPackage
+Custom actions are attached to task ':app:processDebugManifestForPackage'.
+Caching disabled for task ':app:processDebugManifestForPackage' because:
+  Build cache is disabled
+Task ':app:processDebugManifestForPackage' is not up-to-date because:
+  Input property 'mergedManifests' file C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\intermediates\merged_manifests\debug\processDebugManifest\AndroidManifest.xml has changed.
+Resolve mutations for :app:processDebugResources (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:processDebugResources (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:processDebugResources
+Caching disabled for task ':app:processDebugResources' because:
+  Build cache is disabled
+Task ':app:processDebugResources' is not up-to-date because:
+  Value of input property 'useStableIds' has changed for task ':app:processDebugResources'
+The input changes require a full rebuild for incremental task ':app:processDebugResources'.
+AAPT2 aapt2-8.13.0-13719691-windows Daemon #0: starting
+
+error: string too large to encode using UTF-8 written instead as 'STRING_TOO_LARGE'.
+error: string too large to encode using UTF-8 written instead as 'STRING_TOO_LARGE'.
+
+
+> Task :app:processDebugResources
+Aapt output file C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\intermediates\linked_resources_binary_format\debug\processDebugResources\linked-resources-binary-format-debug.ap_
+Resolve mutations for :app:kaptGenerateStubsDebugKotlin (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:kaptGenerateStubsDebugKotlin (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:kaptGenerateStubsDebugKotlin
+Adding -Xuse-inline-scopes-numbers Kotlin compiler flag for task :app:compileDebugAndroidTestKotlin
+Caching disabled for BuildToolsApiClasspathEntrySnapshotTransform: C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\intermediates\compile_and_runtime_not_namespaced_r_class_jar\debug\processDebugResources\R.jar because:
+  Build cache is disabled
+Caching disabled for task ':app:kaptGenerateStubsDebugKotlin' because:
+  Build cache is disabled
+Task ':app:kaptGenerateStubsDebugKotlin' is not up-to-date because:
+  Input property 'classpathSnapshotProperties.classpathSnapshot' file C:\Users\noors\.gradle\caches\8.13\transforms\a4c6542e420810467803e06d2694f148\transformed\R_jar-snapshot.bin has been removed.
+  Input property 'classpathSnapshotProperties.classpathSnapshot' file C:\Users\noors\.gradle\caches\8.13\transforms\b4514e204a54bba78d4aeb9edb64eda3\transformed\R_jar-snapshot.bin has been added.
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+Using Kotlin/JVM incremental compilation
+[KOTLIN] Kotlin compilation 'jdkHome' argument: null
+Options for KOTLIN DAEMON: IncrementalCompilationOptions(super=CompilationOptions(compilerMode=INCREMENTAL_COMPILER, targetPlatform=JVM, reportCategories=[0, 3], reportSeverity=2, requestedCompilationResults=[0], kotlinScriptExtensions=[]), areFileChangesKnown=true, modifiedFiles=[C:\Users\noors\.gradle\caches\8.13\transforms\b4514e204a54bba78d4aeb9edb64eda3\transformed\R_jar-snapshot.bin], deletedFiles=[C:\Users\noors\.gradle\caches\8.13\transforms\a4c6542e420810467803e06d2694f148\transformed\R_jar-snapshot.bin], classpathChanges=ToBeComputedByIncrementalCompiler, workingDir=C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\kotlin\kaptGenerateStubsDebugKotlin\cacheable, multiModuleICSettings=MultiModuleICSettings(buildHistoryFile=C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\kotlin\kaptGenerateStubsDebugKotlin\local-state\build-history.bin, useModuleDetection=true), usePreciseJavaTracking=true, icFeatures=IncrementalCompilationFeatures(withAbiSnapshot=false, preciseCompilationResultsBackup=true, keepIncrementalCompilationCachesInMemory=true, enableUnsafeIncrementalCompilationForMultiplatform=false), outputFiles=[C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\tmp\kapt3\incrementalData\debug, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\tmp\kapt3\stubs\debug, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\kotlin\kaptGenerateStubsDebugKotlin\cacheable, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\kotlin\kaptGenerateStubsDebugKotlin\local-state])
+w: Kapt currently doesn't support language version 2.0+. Falling back to 1.9.
+Finished executing kotlin compiler using DAEMON strategy
+Resolve mutations for :app:kaptDebugKotlin (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:kaptDebugKotlin (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:kaptDebugKotlin
+Caching disabled for StructureTransformAction: C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\intermediates\compile_and_runtime_not_namespaced_r_class_jar\debug\processDebugResources\R.jar because:
+  Build cache is disabled
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+Caching disabled for task ':app:kaptDebugKotlin' because:
+  Build cache is disabled
+Task ':app:kaptDebugKotlin' is not up-to-date because:
+  Input property 'classpathStructure' file C:\Users\noors\.gradle\caches\8.13\transforms\69bd19a2d24cd8a4ae9cddee5a107dbc\transformed\output.bin has been added.
+  Input property 'classpathStructure' file C:\Users\noors\.gradle\caches\8.13\transforms\2a3df87cc85fdb951d74557d144397ef\transformed\output.bin has been removed.
+  Input property 'internalNonAbiClasspath$kotlin_gradle_plugin_common' file C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\intermediates\compile_and_runtime_not_namespaced_r_class_jar\debug\processDebugResources\R.jar has changed.
+Running kapt annotation processing using the Gradle Worker API
+Full list of impacted classpath names: [androidx/viewpager/R$layout, com/example/tripsync/R$id, com/example/tripsync/R$drawable, androidx/coordinatorlayout/R$drawable, androidx/drawerlayout/R$layout, com/example/tripsync/R$layout, androidx/window/R$id, androidx/constraintlayout/widget/R$id, androidx/lifecycle/viewmodel/R$id, androidx/legacy/coreui/R$id, androidx/vectordrawable/animated/R$layout, com/google/android/material/R$layout, androidx/gridlayout/R$id, androidx/gridlayout/R$layout, androidx/legacy/coreutils/R$id, androidx/recyclerview/R$id, androidx/vectordrawable/R$layout, com/bumptech/glide/R$drawable, androidx/legacy/coreutils/R$layout, androidx/asynclayoutinflater/R$drawable, androidx/customview/R$drawable, androidx/appcompat/R$drawable, androidx/lifecycle/runtime/R$id, androidx/core/R$id, androidx/savedstate/R$id, androidx/drawerlayout/R$id, androidx/legacy/coreui/R$drawable, androidx/customview/poolingcontainer/R$id, androidx/core/R$layout, androidx/legacy/coreui/R$layout, androidx/gridlayout/R$drawable, com/bumptech/glide/R$id, androidx/appcompat/R$layout, androidx/navigation/fragment/R$id, androidx/asynclayoutinflater/R$layout, androidx/viewpager/R$id, androidx/loader/R$drawable, androidx/swiperefreshlayout/R$layout, androidx/loader/R$layout, androidx/vectordrawable/animated/R$drawable, androidx/asynclayoutinflater/R$id, androidx/customview/R$id, androidx/transition/R$id, com/google/android/material/R$id, androidx/loader/R$id, androidx/navigation/R$id, androidx/fragment/R$id, com/google/android/material/R$drawable, androidx/activity/R$id, androidx/appcompat/R$id, androidx/vectordrawable/R$drawable, androidx/swiperefreshlayout/R$id, androidx/swiperefreshlayout/R$drawable, androidx/coordinatorlayout/R$layout, androidx/viewpager/R$drawable, androidx/vectordrawable/R$id, androidx/legacy/coreutils/R$drawable, androidx/drawerlayout/R$drawable, androidx/customview/R$layout, androidx/core/viewtree/R$id, com/bumptech/glide/R$layout, androidx/coordinatorlayout/R$id, androidx/core/R$drawable, androidx/vectordrawable/animated/R$id]. Took 149ms.
+Using workers NONE isolation mode to run kapt
+Resolve mutations for :app:compileDebugKotlin (Thread[#123,Execution worker Thread 5,5,main]) started.
+:app:compileDebugKotlin (Thread[#123,Execution worker Thread 5,5,main]) started.
+
+> Task :app:compileDebugKotlin
+Caching disabled for task ':app:compileDebugKotlin' because:
+  Build cache is disabled
+Task ':app:compileDebugKotlin' is not up-to-date because:
+  Input property 'classpathSnapshotProperties.classpathSnapshot' file C:\Users\noors\.gradle\caches\8.13\transforms\a4c6542e420810467803e06d2694f148\transformed\R_jar-snapshot.bin has been removed.
+  Input property 'classpathSnapshotProperties.classpathSnapshot' file C:\Users\noors\.gradle\caches\8.13\transforms\b4514e204a54bba78d4aeb9edb64eda3\transformed\R_jar-snapshot.bin has been added.
+  Input property 'sources' file C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ExploreFragment.kt has changed.
+  and more...
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\kotlin', not found
+file or directory 'C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\debug\java', not found
+Kotlin source files: C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\AddCategoryDialogFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\AIItinearyPlanner.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\ApiClient.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\AuthService.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\budget\BudgetService.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\budget\CreateBudgetRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\ChatApi.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\interceptors\AuthInterceptor.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\Comment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\CommentActionListener.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\CreateProfileRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\CreateProfileResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\Delete.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\EmailRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\EmergencySOSRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\EmergencySOSResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\EmptyJsonBody.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\GenericResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\GetProfileResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\ItineraryModels.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\ItineraryTripCreateRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\LikeRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\LoginErrorResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\LoginRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\LoginResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\OtpCodeRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\OTPVerifyRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\Post.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\PostActionListener.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\PostListResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\ProfileModels.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\RegisterRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\RegisterResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\RegistrationOtpVerifyRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\ResendOtpResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\ResetPasswordOTPRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\SearchAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\SearchPostResponseItem.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\SearchPostsResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\sosModel.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\TravelStory.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\TravelStoryAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\UpdateProfileRequest.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\UpdateProfileResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\UriUtil.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\VerifyOtpResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\VerifyPhoneResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\api\models\WeatherResponse.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\Auth\ForgotPasswordFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\Auth\fragment_otp.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\Auth\fragment_signup.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\Auth\LoginFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\Auth\ResetOtp.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\Auth\ResetPasswordFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\BudgetCategoryAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\BudgetEditDialogFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\BudgetFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\BudgetOverviewFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chatbot\AIchatAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chatbot\AIchatFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chatbot\chatbotModel.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chats\ChatFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chats\Chats.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chats\ChatThreadFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chats\ConversationsAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chats\MessagesAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\chats\WebsocketManager.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\community\CommentAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\community\CommentsFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\community\CommunityFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\community\CreatePostFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\community\PostAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\community\SearchFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\CongratsDialogFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\dialog_terms.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ExploreFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\FunFactsAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\home\openProfileFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\home\SosFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ItinearyProgressThree.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ItineraryService.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\MainActivity.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\onboarding\OnboardingAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\onboarding\OnboardingData.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\onboarding\OnboardingFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\onboarding\OnboardingSlides.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ProfileDetails\ContactVerifyFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ProfileDetails\emergencyFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ProfileDetails\fragment_personal_details.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ProfileDetails\fragment_tripsync_welcome.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ProfileDetails\PreferencesFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ProfileDetails\ProfileViewModel.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\SearchUserFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\SplashActivity.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\TravelStoryDetailFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\Trip.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\TripsAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\UserSearch.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\itinerary\IconMapper.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\itinerary\ItineraryAdapter.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\itinerary\UiModels.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\AIItinearyPlannerFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\Auth\ContactVerifyFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\Auth\ForgotPasswordFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\Auth\FragmentOtpDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\Auth\fragment_signupDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\Auth\LoginFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\Auth\ResetOTPDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\Auth\ResetPasswordFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\BudgetFragmentArgs.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\BudgetFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\BudgetOverviewFragmentArgs.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\BudgetOverviewFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ChatFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ChatThreadFragmentArgs.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\community\CommunityFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\community\SearchFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ExploreFragmentArgs.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ExploreFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\onboarding\OnboardingFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ProfileDetails\EmergencyFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ProfileDetails\fragment_tripsync_welcomeDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ProfileDetails\PreferencesFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\SearchUsersFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\TravelStoryDetailFragmentArgs.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ui\FragmentPersonalDetailsDirections.kt
+Java source files: C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\buildConfig\debug\com\example\tripsync\BuildConfig.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ActivityAIItinearyPlannerBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ActivityBudgetBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ActivityMainBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ActivitySplashBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\AichatLayoutBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\CardAddTripmatesBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\CardAiPlannerBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\CardCreateTripBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\CardSosEmergencyBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\DialogBudgetEditBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\DialogCongratsBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\DialogPasswordNoteBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\DialogTermsBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\DialogTripSuccessBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentAIchatBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentAiItineraryStep3Binding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentBudgetOverviewBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentChatsBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentChatThreadBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentCommentsBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentCommunityBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentContactVerifyBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentCreatePostBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentEmergencyBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentExploreBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentForgotPasswordBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentLoginBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentOpenProfileBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentOtpBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentOtpScreenBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentPersonalDetailsBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentPreferencesBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentResetPasswordBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentSearchBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentSearchUserBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentSignupBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentSosBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentStoryDetailBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentTravelStoryDetailBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentTrendingDestinationBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\FragmentTripsyncWelcomeBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemBotMessageBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemBudgetCategoryBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemChatListRowBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemCommentBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemCommunityCardBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemDestinationCardBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemFriendBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemFunFactBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemItineraryCardBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemItinerarySectionBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemMessageBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemPostBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemTravelStoryBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemTravelStyleBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemTripCardBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemUserBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ItemUserMessageBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\LayoutDrawerMenuBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\ListChoiceBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\NavHeaderBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\OnboardingFragmentBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\OnboardingSlideFragmentBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\SpinnerItemBinding.java, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\data_binding_base_class_source_out\debug\out\com\example\tripsync\databinding\TrendingDestinationItemBinding.java
+Script source files: 
+Script file extensions: 
+Using Kotlin/JVM incremental compilation
+[KOTLIN] Kotlin compilation 'jdkHome' argument: null
+Options for KOTLIN DAEMON: IncrementalCompilationOptions(super=CompilationOptions(compilerMode=INCREMENTAL_COMPILER, targetPlatform=JVM, reportCategories=[0, 3], reportSeverity=2, requestedCompilationResults=[0], kotlinScriptExtensions=[]), areFileChangesKnown=true, modifiedFiles=[C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\ExploreFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\ExploreFragmentDirections.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\src\main\java\com\example\tripsync\TravelStoryDetailFragment.kt, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\generated\source\navigation-args\debug\com\example\tripsync\TravelStoryDetailFragmentArgs.kt, C:\Users\noors\.gradle\caches\8.13\transforms\b4514e204a54bba78d4aeb9edb64eda3\transformed\R_jar-snapshot.bin], deletedFiles=[C:\Users\noors\.gradle\caches\8.13\transforms\a4c6542e420810467803e06d2694f148\transformed\R_jar-snapshot.bin], classpathChanges=ToBeComputedByIncrementalCompiler, workingDir=C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\kotlin\compileDebugKotlin\cacheable, multiModuleICSettings=MultiModuleICSettings(buildHistoryFile=C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\kotlin\compileDebugKotlin\local-state\build-history.bin, useModuleDetection=true), usePreciseJavaTracking=true, icFeatures=IncrementalCompilationFeatures(withAbiSnapshot=false, preciseCompilationResultsBackup=true, keepIncrementalCompilationCachesInMemory=true, enableUnsafeIncrementalCompilationForMultiplatform=false), outputFiles=[C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\tmp\kotlin-classes\debug, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\kotlin\compileDebugKotlin\cacheable, C:\Users\noors\AndroidStudioProjects\Tripsync-2.0\app\build\kotlin\compileDebugKotlin\local-state])
+Finished executing kotlin compiler using DAEMON strategy
+Restoring task outputs to pre-compilation state
+.\gradlew.bat : e: 
+file:///C:/Users/noors/AndroidStudioProjects/Tripsync-2.0/app/build/generated/source/navigation-args/debug/com/example/tripsync/ExploreFragmentDirections.kt:13:46 Unresolved 
+reference 'action_homeFragment_to_travelStoryDetailFragment'.
+At line:1 char:1
++ .\gradlew.bat :app:assembleDebug --stacktrace --info 2>&1 | Out-File  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (e: file:///C:/U...etailFragment'.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+e: file:///C:/Users/noors/AndroidStudioProjects/Tripsync-2.0/app/src/main/java/com/example/tripsync/ExploreFragment.kt:108:63 Unresolved reference 'travelStoryDetailFragment'.
+
+> Task :app:compileDebugKotlin FAILED
+AAPT2 aapt2-8.13.0-13719691-windows Daemon #0: shutdown
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:293)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskExecuter.java:40)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing 
+org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:287)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:130)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:335)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:318)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:323)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:252)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:75)
+	at org.gradle.internal.Either$Right.fold(Either.java:175)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:61)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskExecuter.java:40)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:21)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:119)
+	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:76)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+34 actionable tasks: 7 executed, 27 up-to-date
+Watched directory hierarchies: [C:\Users\noors\AndroidStudioProjects\Tripsync-2.0]
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:174)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:169)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:133)
+	... 2 more
+
+
+BUILD FAILED in 36s

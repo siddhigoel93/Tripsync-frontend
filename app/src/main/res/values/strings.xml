@@ -4,6 +4,7 @@
     <string name="adventure_begins_here">Adventure begins\nhere!</string>
     <string name="signup_subtext">Sign up to plan smarter, travel better, and explore more.</string>
     <string name="signup_title">Sign-up</string>
+    <string name="sample_story_text">A shoppers dream at Sarojini Chandni Chowk</string>
     <string name="label_username_email">Username/email</string>
     <string name="hint_email">priyanshu@gmail.com</string>
     <string name="label_enter_password">Enter Password</string>
@@ -15,8 +16,11 @@
     <string name="sign_in"> Sign-In</string>
     <string name="cd_show_password">Show password</string>
     <string name="cd_hide_password">Hide password</string>
+    <string name="back">Back</string>
+    <string name="detail_image">Detail image</string>
     <string name="forgot_password"><![CDATA[<u>Forgot Password</u>]]></string>
     <string name="empty" translatable="false"></string>
+    <string name="story_image_desc">Travel story image</string>
 
 
     <string name="chat">Chat</string>
