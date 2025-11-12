@@ -26,9 +26,19 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import android.Manifest
+import android.content.pm.PackageManager
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 
 class ExploreFragment : Fragment() {
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    lateinit var city : TextView
+    lateinit var sos_btn : MaterialButton
     private val args: ExploreFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -36,14 +46,18 @@ class ExploreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
+        city = view.findViewById(R.id.weather_subtitle)
+        sos_btn = view.findViewById(R.id.sos_btn)
 
 
-        // Complete Profile Button
+        sos_btn.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_emergencySosFragment)
+        }
+
         view.findViewById<MaterialButton>(R.id.complete_profile_button).setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
         }
 
-        // Drawer Menu Button
         view.findViewById<ImageView>(R.id.menu_icon).setOnClickListener {
             val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
             if (drawerLayout != null) {
@@ -55,32 +69,13 @@ class ExploreFragment : Fragment() {
 
         val chatButton = view.findViewById<ImageButton>(R.id.toolbar_btn_chat)
 
-        // 2. Set the Click Listener and Navigate
         chatButton.setOnClickListener {
-            // 3. Navigate to ChatFragment using its ID from your nav_graph.xml
             findNavController().navigate(R.id.chatFragment)
-            // OR use Safe Args if you have created an action for it:
-            // findNavController().navigate(ExploreFragmentDirections.actionExploreFragmentToChatFragment())
         }
 
-        // AI Planner Card
         view.findViewById<CardView>(R.id.card_ai_planner).setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_AIItinearyPlannerFragment)
         }
-
-        // Bottom Navigation Listener
-//        view.findViewById<BottomNavigationView>(R.id.bottom_navigation_view).setOnItemSelectedListener { item ->
-//            when (item.itemId) {
-//                R.id.nav_search -> {
-//                    val navController = findNavController()
-//                    if (navController.currentDestination?.id != R.id.chatFragment) {
-//                        navController.navigate(R.id.chatFragment)
-//                    }
-//                    true
-//                }
-//                else -> false
-//            }
-//        }
 
         return view
     }
@@ -97,6 +92,8 @@ class ExploreFragment : Fragment() {
         val savedUrl = sharedPrefs.getString("userAvatarUrl", null)
         updateExploreProfileImage(savedUrl)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        getUserLocation()
 
         customHeader.visibility = if (isProfileCompleted) View.GONE else View.VISIBLE
         if (args.showHeader) {
@@ -113,11 +110,8 @@ class ExploreFragment : Fragment() {
                 profileImageView.setImageResource(R.drawable.placeholder_image)
             }
             customHeader.visibility = View.GONE
-        } else {
-            fetchWeather("Delhi")
         }
 
-        // AppBar elevation
         val elevationInPixels = 4f * resources.displayMetrics.density
         appBarLayout.elevation = elevationInPixels
         appBarLayout.translationZ = elevationInPixels
@@ -178,5 +172,53 @@ class ExploreFragment : Fragment() {
             exploreProfileImage.setImageResource(R.drawable.profile)
         }
     }
+    private fun getUserLocation() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Permission granted, get location
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        val lat = location.latitude
+                        val lon = location.longitude
+                        Log.d("Location", "Lat: $lat, Lon: $lon")
+
+                        val cityName = getCityNameFromLocation(lat, lon)
+                        Log.d("Location", "City: $cityName")
+                        fetchWeather(cityName ?: "Delhi")
+                        city.text=cityName
+                    } else {
+                        fetchWeather("Delhi")
+                    }
+                }
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                getUserLocation()
+            } else {
+                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
+                fetchWeather("Delhi")
+            }
+        }
+    private fun getCityNameFromLocation(lat: Double, lon: Double): String? {
+        return try {
+            val geocoder = android.location.Geocoder(requireContext(), java.util.Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, lon, 1)
+            addresses?.firstOrNull()?.locality
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+
 
 }

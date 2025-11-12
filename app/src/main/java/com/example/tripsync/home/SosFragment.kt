@@ -39,8 +39,8 @@ class EmergencySosFragment : Fragment() {
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val contact_name = view.findViewById<TextView>(R.id.contact_name)
         val contact_number = view.findViewById<TextView>(R.id.contact_number)
-        contact_name.text = sharedPrefs.getString("contact_name", "Relation")
-        contact_number.text = sharedPrefs.getString("contact_number", "1234567890")
+        contact_name.text = sharedPrefs.getString("ename", "Relation")
+        contact_number.text = sharedPrefs.getString("enumber", "1234567890")
 
          close = view.findViewById(R.id.icon_close)
 

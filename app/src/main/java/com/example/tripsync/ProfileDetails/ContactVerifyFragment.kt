@@ -137,6 +137,8 @@ class ContactVerifyFragment : Fragment() {
                             .putString("ename" , profile.ename)
                             .putString("enum" , profile.enumber)
                             .putString("self_id" , profile.id.toString())
+                            .putString("ename", profile.ename)
+                            .putString("enumber", profile.enumber)
                             .putString(
                                 "userAvatarUrl",
                                 profile.profilePicUrl ?: profile.profilePic ?: ""
