@@ -3,14 +3,14 @@ package com.example.tripsync.api.models
 
 data class Conversation(
     val id: Int,
-    val name: String?,  // <- Make sure this is nullable
+    val name: String?,
     val participants: List<Participant>,
-    val message_count: Int? = null,  // Make optional since it might not be in create response
+    val message_count: Int? = null,
     val updated_at: String,
     val last_message: Message? = null,
-    val unread_count: Int? = null,  // Make optional
-    val is_group: Boolean? = false,  // Add this field from your API response
-    val created_at: String? = null  // Add this field from your API response
+    val unread_count: Int? = null,
+    val is_group: Boolean? = false,
+    val created_at: String? = null
 )
 
 data class Participant(
@@ -43,4 +43,7 @@ data class MessagesResponse(
     val status: String?,
     val message: String?,
     val data: List<Message>?
+)
+data class SendMessageRequest(
+    val content: String
 )
