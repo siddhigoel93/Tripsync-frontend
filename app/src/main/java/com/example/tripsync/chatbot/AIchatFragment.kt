@@ -1,9 +1,11 @@
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,21 +19,27 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
+import android.widget.ImageView
+import android.widget.TextView
 class AIchatFragment : Fragment() {
 
     private val messages = mutableListOf<ChatMessage>()
     private lateinit var adapter: AIchatAdapter
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.aichat_layout, container, false)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.chatRecyclerView)
-        val messageInput = view.findViewById<EditText>(R.id.messageInput)
-        val sendButton = view.findViewById<Button>(R.id.sendButton)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
+        val messageInput = view.findViewById<EditText>(R.id.input_message)
+        val sendButton = view.findViewById<ImageButton>(R.id.btn_send)
+        val emptyStateContainer = view.findViewById<ViewGroup>(R.id.empty_state_container)
+
+
+
 
         adapter = AIchatAdapter(messages)
         recyclerView.adapter = adapter
@@ -40,6 +48,7 @@ class AIchatFragment : Fragment() {
         sendButton.setOnClickListener {
             val message = messageInput.text.toString().trim()
             if (message.isNotEmpty()) {
+                emptyStateContainer.visibility = View.GONE
                 addMessage(message, true)
                 messageInput.text.clear()
                 sendMessageToApi(message)

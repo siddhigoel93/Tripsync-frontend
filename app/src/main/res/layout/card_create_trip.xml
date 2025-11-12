@@ -18,11 +18,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/bell"
-            app:tint="@color/white"
+            android:src="@drawable/train"
             tools:ignore="ContentDescription" />
     </androidx.cardview.widget.CardView>
 
@@ -32,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Set Alarms"
+        android:text="Train Info"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -46,9 +45,9 @@
         android:layout_height="56dp"
         android:layout_marginTop="4dp"
         android:fontFamily="sans-serif"
-        android:text="set alarms and\nreminders to\nhave a smooth\ntrip"
+        android:text="Get information about any train."
         android:textColor="#737373"
-        android:textSize="14sp"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/card_title_ai"
         app:layout_constraintTop_toBottomOf="@id/card_title_ai"
         tools:ignore="HardcodedText" />
