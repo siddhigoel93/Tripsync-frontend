@@ -53,6 +53,7 @@ class ChatFragment : Fragment() {
         }
 
         adapter = ConversationsAdapter(conversations) { conversation ->
+            // Navigate to chat thread
             val bundle = Bundle().apply {
                 putString("name", conversation.name)
                 putInt("conversationId", conversation.id)

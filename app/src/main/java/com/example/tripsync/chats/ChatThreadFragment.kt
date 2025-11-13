@@ -2,8 +2,6 @@ package com.example.tripsync
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,17 +15,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tripsync.adapters.MessagesAdapter
+//import com.example.tripsync.adapters.MessagesAdapter
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.ChatApi
 import com.example.tripsync.api.models.Message
+import com.example.tripsync.api.models.MessageSender
 import com.example.tripsync.api.models.SendMessageRequest
-// import com.example.tripsync.websocket.WebSocketManager // COMMENTED OUT - WebSocket
-// import org.json.JSONObject // COMMENTED OUT - WebSocket
+import com.example.tripsync.websocket.WebSocketManager
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
-class ChatThreadFragment : Fragment() {
-    // Removed WebSocketListenerInterface - using REST API only
+class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterface {
 
     private var conversationId: Int = -1
     private lateinit var recycler: RecyclerView
@@ -37,17 +35,12 @@ class ChatThreadFragment : Fragment() {
     private lateinit var conversationNameTv: TextView
     private lateinit var toolbarOptions: ImageView
 
-    // COMMENTED OUT - WebSocket
-    // private var webSocketManager: WebSocketManager? = null
+    private var webSocketManager: WebSocketManager? = null
 
     private var selfEmail: String? = null
     private var selfId: Int = -1
     private var isEditingMessage = false
     private var editingMessageId: Int = -1
-
-    // Auto-refresh handler
-    private val refreshHandler = Handler(Looper.getMainLooper())
-    private var isRefreshing = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +50,7 @@ class ChatThreadFragment : Fragment() {
 
         val back = v.findViewById<ImageView>(R.id.toolbar_back)
         conversationNameTv = v.findViewById<TextView>(R.id.toolbar_name)
-        toolbarOptions = v.findViewById<ImageView>(R.id.toolbar_options) // Add this to your layout if missing
+        toolbarOptions = v.findViewById<ImageView>(R.id.toolbar_options)
 
         val args = requireArguments()
         conversationNameTv.text = args.getString("name", "")
@@ -67,30 +60,17 @@ class ChatThreadFragment : Fragment() {
 
         back.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 
-        // Options menu - conversation details, leave conversation
         toolbarOptions.setOnClickListener {
             showConversationOptionsMenu()
         }
 
         val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-//        selfId = prefs.getString("self_id", "-1")?.toIntOrNull() ?: -1
-//        Log.d("ChatThread", "SelfId: $selfId")
-        selfId = try {
-            prefs.getInt("self_id", -1)
-        } catch (e: ClassCastException) {
-            val stringId = prefs.getString("self_id", "-1")
-            val fixedId = stringId?.toIntOrNull() ?: -1
-
-            // rewrite it properly as Int for next time
-            prefs.edit().putInt("self_id", fixedId).apply()
-            fixedId
-        }
+        selfId = prefs.getInt("self_id", -1)
         selfEmail = prefs.getString("currentUserEmail", null)
 
         recycler = v.findViewById(R.id.recycler_messages)
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
-        // Pass message click listener for edit/delete
         adapter = MessagesAdapter(
             messages = mutableListOf(),
             selfId = selfId,
@@ -99,12 +79,7 @@ class ChatThreadFragment : Fragment() {
         recycler.adapter = adapter
 
         loadMessages()
-
-        // COMMENTED OUT - WebSocket connection
-        // connectWebSocket()
-
-        // Start auto-refresh (every 3 seconds)
-        startAutoRefresh()
+        connectWebSocket() // WEBSOCKET ENABLED!
 
         return v
     }
@@ -121,7 +96,7 @@ class ChatThreadFragment : Fragment() {
                 if (isEditingMessage) {
                     editMessage(editingMessageId, content)
                 } else {
-                    sendMessage(content)
+                    sendMessage(content) // Uses WebSocket
                 }
                 messageEditText.text.clear()
                 cancelEditMode()
@@ -156,8 +131,7 @@ class ChatThreadFragment : Fragment() {
         }
     }
 
-    // COMMENTED OUT - WebSocket connection
-    /*
+    // WEBSOCKET: Connect to real-time chat
     private fun connectWebSocket() {
         if (conversationId == -1) {
             Log.e("ChatThread", "Cannot connect WebSocket: Invalid conversation ID")
@@ -176,33 +150,15 @@ class ChatThreadFragment : Fragment() {
         webSocketManager = WebSocketManager(conversationId.toString(), token, this)
         webSocketManager?.connect()
     }
-    */
 
+    // WEBSOCKET: Send message via WebSocket (real-time)
     private fun sendMessage(content: String) {
-        lifecycleScope.launch {
-            try {
-                val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
-                val request = SendMessageRequest(content = content)
-                val response = chatApi.sendMessage(conversationId, request)
-
-                if (response.isSuccessful) {
-                    val message = response.body()
-                    if (message != null) {
-                        adapter.addMessage(message)
-                        recycler.scrollToPosition(adapter.itemCount - 1)
-                        Toast.makeText(requireContext(), "Message sent", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Failed to send message", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Log.e("ChatThread", "Error sending message: ${e.message}", e)
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
+        val sender = selfEmail ?: "unknown@user.com"
+        webSocketManager?.sendMessage(sender, content)
+            ?: Toast.makeText(requireContext(), "WebSocket not connected", Toast.LENGTH_SHORT).show()
     }
 
-    // NEW: Edit message API
+    // REST API: Edit message (WebSocket doesn't support this)
     private fun editMessage(messageId: Int, newContent: String) {
         lifecycleScope.launch {
             try {
@@ -223,7 +179,7 @@ class ChatThreadFragment : Fragment() {
         }
     }
 
-    // NEW: Delete message API
+    // REST API: Delete message
     private fun deleteMessage(messageId: Int) {
         lifecycleScope.launch {
             try {
@@ -232,7 +188,7 @@ class ChatThreadFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Message deleted", Toast.LENGTH_SHORT).show()
-                    loadMessages() // Refresh to remove deleted message
+                    loadMessages()
                 } else {
                     Toast.makeText(requireContext(), "Failed to delete message", Toast.LENGTH_SHORT).show()
                 }
@@ -243,7 +199,7 @@ class ChatThreadFragment : Fragment() {
         }
     }
 
-    // NEW: Get message details API
+    // REST API: Get message details
     private fun getMessageDetails(messageId: Int) {
         lifecycleScope.launch {
             try {
@@ -265,7 +221,6 @@ class ChatThreadFragment : Fragment() {
         }
     }
 
-    // NEW: Show message options (Edit, Delete, Details)
     private fun showMessageOptionsDialog(message: Message) {
         val options = if (message.sender.id == selfId) {
             arrayOf("Edit", "Delete", "View Details")
@@ -290,14 +245,14 @@ class ChatThreadFragment : Fragment() {
         editingMessageId = message.id
         messageEditText.setText(message.content)
         messageEditText.requestFocus()
-        sendButton.setImageResource(android.R.drawable.ic_menu_edit) // Change icon to edit
+        sendButton.setImageResource(android.R.drawable.ic_menu_edit)
         Toast.makeText(requireContext(), "Editing message", Toast.LENGTH_SHORT).show()
     }
 
     private fun cancelEditMode() {
         isEditingMessage = false
         editingMessageId = -1
-        sendButton.setImageResource(android.R.drawable.ic_menu_send) // Back to send icon
+        sendButton.setImageResource(android.R.drawable.ic_menu_send)
     }
 
     private fun confirmDeleteMessage(messageId: Int) {
@@ -326,7 +281,6 @@ class ChatThreadFragment : Fragment() {
             .show()
     }
 
-    // NEW: Conversation options menu
     private fun showConversationOptionsMenu() {
         val options = arrayOf("View Conversation Details", "Leave Conversation")
 
@@ -341,7 +295,6 @@ class ChatThreadFragment : Fragment() {
             .show()
     }
 
-    // NEW: Get conversation details API
     private fun loadConversationDetails() {
         lifecycleScope.launch {
             try {
@@ -384,7 +337,6 @@ class ChatThreadFragment : Fragment() {
             .show()
     }
 
-    // NEW: Leave conversation API
     private fun confirmLeaveConversation() {
         AlertDialog.Builder(requireContext())
             .setTitle("Leave Conversation")
@@ -415,32 +367,16 @@ class ChatThreadFragment : Fragment() {
         }
     }
 
-    private fun startAutoRefresh() {
-        isRefreshing = true
-        refreshHandler.postDelayed(object : Runnable {
-            override fun run() {
-                if (isRefreshing) {
-                    loadMessages()
-                    refreshHandler.postDelayed(this, 3000)
-                }
-            }
-        }, 3000)
-    }
-
-    private fun stopAutoRefresh() {
-        isRefreshing = false
-        refreshHandler.removeCallbacksAndMessages(null)
-    }
-
-    // COMMENTED OUT - WebSocket callbacks
-    /*
+    // WEBSOCKET CALLBACKS
     override fun onConnected() {
-        requireActivity().runOnUiThread {
+        if (!isAdded) return
+        activity?.runOnUiThread {
             Toast.makeText(requireContext(), "Connected to chat", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onMessageReceived(message: String) {
+        if (!isAdded) return
         try {
             val json = JSONObject(message)
             val msg = Message(
@@ -453,7 +389,7 @@ class ChatThreadFragment : Fragment() {
                 timestamp = json.optString("timestamp", "")
             )
 
-            requireActivity().runOnUiThread {
+            activity?.runOnUiThread {
                 adapter.addMessage(msg)
                 recycler.scrollToPosition(adapter.itemCount - 1)
             }
@@ -462,24 +398,26 @@ class ChatThreadFragment : Fragment() {
         }
     }
 
+
     override fun onDisconnected() {
-        requireActivity().runOnUiThread {
+        if (!isAdded) return
+        activity?.runOnUiThread {
             Toast.makeText(requireContext(), "Disconnected", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onError(t: Throwable) {
         Log.e("ChatThread", "WebSocket error: ${t.message}", t)
-        requireActivity().runOnUiThread {
+        if (!isAdded) return //
+
+        activity?.runOnUiThread {
             Toast.makeText(requireContext(), "WebSocket Error: ${t.message}", Toast.LENGTH_SHORT).show()
         }
     }
-    */
+
 
     override fun onDestroyView() {
         super.onDestroyView()
-        stopAutoRefresh()
-        // COMMENTED OUT - WebSocket disconnect
-        // webSocketManager?.disconnect()
+        webSocketManager?.disconnect()
     }
 }

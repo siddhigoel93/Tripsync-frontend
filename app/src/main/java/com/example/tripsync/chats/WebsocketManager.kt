@@ -38,6 +38,18 @@ class WebSocketManager(
 
             override fun onMessage(webSocket: WebSocket, text: String) {
                 Log.d("WebSocket", "Message received: $text")
+
+                // Check if it's an error message
+                try {
+                    val json = JSONObject(text)
+                    if (json.optString("type") == "error") {
+                        Log.e("WebSocket", "Backend error: ${json.optString("message")}")
+                        // Still notify listener so UI can display error
+                    }
+                } catch (e: Exception) {
+                    // Not JSON or different format, ignore
+                }
+
                 listener.onMessageReceived(text)
             }
 
@@ -68,11 +80,15 @@ class WebSocketManager(
         }
 
         try {
-            val json = JSONObject()
-            json.put("sender", sender)
-            json.put("message", message)
-            webSocket?.send(json.toString())
-            Log.d("WebSocket", "Message sent: $json")
+
+            val format = JSONObject().apply {
+                put("content", message)
+            }
+
+            Log.d("WebSocket", "Sending format: send_message type")
+            webSocket?.send(format.toString())
+
+
         } catch (e: Exception) {
             Log.e("WebSocket", "Send failed: ${e.message}")
         }

@@ -8,7 +8,6 @@ interface ChatApi {
     @GET("/api/chat/conversations/")
     suspend fun getConversations(): Response<List<Conversation>>
 
-    // FIXED: Returns CreateConversationResponse with nested data
     @POST("/api/chat/conversations/")
     suspend fun createConversation(
         @Body body: CreateConversationRequest
