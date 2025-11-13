@@ -23,6 +23,7 @@
             android:src="@drawable/greenback"
             android:contentDescription="back" />
 
+
         <ImageView
             android:id="@+id/toolbar_profile"
             android:layout_width="36dp"
@@ -42,6 +43,13 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black" />
+        <ImageView
+            android:id="@+id/toolbar_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_more"
+            android:padding="8dp"
+            android:layout_alignParentEnd="true"/>
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -78,6 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
+            android:textColor="@color/black"
             android:hint="Type a message..."
             android:background="@drawable/edittext_simple"
             android:paddingStart="12dp"
@@ -85,10 +94,10 @@
 
         <ImageView
             android:id="@+id/button_send"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:src="@drawable/send"
-            android:padding="8dp"
+            android:layout_marginStart="2dp"
             android:contentDescription="Send" />
     </LinearLayout>
 

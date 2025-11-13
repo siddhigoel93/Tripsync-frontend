@@ -7,11 +7,11 @@ data class LoginResponse(
 )
 
 data class LoginData(
-    val user: User?,
+    val user: UserL?,
     val tokens: Tokens?
 )
 
-data class User(
+data class UserL(
     val id: Int,
     val email: String?,
     val isEmailVerified: Boolean?

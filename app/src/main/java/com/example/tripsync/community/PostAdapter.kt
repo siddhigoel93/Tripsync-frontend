@@ -30,6 +30,9 @@ class PostAdapter(
     private val currentUserEmail: String?
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
+    // Add this map to track comment counts
+    private val commentCounts = mutableMapOf<Int, Int>()
+
     inner class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val optionsMenu: ImageView = itemView.findViewById(R.id.three_dots)
         val userAvatar: ImageView = itemView.findViewById(R.id.post_user_avatar)
@@ -40,8 +43,8 @@ class PostAdapter(
         val mediaImage: ImageView = itemView.findViewById(R.id.post_media_image)
         val iconLike: ImageView = itemView.findViewById(R.id.icon_like)
         val iconComment: ImageView = itemView.findViewById(R.id.icon_comment)
-        var likeCount: TextView = itemView.findViewById(R.id.like_count)
-        var commentCount: TextView = itemView.findViewById(R.id.comment_count)
+        val likeCount: TextView = itemView.findViewById(R.id.like_count)
+        val commentCount: TextView = itemView.findViewById(R.id.comment_count)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -53,9 +56,6 @@ class PostAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
         val context = holder.itemView.context
-        holder.likeCount.text = post.likes?.toString() ?: "0"
-        holder.commentCount.text = post.total_comments.toString() ?: "0"
-
 
         val user = post.user
         holder.userName.text = if (user != null) {
@@ -95,7 +95,14 @@ class PostAdapter(
         } else {
             holder.mediaImage.visibility = View.GONE
         }
+        val displayCommentCount = commentCounts[post.id] ?: post.total_comments ?: post.comments?.size ?: 0
+        holder.commentCount.text = displayCommentCount.toString()
 
+
+        holder.likeCount.text = post.likes?.toString() ?: "0"
+
+
+        Log.d("PostAdapter", "Post ${post.id}: likes=${post.likes}, comments original=${post.comments?.size}, tracked=${commentCounts[post.id]}, displaying=$displayCommentCount")
 
         val liked = getLikeState(context, post.id)
         holder.iconLike.setImageResource(if (liked) R.drawable.liked else R.drawable.like)
@@ -106,14 +113,14 @@ class PostAdapter(
             holder.iconLike.setImageResource(if (newState) R.drawable.liked else R.drawable.like)
             listener.onLike(post.id)
         }
+
         holder.iconComment.setOnClickListener {
             listener.onComment(post.id)
         }
 
         Log.d("PostAdapter", "Post ${post.id} owner: ${post.owner}")
 
-            holder.optionsMenu.setOnClickListener { showPopupMenu(it, post) }
-
+        holder.optionsMenu.setOnClickListener { showPopupMenu(it, post) }
     }
 
     private fun showPopupMenu(view: View, post: Post) {
@@ -149,7 +156,30 @@ class PostAdapter(
 
     fun updateData(newPosts: List<Post>) {
         posts = newPosts
+        newPosts.forEach { post ->
+            if (!commentCounts.containsKey(post.id)) {
+                val count = post.total_comments?: post.comments?.size ?: 0
+                commentCounts[post.id] = count
+
+                Log.d("PostAdapter", "Initialized comment count for post ${post.id}: $count")
+            }
+        }
         notifyDataSetChanged()
+    }
+
+    fun updatePostCounts(postId: Int, likes: Int? = null, commentCount: Int? = null) {
+        val position = posts.indexOfFirst { it.id == postId }
+        if (position != -1) {
+            likes?.let {
+                posts[position].likes = it
+                Log.d("PostAdapter", "Updated likes for post $postId to $it")
+            }
+            commentCount?.let {
+                commentCounts[postId] = it
+                Log.d("PostAdapter", "Updated comment count for post $postId to $it")
+            }
+            notifyItemChanged(position)
+        }
     }
 
     private fun saveLikeState(context: Context, postId: Int, liked: Boolean) {
@@ -190,20 +220,6 @@ class PostAdapter(
         } catch (e: Exception) {
             Log.e("TimeFormat", "Error parsing time: ${e.message}")
             "Unknown time"
-        }
-    }
-    fun updatePostCounts(postId: Int, likes: Int? = null, commentCount: Int? = null) {
-        val position = posts.indexOfFirst { it.id == postId }
-        if (position != -1) {
-            likes?.let {
-                posts[position].likes = it
-                notifyItemChanged(position, "likes")
-            }
-            commentCount?.let {
-                // If your Post model has a comment count field, update it here
-                // For now, we'll just notify the change
-                notifyItemChanged(position, "comments")
-            }
         }
     }
 }

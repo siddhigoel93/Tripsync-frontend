@@ -13,7 +13,7 @@ data class VerifyPhoneData(
 )
 
 data class UserProfile(
-    val id: Int?,
+    val id: Int,
     val email: String?,
     val fname: String?,
     @SerializedName("Iname") val lname: String?,

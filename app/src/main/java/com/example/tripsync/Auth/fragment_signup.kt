@@ -111,15 +111,19 @@ class fragment_signup : Fragment() {
         tvRuleDigitConfirm = view.findViewById(R.id.pwRuleDigitConfirm)
 
         val blockEmojiAndSpaces = InputFilter { source, _, _, _, _, _ ->
-            if (source.any { Character.getType(it) == Character.SURROGATE.toInt() ||
-                        Character.getType(it) == Character.OTHER_SYMBOL.toInt() ||
-                        it.isWhitespace() }) "" else source
+            if (source.any {
+                    Character.getType(it) == Character.SURROGATE.toInt() ||
+                            Character.getType(it) == Character.OTHER_SYMBOL.toInt() ||
+                            it.isWhitespace()
+                }) "" else source
         }
-        val limit20 = InputFilter.LengthFilter(20)
+
+        val limit30 = InputFilter.LengthFilter(30)
+        etEmail.filters = arrayOf(blockEmojiAndSpaces, limit30)
 
         etEmail.filters = arrayOf(blockEmojiAndSpaces)
-        etPassword.filters = arrayOf(blockEmojiAndSpaces, limit20)
-        etConfirm.filters = arrayOf(blockEmojiAndSpaces, limit20)
+        etPassword.filters = arrayOf(blockEmojiAndSpaces, limit30)
+        etConfirm.filters = arrayOf(blockEmojiAndSpaces, limit30)
 
         signin.paintFlags = signin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         tvTerms.paintFlags = tvTerms.paintFlags or Paint.UNDERLINE_TEXT_FLAG

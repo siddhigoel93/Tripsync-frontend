@@ -58,16 +58,16 @@ class OnboardingAdapter(
                 if (index < slides.lastIndex) {
                     viewPager.setCurrentItem(index + 1, true)
                 } else {
-                    itemView.findNavController().navigate(R.id.action_onboarding_to_login)
+                    itemView.findNavController().navigate(R.id.action_onboarding_to_signup)
                 }
             }
 
             skip.setOnClickListener {
-                itemView.findNavController().navigate(R.id.action_onboarding_to_login)
+                itemView.findNavController().navigate(R.id.action_onboarding_to_signup)
             }
         }
 
-         fun updateProgress(index: Int) {
+        fun updateProgress(index: Int) {
             progressBars.forEachIndexed { i, bar ->
                 bar.setBackgroundResource(
                     if (i == index) R.drawable.progress_selected

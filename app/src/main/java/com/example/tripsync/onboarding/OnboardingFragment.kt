@@ -2,8 +2,6 @@ package com.example.tripsync.onboarding
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,9 +14,6 @@ class OnboardingFragment : Fragment() {
 
     private lateinit var viewPager: ViewPager2
     private lateinit var adapter: OnboardingAdapter
-    private val handler = Handler(Looper.getMainLooper())
-    private var slideRunnable: Runnable? = null
-    private val slideInterval = 1800L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +22,7 @@ class OnboardingFragment : Fragment() {
         val accessToken = sharedPrefs.getString("access_token", null)
 
         if (accessToken != null) {
-
-           findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
+            findNavController().navigate(R.id.action_onboardingFragment_to_homeFragment)
         }
     }
 
@@ -46,42 +40,13 @@ class OnboardingFragment : Fragment() {
         viewPager.clipToPadding = true
         viewPager.clipChildren = true
 
-        viewPager.setPageTransformer { page, position ->
-            page.translationX = -position * page.width
-            page.alpha = 1 - kotlin.math.abs(position)
-        }
+        viewPager.isUserInputEnabled = false
 
-        startAutoSlide()
+        viewPager.setPageTransformer { page, position ->
+            page.alpha = 1 - kotlin.math.abs(position) * 0.5f
+            page.scaleY = 0.85f + (1 - kotlin.math.abs(position)) * 0.15f
+        }
 
         return view
-    }
-
-    private fun startAutoSlide() {
-        slideRunnable = object : Runnable {
-            override fun run() {
-                if (viewPager.currentItem < adapter.itemCount - 1) {
-                    viewPager.setCurrentItem(viewPager.currentItem + 1, true)
-                    handler.postDelayed(this, slideInterval)
-                } else {
-
-                    handler.removeCallbacks(this)
-                }
-            }
-        }
-        handler.postDelayed(slideRunnable!!, slideInterval)
-
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                handler.removeCallbacks(slideRunnable!!)
-                if (position < adapter.itemCount - 1) {
-                    handler.postDelayed(slideRunnable!!, slideInterval)
-                }
-            }
-        })
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        slideRunnable?.let { handler.removeCallbacks(it) }
     }
 }

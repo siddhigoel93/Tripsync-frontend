@@ -1,4 +1,4 @@
-package com.example.tripsync.adapters
+package com.example.tripsync
 
 import android.view.LayoutInflater
 import android.view.View

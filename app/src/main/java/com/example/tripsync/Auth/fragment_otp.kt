@@ -334,7 +334,9 @@ class FragmentOtp : Fragment() {
             if (navigateToLoginAfterVideo) {
                 navigateToLoginAfterVideo = false
                 findNavController().navigate(R.id.action_fragment_otp_to_login)
-            } else navigateToWelcome()
+            } else {
+                findNavController().navigate(R.id.action_fragment_otp_to_login)
+            }
             return
         }
         val videoUri = Uri.parse("android.resource://${requireContext().packageName}/$rawId")
@@ -353,14 +355,18 @@ class FragmentOtp : Fragment() {
             if (navigateToLoginAfterVideo) {
                 navigateToLoginAfterVideo = false
                 findNavController().navigate(R.id.action_fragment_otp_to_login)
-            } else navigateToWelcome()
+            } else {
+                findNavController().navigate(R.id.action_fragment_otp_to_login)
+            }
         }
         successVideoView.setOnErrorListener { _, _, _ ->
             successVideoContainer.visibility = View.GONE
             if (navigateToLoginAfterVideo) {
                 navigateToLoginAfterVideo = false
                 findNavController().navigate(R.id.action_fragment_otp_to_login)
-            } else navigateToWelcome()
+            } else {
+                findNavController().navigate(R.id.action_fragment_otp_to_login)
+            }
             true
         }
     }

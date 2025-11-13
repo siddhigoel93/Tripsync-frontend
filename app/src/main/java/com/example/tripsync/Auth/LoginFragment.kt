@@ -3,6 +3,7 @@ package com.example.tripsync.Auth
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.method.PasswordTransformationMethod
@@ -21,18 +22,22 @@ import com.example.tripsync.api.models.LoginRequest
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import android.text.InputType
+import androidx.annotation.RequiresApi
 
 class LoginFragment : Fragment() {
 
     private var passwordVisible = false
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
         val etUsername = view.findViewById<EditText>(R.id.etUsername)
-        etUsername.filters = arrayOf(EMAIL_EMOJI_FILTER)
+        etUsername.inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS or android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        etUsername.imeOptions = android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
         val etPassword = view.findViewById<EditText>(R.id.etPassword)
         val passwordField = view.findViewById<View>(R.id.passwordField)
         val ivPasswordEye = view.findViewById<ImageView>(R.id.ivPasswordEye)
@@ -42,6 +47,12 @@ class LoginFragment : Fragment() {
         val usernameError = view.findViewById<TextView>(R.id.usernameError)
         val passwordError = view.findViewById<TextView>(R.id.passwordError)
         val verified = view.findViewById<ImageView>(R.id.verified)
+
+        etUsername.setRawInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS)
+        etUsername.setTextIsSelectable(false)
+        etUsername.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
+        etUsername.setAutofillHints(null)
+
 
 
         forgotPassword.paintFlags = forgotPassword.paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -61,7 +72,7 @@ class LoginFragment : Fragment() {
             val start = editText.selectionStart
             val end = editText.selectionEnd
             editText.transformationMethod = if (visible) null else PasswordTransformationMethod.getInstance()
-            editText.setSelection(start, end)
+            editText.setSelection(if (start >= 0 && end >= 0) start else editText.text.length)
             icon.setImageResource(if (visible) R.drawable.eye else R.drawable.eyedisable)
         }
 
@@ -150,22 +161,24 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+        val emailEmojiFilter = InputFilter { source, _, _, _, _, _ ->
+            if (source.any {
+                    Character.getType(it) == Character.SURROGATE.toInt() ||
+                            Character.getType(it) == Character.OTHER_SYMBOL.toInt() ||
+                            Character.getType(it) == Character.NON_SPACING_MARK.toInt() ||
+                            it.isWhitespace()
+                }) "" else source
+        }
+
+
+        val limit30 = InputFilter.LengthFilter(30)
+        etUsername.filters = arrayOf(emailEmojiFilter, limit30)
+
 
         return view
     }
 
-    val EMAIL_EMOJI_FILTER = InputFilter { source, start, end, dest, dstart, dend ->
-        for (i in start until end) {
-            val type = Character.getType(source[i])
-            if (type == Character.SURROGATE.toInt() ||
-                type == Character.OTHER_SYMBOL.toInt() ||
-                type == Character.NON_SPACING_MARK.toInt()
-            ) {
-                return@InputFilter ""
-            }
-        }
-        return@InputFilter null
-    }
+
     private fun showFieldError(errorView: TextView, field: View, message: String) {
         errorView.text = message
         errorView.visibility = View.VISIBLE

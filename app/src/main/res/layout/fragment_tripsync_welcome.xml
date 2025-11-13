@@ -31,21 +31,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.245"/>
+        app:layout_constraintGuide_percent="0.28"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/g_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.345"/>
+        app:layout_constraintGuide_percent="0.4"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/g_para"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.435"/>
+        app:layout_constraintGuide_percent="0.45"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/g_btns_top"
@@ -125,7 +125,8 @@
         android:lineHeight="18sp"
         android:text="Elevate your trips with AI powered planning,\nreal-time expense tracking, and seamless\nconnectivity"
         android:textColor="#E6FFFFFF"
-        android:textSize="12.5sp"
+        android:textSize="14sp"
+        android:fontFamily="@font/roboto_bold"
         app:layout_constraintTop_toTopOf="@id/g_para"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

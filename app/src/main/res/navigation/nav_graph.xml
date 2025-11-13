@@ -38,8 +38,8 @@
         android:name="com.example.tripsync.onboarding.OnboardingFragment"
         android:label="Onboarding">
         <action
-            android:id="@+id/action_onboarding_to_login"
-            app:destination="@id/loginFragment"
+            android:id="@+id/action_onboarding_to_signup"
+            app:destination="@id/fragment_signup"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
         <action
@@ -100,13 +100,11 @@
             app:popUpTo="@id/forgotPasswordFragment"
             app:popUpToInclusive="true" />
     </fragment>
-
-    <!-- 🟩 HOME / EXPLORE FRAGMENT -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.tripsync.ExploreFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_explore">
+        tools:layout="@layout/fragment_explore" >
         <argument
             android:name="showHeader"
             app:argType="boolean"
@@ -135,13 +133,15 @@
         <action
             android:id="@+id/action_homeFragment_to_travelStoryDetailFragment"
             app:destination="@id/travelStoryDetailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_AIchatFragment"
+            app:destination="@id/AIchatFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/emergencyFragment"
         android:name="com.example.tripsync.ProfileDetails.EmergencyFragment"
         android:label="fragment_emergency"
-        tools:layout="@layout/fragment_emergency">
+        tools:layout="@layout/fragment_emergency" >
         <action
             android:id="@+id/action_emergencyFragment_to_preferencesFragment"
             app:destination="@id/preferencesFragment" />
@@ -149,12 +149,11 @@
             android:id="@+id/action_emergencyFragment_to_fragment_personal_details"
             app:destination="@id/fragment_personal_details" />
     </fragment>
-
     <fragment
         android:id="@+id/preferencesFragment"
         android:name="com.example.tripsync.ProfileDetails.PreferencesFragment"
         android:label="fragment_preferences"
-        tools:layout="@layout/fragment_preferences">
+        tools:layout="@layout/fragment_preferences" >
         <action
             android:id="@+id/action_preferencesFragment_to_emergencyFragment"
             app:destination="@id/emergencyFragment" />
@@ -162,29 +161,29 @@
             android:id="@+id/action_preferencesFragment_to_contactVerifyFragment"
             app:destination="@id/contactVerifyFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="com.example.tripsync.ProfileDetails.fragment_tripsync_welcome"
-        android:label="WelcomeFragment">
+        android:label="WelcomeFragment" >
         <action
             android:id="@+id/action_welcomeFragment_to_fragment_personal_details"
             app:destination="@id/fragment_personal_details" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/fragment_personal_details"
         android:name="com.example.tripsync.ui.FragmentPersonalDetails"
-        android:label="fragment_personal_details">
+        android:label="fragment_personal_details" >
         <action
             android:id="@+id/action_fragment_personal_details_to_emergencyFragment"
             app:destination="@id/emergencyFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/contactVerifyFragment"
         android:name="com.example.tripsync.Auth.ContactVerifyFragment"
-        android:label="ContactVerifyFragment">
+        android:label="ContactVerifyFragment" >
         <action
             android:id="@+id/action_contactVerifyFragment_to_preferencesFragment"
             app:destination="@id/preferencesFragment" />
@@ -281,13 +280,16 @@
         <action
             android:id="@+id/action_chatFragment_to_searchUsersFragment"
             app:destination="@id/searchUsersFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_chatThreadFragment"
+            app:destination="@id/chatThreadFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/nav_community"
         android:name="com.example.tripsync.community.CommunityFragment"
         android:label="fragment_community"
-        tools:layout="@layout/fragment_community">
+        tools:layout="@layout/fragment_community" >
         <action
             android:id="@+id/action_communityFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
@@ -295,16 +297,14 @@
             android:id="@+id/action_nav_community_to_searchFragment"
             app:destination="@id/searchFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/createPostFragment"
         android:name="com.example.tripsync.community.CreatePostFragment"
         android:label="CreatePostFragment" />
-
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.tripsync.community.SearchFragment"
-        android:label="SearchFragment">
+        android:label="SearchFragment" >
         <action
             android:id="@+id/action_searchFragment_to_nav_community"
             app:destination="@id/nav_community" />
@@ -318,18 +318,16 @@
     <fragment
         android:id="@+id/searchUsersFragment"
         android:name="com.example.tripsync.SearchUsersFragment"
-        android:label="Search Users">
+        android:label="Search Users" >
         <action
             android:id="@+id/action_searchUsersFragment_to_chatThreadFragment"
-            app:destination="@id/chatThreadFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim" />
-    </fragment>
+            app:destination="@id/chatThreadFragment" />
 
+    </fragment>
     <fragment
         android:id="@+id/chatThreadFragment"
         android:name="com.example.tripsync.ChatThreadFragment"
-        android:label="ChatThreadFragment">
+        android:label="ChatThreadFragment" >
         <argument
             android:name="conversationId"
             app:argType="integer" />
@@ -337,11 +335,14 @@
             android:name="name"
             app:argType="string" />
     </fragment>
-
     <fragment
         android:id="@+id/emergencySosFragment"
         android:name="com.example.tripsync.home.EmergencySosFragment"
         android:label="EmergencySosFragment" />
+    <fragment
+        android:id="@+id/AIchatFragment"
+        android:name="AIchatFragment"
+        android:label="AIchatFragment" />
 
     <fragment
         android:id="@+id/travelStoryDetailFragment"
