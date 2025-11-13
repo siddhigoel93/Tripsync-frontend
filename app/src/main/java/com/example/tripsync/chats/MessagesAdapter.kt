@@ -1,4 +1,4 @@
-package com.example.tripsync.adapters
+package com.example.tripsync
 
 import android.view.LayoutInflater
 import android.view.View
@@ -35,31 +35,35 @@ class MessagesAdapter(
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messages[position]
-        val isSelf = message.sender.id == selfId
+        val senderId = message.sender?.id
+        val isSelf = senderId == selfId
         val formattedTime = message.timestamp?.let { formatTime(it) } ?: ""
 
+        if (senderId == null) {
+            holder.containerLeft.visibility = View.VISIBLE
+            holder.bubbleLeft.text = message.content ?: "(Unknown sender)"
+            holder.timeLeft.text = formattedTime
+            holder.containerRight.visibility = View.GONE
+            return
+        }
         if (isSelf) {
-            // Show right bubble
             holder.containerRight.visibility = View.VISIBLE
             holder.bubbleRight.text = message.content
             holder.timeRight.text = formattedTime
 
             holder.containerLeft.visibility = View.GONE
 
-            // NEW: Long click to edit/delete own messages
             holder.containerRight.setOnLongClickListener {
                 onMessageLongClick(message)
                 true
             }
         } else {
-            // Show left bubble
             holder.containerLeft.visibility = View.VISIBLE
             holder.bubbleLeft.text = message.content
             holder.timeLeft.text = formattedTime
 
             holder.containerRight.visibility = View.GONE
 
-            // NEW: Long click to view details of others' messages
             holder.containerLeft.setOnLongClickListener {
                 onMessageLongClick(message)
                 true
@@ -80,7 +84,6 @@ class MessagesAdapter(
         notifyItemInserted(messages.size - 1)
     }
 
-    // Format ISO timestamp to HH:mm
     private fun formatTime(isoTime: String): String {
         return try {
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
