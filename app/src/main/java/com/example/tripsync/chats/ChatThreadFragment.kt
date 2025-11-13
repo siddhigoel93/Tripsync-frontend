@@ -15,13 +15,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-//import com.example.tripsync.adapters.MessagesAdapter
+//import com.example.tripsync.MessagesAdapter
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.ChatApi
 import com.example.tripsync.api.models.Message
 import com.example.tripsync.api.models.MessageSender
 import com.example.tripsync.api.models.SendMessageRequest
-import com.example.tripsync.websocket.WebSocketManager
+import com.example.tripsync.WebSocketManager
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -79,7 +79,7 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
         recycler.adapter = adapter
 
         loadMessages()
-        connectWebSocket() // WEBSOCKET ENABLED!
+        connectWebSocket()
 
         return v
     }
@@ -96,7 +96,7 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
                 if (isEditingMessage) {
                     editMessage(editingMessageId, content)
                 } else {
-                    sendMessage(content) // Uses WebSocket
+                    sendMessage(content)
                 }
                 messageEditText.text.clear()
                 cancelEditMode()
@@ -131,7 +131,6 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
         }
     }
 
-    // WEBSOCKET: Connect to real-time chat
     private fun connectWebSocket() {
         if (conversationId == -1) {
             Log.e("ChatThread", "Cannot connect WebSocket: Invalid conversation ID")
@@ -151,14 +150,12 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
         webSocketManager?.connect()
     }
 
-    // WEBSOCKET: Send message via WebSocket (real-time)
     private fun sendMessage(content: String) {
         val sender = selfEmail ?: "unknown@user.com"
-        webSocketManager?.sendMessage(sender, content)
+        webSocketManager?.sendMessage(sender)
             ?: Toast.makeText(requireContext(), "WebSocket not connected", Toast.LENGTH_SHORT).show()
     }
 
-    // REST API: Edit message (WebSocket doesn't support this)
     private fun editMessage(messageId: Int, newContent: String) {
         lifecycleScope.launch {
             try {
@@ -168,7 +165,7 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
 
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Message edited", Toast.LENGTH_SHORT).show()
-                    loadMessages() // Refresh to show edited message
+                    loadMessages()
                 } else {
                     Toast.makeText(requireContext(), "Failed to edit message", Toast.LENGTH_SHORT).show()
                 }
@@ -178,8 +175,6 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
             }
         }
     }
-
-    // REST API: Delete message
     private fun deleteMessage(messageId: Int) {
         lifecycleScope.launch {
             try {
@@ -199,7 +194,6 @@ class ChatThreadFragment : Fragment(), WebSocketManager.WebSocketListenerInterfa
         }
     }
 
-    // REST API: Get message details
     private fun getMessageDetails(messageId: Int) {
         lifecycleScope.launch {
             try {
