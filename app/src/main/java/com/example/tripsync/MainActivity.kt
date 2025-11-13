@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.trendingDestinationFragment,
                 R.id.createPostFragment,
                 R.id.searchFragment,
+                R.id.chatFragment
                     -> {
                     bottom_app_bar_wrapper.visibility = View.VISIBLE
                     bottom_nav_view.visibility = View.VISIBLE

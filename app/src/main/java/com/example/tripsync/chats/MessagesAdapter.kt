@@ -13,7 +13,8 @@ import java.util.*
 
 class MessagesAdapter(
     private val messages: MutableList<Message>,
-    private val selfId: Int // logged-in user id
+    private val selfId: Int,
+    private val onMessageLongClick: (Message) -> Unit = {} // NEW: Long click callback
 ) : RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>() {
 
     inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -44,6 +45,12 @@ class MessagesAdapter(
             holder.timeRight.text = formattedTime
 
             holder.containerLeft.visibility = View.GONE
+
+            // NEW: Long click to edit/delete own messages
+            holder.containerRight.setOnLongClickListener {
+                onMessageLongClick(message)
+                true
+            }
         } else {
             // Show left bubble
             holder.containerLeft.visibility = View.VISIBLE
@@ -51,6 +58,12 @@ class MessagesAdapter(
             holder.timeLeft.text = formattedTime
 
             holder.containerRight.visibility = View.GONE
+
+            // NEW: Long click to view details of others' messages
+            holder.containerLeft.setOnLongClickListener {
+                onMessageLongClick(message)
+                true
+            }
         }
     }
 

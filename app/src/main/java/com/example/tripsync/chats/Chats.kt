@@ -1,5 +1,25 @@
 package com.example.tripsync.api.models
 
+// User models
+data class User(
+    val id: Int,
+    val email: String,
+    val name: String? = null,
+    val first_name: String? = null,
+    val last_name: String? = null,
+    val profile_picture: String? = null
+)
+
+data class UserSearchResponse(
+    val id: Int,
+    val email: String?,
+    val name: String? = null,
+    val first_name: String? = null,
+    val last_name: String? = null,
+    val profile_picture: String? = null
+)
+
+// Conversation models
 data class Conversation(
     val id: Int,
     val name: String?,
@@ -31,32 +51,25 @@ data class MessageSender(
     val name: String? = null
 )
 
+// Request models
 data class CreateConversationRequest(
     val participant_ids: List<Int>,
     val name: String? = null
-)
-
-data class CreateConversationResponse(
-    val status: String?,
-    val message: String?,
-    val data: Conversation?
-)
-
-data class MessagesResponse(
-    val status: String?,
-    val message: String?,
-    val data: List<Message>?
 )
 
 data class SendMessageRequest(
     val content: String
 )
 
-data class UserSearchResponse(
-    val id: Int,
-    val email: String?,
-    val name: String? = null,
-    val first_name: String? = null,
-    val last_name: String? = null,
-    val profile_picture: String? = null
+// Response wrappers (Backend sends nested responses)
+data class CreateConversationResponse(
+    val status: String?,
+    val message: String?,
+    val data: Conversation? // IMPORTANT: Backend nests data inside this field
+)
+
+data class MessagesResponse(
+    val status: String?,
+    val message: String?,
+    val data: List<Message>?
 )

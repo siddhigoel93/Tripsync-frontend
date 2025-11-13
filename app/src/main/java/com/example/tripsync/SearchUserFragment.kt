@@ -3,6 +3,7 @@ package com.example.tripsync
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import com.example.tripsync.adapters.UsersAdapter
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.ChatApi
 import com.example.tripsync.api.UserApi
+import com.example.tripsync.api.UserSearchRequest
 import com.example.tripsync.api.models.CreateConversationRequest
 import com.example.tripsync.api.models.UserSearchResponse
 import kotlinx.coroutines.Job
@@ -54,7 +56,6 @@ class SearchUsersFragment : Fragment() {
         }
 
         recyclerView.adapter = adapter
-
         setupSearchListener()
 
         return view
@@ -86,69 +87,130 @@ class SearchUsersFragment : Fragment() {
             try {
                 progressBar.visibility = View.VISIBLE
                 val userApi = ApiClient.createService(requireContext(), UserApi::class.java)
-                val response = userApi.searchUsers(query)
+
+                // Split query into first and last name
+                val parts = query.trim().split(" ", limit = 2)
+                val firstName = parts.getOrNull(0) ?: ""
+                val lastName = parts.getOrNull(1) ?: ""
+
+                Log.d("SearchUsers", "Searching - First: '$firstName', Last: '$lastName'")
+
+                // Create request body
+                val request = UserSearchRequest(
+                    fname = firstName.ifEmpty { null },
+                    lname = lastName.ifEmpty { null }
+                )
+
+                val response = userApi.searchUsers(request)
 
                 progressBar.visibility = View.GONE
 
                 if (response.isSuccessful) {
-                    val users = response.body()?.map {
-                        UserSearchResponse(
-                            id = it.id,
-                            email = it.email,
-                            name = it.name,
-                            first_name = it.first_name,
-                            last_name = it.last_name,
-                            profile_picture = it.profile_picture
-                        )
-                    } ?: emptyList()
+                    val users = response.body() ?: emptyList()
+
+                    Log.d("SearchUsers", "Found ${users.size} users")
 
                     adapter.updateUsers(users)
+
+                    if (users.isEmpty()) {
+                        Toast.makeText(requireContext(), "No users found. Try 'FirstName LastName'", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    Toast.makeText(requireContext(), "Search failed", Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("SearchUsers", "Search failed: ${response.code()} - $errorBody")
+
+                    when (response.code()) {
+                        400 -> Toast.makeText(requireContext(), "Invalid search query", Toast.LENGTH_SHORT).show()
+                        403 -> Toast.makeText(requireContext(), "Phone verification required", Toast.LENGTH_SHORT).show()
+                        404 -> Toast.makeText(requireContext(), "No users found", Toast.LENGTH_SHORT).show()
+                        else -> Toast.makeText(requireContext(), "Search failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } catch (e: Exception) {
                 progressBar.visibility = View.GONE
+                Log.e("SearchUsers", "Error searching users: ${e.message}", e)
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun createConversationWithUser(user: UserSearchResponse)
-        {
+    private fun createConversationWithUser(user: UserSearchResponse) {
         lifecycleScope.launch {
             try {
                 progressBar.visibility = View.VISIBLE
                 val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
 
+                Log.d("CreateConversation", "Creating conversation with user ID: ${user.id}")
+
                 val request = CreateConversationRequest(
                     participant_ids = listOf(user.id),
-                    name = null
+                    name = null // Backend auto-generates for DMs
                 )
 
                 val response = chatApi.createConversation(request)
+
+                Log.d("CreateConversation", "Response code: ${response.code()}")
+
                 progressBar.visibility = View.GONE
 
                 if (response.isSuccessful) {
-                    val conversation = response.body()
+                    val responseBody = response.body()
+
+                    Log.d("CreateConversation", "Response: $responseBody")
+
+                    // FIXED: Extract conversation from nested 'data' field
+                    val conversation = responseBody?.data
+
                     if (conversation != null) {
-                        val displayName = user.name
-                            ?: listOfNotNull(user.first_name, user.last_name).joinToString(" ").ifEmpty { user.email }
+                        Log.d("CreateConversation", "Conversation created: ID=${conversation.id}")
+
+                        // Build display name
+                        val displayName = when {
+                            !user.name.isNullOrEmpty() -> user.name
+                            !user.first_name.isNullOrEmpty() && !user.last_name.isNullOrEmpty() ->
+                                "${user.first_name} ${user.last_name}"
+                            !user.first_name.isNullOrEmpty() -> user.first_name
+                            !user.last_name.isNullOrEmpty() -> user.last_name
+                            !user.email.isNullOrEmpty() -> user.email
+                            else -> "Unknown User"
+                        }
 
                         val bundle = Bundle().apply {
                             putString("name", displayName)
                             putInt("conversationId", conversation.id)
                         }
+
+                        Toast.makeText(requireContext(), "Conversation created!", Toast.LENGTH_SHORT).show()
+
+                        // Navigate to chat thread
                         findNavController().navigate(
                             R.id.action_searchUsersFragment_to_chatThreadFragment,
                             bundle
                         )
+                    } else {
+                        Log.e("CreateConversation", "Response status: ${responseBody?.status}")
+                        Log.e("CreateConversation", "Response message: ${responseBody?.message}")
+                        Toast.makeText(requireContext(), responseBody?.message ?: "Failed to create conversation", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to create conversation", Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("CreateConversation", "Failed: ${response.code()}")
+                    Log.e("CreateConversation", "Error: $errorBody")
+
+                    when (response.code()) {
+                        400 -> Toast.makeText(requireContext(), "Invalid request - Check participant ID", Toast.LENGTH_LONG).show()
+                        401 -> Toast.makeText(requireContext(), "Unauthorized - Please login again", Toast.LENGTH_SHORT).show()
+                        403 -> Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+                        404 -> Toast.makeText(requireContext(), "User not found", Toast.LENGTH_SHORT).show()
+                        409 -> Toast.makeText(requireContext(), "Conversation already exists", Toast.LENGTH_SHORT).show()
+                        500 -> Toast.makeText(requireContext(), "Server error - Try again later", Toast.LENGTH_SHORT).show()
+                        else -> Toast.makeText(requireContext(), "Error ${response.code()}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } catch (e: Exception) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("CreateConversation", "Exception: ${e.message}", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }

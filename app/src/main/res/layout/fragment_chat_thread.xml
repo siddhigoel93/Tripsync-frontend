@@ -23,6 +23,7 @@
             android:src="@drawable/greenback"
             android:contentDescription="back" />
 
+
         <ImageView
             android:id="@+id/toolbar_profile"
             android:layout_width="36dp"
@@ -42,6 +43,13 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black" />
+        <ImageView
+            android:id="@+id/toolbar_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_more"
+            android:padding="8dp"
+            android:layout_alignParentEnd="true"/>
 
     </androidx.appcompat.widget.Toolbar>
 

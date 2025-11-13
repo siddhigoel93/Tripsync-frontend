@@ -1,12 +1,18 @@
 package com.example.tripsync.api
 
-import com.example.tripsync.api.models.User
 import com.example.tripsync.api.models.UserSearchResponse
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Body
+import retrofit2.http.POST
+
+// Request body for user search
+data class UserSearchRequest(
+    val fname: String? = null,
+    val lname: String? = null
+)
 
 interface UserApi {
-    @GET("/api/users/search/")
-    suspend fun searchUsers(@Query("q") query: String): Response<List<UserSearchResponse>>
+    // Correct API: POST with fname/lname in body
+    @POST("/api/personal/users/search/")
+    suspend fun searchUsers(@Body request: UserSearchRequest): Response<List<UserSearchResponse>>
 }
