@@ -222,7 +222,6 @@ class OpenProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh profile when returning from edit
         fetchProfile()
     }
 }
