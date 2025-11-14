@@ -39,6 +39,7 @@ class UsersAdapter(
             Glide.with(holder.itemView.context)
                 .load(user.profile_pic_url)
                 .placeholder(R.drawable.avatar_3)
+                .circleCrop()
                 .into(holder.avatar)
         } else {
             holder.avatar.setImageResource(R.drawable.avatar_3)

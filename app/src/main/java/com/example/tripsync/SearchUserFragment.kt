@@ -69,7 +69,7 @@ class SearchUsersFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
-                    delay(500)
+                    delay(3000)
                     val query = s.toString().trim()
                     if (query.isNotEmpty()) {
                         searchUsers(query)
