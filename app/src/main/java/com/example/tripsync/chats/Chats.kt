@@ -9,14 +9,6 @@ data class User(
     val profile_picture: String? = null
 )
 
-data class UserSearchResponse(
-    val id: Int,
-    val email: String?,
-    val name: String? = null,
-    val first_name: String? = null,
-    val last_name: String? = null,
-    val profile_picture: String? = null
-)
 
 data class Conversation(
     val id: Int,
@@ -68,4 +60,9 @@ data class MessagesResponse(
     val status: String?,
     val message: String?,
     val data: List<Message>?
+)
+data class ConversationsListResponse(
+    val status: String?,
+    val message: String?,
+    val data: List<Conversation>?
 )

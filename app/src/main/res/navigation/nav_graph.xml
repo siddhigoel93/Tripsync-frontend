@@ -136,6 +136,9 @@
         <action
             android:id="@+id/action_homeFragment_to_AIchatFragment"
             app:destination="@id/AIchatFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_trendingDestinationFragment2"
+            app:destination="@id/trendingDestinationFragment" />
     </fragment>
     <fragment
         android:id="@+id/emergencyFragment"
@@ -281,6 +284,9 @@
             android:id="@+id/action_chatFragment_to_searchUsersFragment"
             app:destination="@id/searchUsersFragment" />
         <action
+            android:id="@+id/action_chatFragment_to_newGroupFragment"
+            app:destination="@id/newGroupFragment" />
+        <action
             android:id="@+id/action_chatFragment_to_chatThreadFragment"
             app:destination="@id/chatThreadFragment" />
     </fragment>
@@ -354,5 +360,24 @@
             app:argType="integer"
             android:defaultValue="-1" />
     </fragment>
+    <fragment
+        android:id="@+id/trendingDestinationFragment"
+        android:name="com.example.tripsync.travelStories.TrendingDestinationFragment"
+        android:label="TrendingDestinationFragment" >
+        <action
+            android:id="@+id/action_trendingDestinationFragment2_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newGroupFragment"
+        android:name="com.example.tripsync.NewGroupFragment"
+        android:label="New Group">
+        <action
+            android:id="@+id/action_newGroupFragment_to_chatThreadFragment"
+            app:destination="@id/chatThreadFragment" />
+    </fragment>
+
+
 
 </navigation>

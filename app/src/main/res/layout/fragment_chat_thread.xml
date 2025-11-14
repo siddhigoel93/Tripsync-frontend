@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@android:color/white">
 
-    <androidx.appcompat.widget.Toolbar
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/chat_thread_toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:background="@android:color/white"
+        android:elevation="2dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -20,44 +21,70 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:padding="6dp"
-            android:src="@drawable/greenback"
-            android:contentDescription="back" />
-
-
+            android:src="@drawable/arrow_left"
+            android:contentDescription="back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="8dp"/>
         <ImageView
             android:id="@+id/toolbar_profile"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:padding="4dp"
             android:src="@drawable/avatar_1"
-            android:visibility="gone"
-            android:contentDescription="profile" />
-
-        <TextView
-            android:id="@+id/toolbar_name"
+            android:scaleType="centerCrop"
+            android:contentDescription="profile"
+            app:layout_constraintStart_toEndOf="@id/toolbar_back"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginStart="12dp"
-            android:text="Name"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
+            app:layout_constraintStart_toEndOf="@id/toolbar_profile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/toolbar_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Keshav Kumar"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/toolbar_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Online"
+                android:textSize="12sp"
+                android:textColor="#4CAF50" />
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/toolbar_options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_more"
-            android:padding="8dp"
-            android:layout_alignParentEnd="true"/>
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:src="@drawable/three_dots"
+            app:tint="@android:color/darker_gray"
+            android:contentDescription="options"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="8dp"/>
 
-    </androidx.appcompat.widget.Toolbar>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:id="@+id/divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/gray_300"
+        android:background="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@id/chat_thread_toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -66,17 +93,23 @@
         android:id="@+id/recycler_messages"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:paddingTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/divider"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/message_input_bar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_message_self"
+        tools:itemCount="10" />
 
     <LinearLayout
         android:id="@+id/message_input_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingVertical="8dp"
+        android:background="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -84,22 +117,27 @@
         <EditText
             android:id="@+id/message_edit_text"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:layout_weight="1"
-            android:textColor="@color/black"
-            android:hint="Type a message..."
+            android:textColor="@android:color/black"
+            android:hint="Type Your message here"
+            android:textSize="16sp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:background="@drawable/edittext_simple"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp" />
+            android:gravity="center_vertical" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/button_send"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:src="@drawable/send"
-            android:layout_marginStart="2dp"
+            android:padding="8dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
             android:contentDescription="Send" />
-    </LinearLayout>
 
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

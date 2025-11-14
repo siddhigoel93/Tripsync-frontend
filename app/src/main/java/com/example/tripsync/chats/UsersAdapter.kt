@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.tripsync.R
 import com.example.tripsync.api.models.User
 import com.example.tripsync.api.models.UserSearchResponse
@@ -31,10 +32,18 @@ class UsersAdapter(
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = users[position]
 
-        val displayName = user.name ?: user.first_name ?: "Unknown User"
+        val displayName = user.fname ?: "Unknown User"
         holder.nameTv.text = displayName
         holder.emailTv.text = user.email
-        holder.avatar.setImageResource(R.drawable.avatar_1)
+        if (!user.profile_pic_url.isNullOrEmpty()) {
+            Glide.with(holder.itemView.context)
+                .load(user.profile_pic_url)
+                .placeholder(R.drawable.avatar_3)
+                .into(holder.avatar)
+        } else {
+            holder.avatar.setImageResource(R.drawable.avatar_3)
+        }
+
 
         holder.itemView.setOnClickListener {
             onClick(user)
@@ -48,3 +57,5 @@ class UsersAdapter(
         notifyDataSetChanged()
     }
 }
+
+

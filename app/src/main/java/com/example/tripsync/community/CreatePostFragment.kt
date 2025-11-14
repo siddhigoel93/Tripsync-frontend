@@ -181,11 +181,15 @@ class CreatePostFragment : Fragment() {
 
         var mediaPart: MultipartBody.Part? = null
         val partName = if (selectedPhotoUri != null) "img" else "vid"
+        var tempFile: File? = null
 
-        if (mediaUri != null && mimeType != null) {
+        if (mediaUri != null) {
             try {
                 val contentResolver = context.contentResolver
                 val mimeTypeFinal = contentResolver.getType(mediaUri) ?: "application/octet-stream"
+
+                // Log MIME type for debugging
+                android.util.Log.d("CreatePostFragment", "Detected MIME type: $mimeTypeFinal")
 
                 val inputStream = contentResolver.openInputStream(mediaUri)
                 if (inputStream == null) {
@@ -193,14 +197,26 @@ class CreatePostFragment : Fragment() {
                     return
                 }
 
+                // Determine file extension
                 val originalExt = when {
-                    mimeTypeFinal.contains("jpeg") -> ".jpg"
+                    mimeTypeFinal.contains("jpeg") || mimeTypeFinal.contains("jpg") -> ".jpg"
                     mimeTypeFinal.contains("png") -> ".png"
                     mimeTypeFinal.contains("mp4") -> ".mp4"
+                    mimeTypeFinal.contains("3gpp") -> ".3gp"
+                    mimeTypeFinal.contains("webm") -> ".webm"
+                    mimeTypeFinal.contains("mpeg") -> ".mpeg"
+                    mimeTypeFinal.contains("quicktime") -> ".mov"
+                    mimeTypeFinal.contains("video") -> ".mp4" // default for other videos
                     else -> ".bin"
                 }
 
-                val tempFile = File.createTempFile("upload_", originalExt, context.cacheDir)
+                // Create temporary file
+                tempFile = File.createTempFile("upload_", originalExt, context.cacheDir)
+
+                // Copy content with progress logging
+                val fileSize = inputStream.available().toLong()
+                android.util.Log.d("CreatePostFragment", "File size: ${fileSize / 1024} KB")
+
                 tempFile.outputStream().use { output ->
                     inputStream.copyTo(output)
                 }
@@ -210,12 +226,16 @@ class CreatePostFragment : Fragment() {
                 val requestBody = tempFile.asRequestBody(mimeTypeFinal.toMediaTypeOrNull())
                 mediaPart = MultipartBody.Part.createFormData(partName, fileName, requestBody)
 
-
-                Toast.makeText(context, "Preparing to upload: $fileName", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Uploading ${if (partName == "vid") "video" else "photo"}: $fileName (${fileSize / 1024} KB)",
+                    Toast.LENGTH_SHORT
+                ).show()
 
             } catch (e: Exception) {
                 Toast.makeText(context, "Error reading file: ${e.message}", Toast.LENGTH_LONG).show()
-                e.printStackTrace()
+                android.util.Log.e("CreatePostFragment", "File read error", e)
+                tempFile?.delete() // Clean up temp file
                 return
             }
         }
@@ -223,6 +243,10 @@ class CreatePostFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val api = ApiClient.getTokenService(requireContext())
+
+                // Show uploading message
+                Toast.makeText(context, "Uploading ${if (partName == "vid") "video" else "photo"}...", Toast.LENGTH_SHORT).show()
+
                 val response = api.createPost(
                     title = titlePart,
                     desc = descPart,
@@ -231,6 +255,9 @@ class CreatePostFragment : Fragment() {
                     img = if (partName == "img") mediaPart else null,
                     vid = if (partName == "vid") mediaPart else null
                 )
+
+                // Clean up temp file after upload attempt
+                tempFile?.delete()
 
                 if (response.isSuccessful) {
                     Toast.makeText(context, "Post Created Successfully!", Toast.LENGTH_SHORT).show()
@@ -241,11 +268,13 @@ class CreatePostFragment : Fragment() {
                     parentFragmentManager.popBackStack()
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown API error"
+                    android.util.Log.e("CreatePostFragment", "Upload failed: ${response.code()} — $errorBody")
                     Toast.makeText(context, "Failed: ${response.code()} — $errorBody", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
+                tempFile?.delete() // Clean up on error
+                android.util.Log.e("CreatePostFragment", "Network error", e)
                 Toast.makeText(context, "Network Error: ${e.message}", Toast.LENGTH_LONG).show()
-                e.printStackTrace()
             }
         }
     }

@@ -5,6 +5,7 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ChatApi {
+    // This endpoint returns array directly, not wrapped in response object
     @GET("/api/chat/conversations/")
     suspend fun getConversations(): Response<List<Conversation>>
 
@@ -19,6 +20,7 @@ interface ChatApi {
     @DELETE("/api/chat/conversations/{id}/")
     suspend fun leaveConversation(@Path("id") conversationId: Int): Response<Unit>
 
+    // These endpoints also return arrays directly
     @GET("/api/chat/conversations/{conversation_id}/messages/")
     suspend fun getMessages(@Path("conversation_id") conversationId: Int): Response<List<Message>>
 
