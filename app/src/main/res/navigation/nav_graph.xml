@@ -101,7 +101,6 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-    <!-- 🟩 HOME / EXPLORE FRAGMENT -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.tripsync.ExploreFragment"
@@ -135,7 +134,16 @@
         <action
             android:id="@+id/action_homeFragment_to_travelStoryDetailFragment"
             app:destination="@id/travelStoryDetailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_connectionsTripmatesFragment"
+            app:destination="@id/fragment_connections_tripmates" />
     </fragment>
+
+    <fragment
+        android:id="@+id/fragment_connections_tripmates"
+        android:name="com.example.tripsync.ConnectionsTripmatesFragment"
+        android:label="ConnectionsTripmates"
+        tools:layout="@layout/fragment_connections_tripmates" />
 
     <fragment
         android:id="@+id/emergencyFragment"

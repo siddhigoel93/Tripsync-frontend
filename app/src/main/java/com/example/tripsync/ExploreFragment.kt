@@ -61,6 +61,14 @@ class ExploreFragment : Fragment() {
             findNavController().navigate(R.id.action_homeFragment_to_AIItinearyPlannerFragment)
         }
 
+        view.findViewById<CardView>(R.id.card_add_tripmates).setOnClickListener {
+            try {
+                findNavController().navigate(R.id.action_homeFragment_to_connectionsTripmatesFragment)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Unable to open Connections", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         val storiesRv = view.findViewById<RecyclerView>(R.id.travel_stories_recycler_view)
         storiesRv.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
         storiesRv.overScrollMode = View.OVER_SCROLL_NEVER

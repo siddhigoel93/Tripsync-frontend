@@ -1,50 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/box_tripmate_card"
-    android:layout_width="wrap_content"
-    android:layout_height="120dp"
-    android:layout_margin="6dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="2dp"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:layout_marginVertical="6dp"
+    android:layout_marginHorizontal="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/white"
     android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
-        android:layout_width="120dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:gravity="center"
-        android:background="@drawable/bg_box_card">
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
 
         <ImageView
             android:id="@+id/iv_tripmate_image"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_trip_placeholder"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_avatar_placeholder"
             android:scaleType="centerCrop"
-            android:background="@drawable/bg_avatar_circle"
+            android:background="@drawable/bg_avatar_ring"
             android:contentDescription="tripmate image" />
 
-        <TextView
-            android:id="@+id/tv_tripmate_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Tripmate"
-            android:textStyle="bold"
-            android:textAppearance="?attr/textAppearanceBody2"
-            android:layout_marginTop="8dp" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="12dp">
 
-        <TextView
-            android:id="@+id/tv_tripmate_meta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Joined 3d ago"
-            android:textAppearance="?attr/textAppearanceCaption"
-            android:alpha="0.85"
-            android:layout_marginTop="2dp" />
+            <TextView
+                android:id="@+id/tv_tripmate_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tripmate"
+                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tv_tripmate_meta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="More Details"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:alpha="0.85"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/gray_700" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_chat_action"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/chatbubble"
+            android:padding="8dp"
+            android:contentDescription="chat"
+            android:background="@null"
+            app:tint="@null" />
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
