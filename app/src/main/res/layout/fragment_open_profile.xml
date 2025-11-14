@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- Header -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="0dp"
@@ -44,6 +43,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
+        android:id="@+id/profile_scroll_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="none"
@@ -58,7 +58,6 @@
             android:layout_height="wrap_content"
             android:paddingBottom="32dp">
 
-            <!-- Cover Photo -->
             <ImageView
                 android:id="@+id/cover_photo"
                 android:layout_width="0dp"
@@ -70,7 +69,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:contentDescription="Cover photo" />
 
-            <!-- Avatar -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/avatar"
                 android:layout_width="80dp"
@@ -78,6 +76,7 @@
                 android:src="@drawable/placeholder_image"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="-40dp"
+                android:backgroundTint="@color/gray_700"
                 app:layout_constraintTop_toBottomOf="@id/cover_photo"
                 app:layout_constraintStart_toStartOf="parent"
                 android:contentDescription="User profile picture"
@@ -85,7 +84,6 @@
                 app:strokeWidth="3dp"
                 app:strokeColor="@android:color/white" />
 
-            <!-- Edit Icon -->
             <ImageView
                 android:id="@+id/edit_icon"
                 android:layout_width="24dp"
@@ -99,7 +97,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:contentDescription="Edit profile" />
 
-            <!-- Name -->
             <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
@@ -113,7 +110,6 @@
                 app:layout_constraintTop_toBottomOf="@id/avatar"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Email -->
             <TextView
                 android:id="@+id/email"
                 android:layout_width="wrap_content"
@@ -125,7 +121,6 @@
                 app:layout_constraintTop_toBottomOf="@id/name"
                 app:layout_constraintStart_toStartOf="@id/name" />
 
-            <!-- Contact -->
             <TextView
                 android:id="@+id/contact"
                 android:layout_width="wrap_content"
@@ -137,7 +132,6 @@
                 app:layout_constraintTop_toBottomOf="@id/email"
                 app:layout_constraintStart_toStartOf="@id/email" />
 
-            <!-- Bio Section -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bio_container"
                 android:layout_width="0dp"
@@ -164,7 +158,7 @@
                     android:id="@+id/bio_content"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Hey there! I'm a passionate traveler who loves exploring new cities, cultures, and cuisines..."
+                    android:text="@string/hey_there_i_m_a_passionate_traveler_who_loves_exploring_new_cities_cultures_and_cuisines"
                     android:textSize="14sp"
                     android:textColor="#666666"
                     android:layout_marginTop="8dp"
@@ -173,7 +167,6 @@
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Interests Title -->
             <TextView
                 android:id="@+id/interests_title"
                 android:layout_width="wrap_content"
@@ -187,7 +180,6 @@
                 app:layout_constraintTop_toBottomOf="@id/bio_container"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Interest Cards Container -->
             <LinearLayout
                 android:id="@+id/interest_container"
                 android:layout_width="0dp"
@@ -200,7 +192,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Adventure Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardAdventure"
                     android:layout_width="0dp"
@@ -236,7 +227,6 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Relaxation Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardRelaxation"
                     android:layout_width="0dp"
@@ -272,7 +262,6 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Spiritual Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardSpiritual"
                     android:layout_width="0dp"
@@ -308,7 +297,6 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Historic Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardHistoric"
                     android:layout_width="0dp"
@@ -344,7 +332,6 @@
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
-            <!-- Gender Title -->
             <TextView
                 android:id="@+id/gender_label"
                 android:layout_width="wrap_content"
@@ -358,7 +345,6 @@
                 app:layout_constraintTop_toBottomOf="@id/interest_container"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- Gender Options -->
             <LinearLayout
                 android:id="@+id/gender_container"
                 android:layout_width="0dp"
@@ -402,7 +388,6 @@
                     android:clickable="false" />
             </LinearLayout>
 
-            <!-- Two Column Container -->
             <LinearLayout
                 android:id="@+id/two_column_container"
                 android:layout_width="0dp"
@@ -415,7 +400,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Blood Group -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -445,7 +429,6 @@
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
 
-                <!-- Allergies -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -476,7 +459,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Emergency Contact Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/emergency_card"
                 android:layout_width="0dp"
@@ -570,7 +552,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Delete/Logout Options -->
             <LinearLayout
                 android:id="@+id/action_buttons"
                 android:layout_width="0dp"
@@ -635,7 +616,60 @@
                         android:layout_marginStart="12dp" />
                 </LinearLayout>
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/no_profile_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header_container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/error_icon"
+                app:tint="#999999"
+                android:contentDescription="Error Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Failed to fetch profile data."
+                android:textColor="#666666"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please check your connection or try again later."
+                android:textColor="#999999"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+
+            <Button
+                android:id="@+id/retry_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Retry"
+                android:layout_marginTop="24dp"
+                android:paddingHorizontal="32dp"/>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -140,7 +140,9 @@ class ExploreFragment : Fragment() {
                 val places: List<TrendingPlace> = service.getTrendingPlaces()
 
                 if (places.isNotEmpty()) {
-                    val stories = places.map { place ->
+                    val selectedPlaces = places.shuffled().take(4)
+
+                    val stories = selectedPlaces.map { place ->
                         TravelStory(id = place.id, cityName = place.name, imageUrl = place.main)
                     }
 

@@ -25,6 +25,7 @@ import com.example.tripsync.MainActivity
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.SessionManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputEditText
@@ -127,7 +128,7 @@ class EditProfileFragment : Fragment() {
             showDatePicker()
         }
 
-        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.done_button).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.done_button).setOnClickListener {
             saveProfile()
         }
 
@@ -156,8 +157,6 @@ class EditProfileFragment : Fragment() {
     private fun setupTravelStyleCards(view: View) {
         travelStyleCards["Adventure"] = view.findViewById(R.id.style_adventure)
         travelStyleCards["Relaxation"] = view.findViewById(R.id.style_relaxation)
-        travelStyleCards["Retreat"] = view.findViewById(R.id.style_retreat)
-        travelStyleCards["Explore"] = view.findViewById(R.id.style_explore)
         travelStyleCards["Spiritual"] = view.findViewById(R.id.style_spiritual)
         travelStyleCards["Historic"] = view.findViewById(R.id.style_historic)
 
@@ -364,6 +363,10 @@ class EditProfileFragment : Fragment() {
                                 preference = updatedProfile.prefrence,
                                 bloodGroup = updatedProfile.bgroup,
                                 allergies = updatedProfile.allergies,
+                                medical = updatedProfile.medical,
+                                emergencyName = updatedProfile.ename,
+                                emergencyNumber = updatedProfile.enumber,
+                                emergencyRelation = updatedProfile.erelation
                             )
 
                             if (activity != null && isAdded) {

@@ -134,7 +134,8 @@ class PostAdapter(
 
                     videoView.setOnPreparedListener { mp ->
                         mp.isLooping = false
-                        playButton.visibility = View.VISIBLE
+                        playButton.visibility = View.GONE
+                        mp.start()
                     }
 
                     videoView.setOnErrorListener { _, what, extra ->

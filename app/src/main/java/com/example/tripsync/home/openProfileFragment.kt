@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class OpenProfileFragment : Fragment() {
 
+    // Existing views
     private lateinit var nameField: TextView
     private lateinit var emailField: TextView
     private lateinit var contactField: TextView
@@ -33,13 +35,15 @@ class OpenProfileFragment : Fragment() {
     private lateinit var avatarImage: ImageView
     private lateinit var coverPhoto: ImageView
     private lateinit var editIcon: ImageView
-
     private lateinit var cardAdventure: View
     private lateinit var cardRelaxation: View
     private lateinit var cardSpiritual: View
     private lateinit var cardHistoric: View
-    private lateinit var cardExplore: View
-    private lateinit var cardNature: View
+
+    // New views for error handling
+    private lateinit var profileScrollView: ScrollView
+    private lateinit var noProfileView: ConstraintLayout
+    private lateinit var retryButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,11 +56,13 @@ class OpenProfileFragment : Fragment() {
         setupEditButton()
         setupLogoutButton(view)
         setupDeleteProfileButton(view)
+        setupRetryButton()
         fetchProfile()
         return view
     }
 
     private fun initViews(view: View) {
+        // Existing views initialization
         nameField = view.findViewById(R.id.name)
         emailField = view.findViewById(R.id.email)
         contactField = view.findViewById(R.id.contact)
@@ -71,13 +77,38 @@ class OpenProfileFragment : Fragment() {
         avatarImage = view.findViewById(R.id.avatar)
         coverPhoto = view.findViewById(R.id.cover_photo)
         editIcon = view.findViewById(R.id.edit_icon)
-
         cardAdventure = view.findViewById(R.id.cardAdventure)
         cardRelaxation = view.findViewById(R.id.cardRelaxation)
         cardSpiritual = view.findViewById(R.id.cardSpiritual)
         cardHistoric = view.findViewById(R.id.cardHistoric)
-        cardExplore = view.findViewById(R.id.cardExplore)
-        cardNature = view.findViewById(R.id.cardNature)
+
+        // New views initialization
+        profileScrollView = view.findViewById(R.id.profile_scroll_view)
+        noProfileView = view.findViewById(R.id.no_profile_view)
+        retryButton = view.findViewById(R.id.retry_button)
+    }
+
+    private fun setupRetryButton() {
+        retryButton.setOnClickListener {
+            // Hide error view, show loading (optional, but good practice)
+            noProfileView.visibility = View.GONE
+            // Re-attempt to fetch profile
+            fetchProfile()
+        }
+    }
+
+    private fun showProfileContent() {
+        profileScrollView.visibility = View.VISIBLE
+        noProfileView.visibility = View.GONE
+    }
+
+    private fun showNoProfileView(errorMessage: String? = null) {
+        profileScrollView.visibility = View.GONE
+        noProfileView.visibility = View.VISIBLE
+
+        // Optional: Display a specific error message if needed, e.g. in a hidden TextView within noProfileView
+        Log.e("OpenProfile", "Profile fetch failed: $errorMessage")
+        Toast.makeText(requireContext(), "Failed to load profile. $errorMessage", Toast.LENGTH_LONG).show()
     }
 
     private fun setupDeleteProfileButton(view: View) {
@@ -194,6 +225,7 @@ class OpenProfileFragment : Fragment() {
         Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
     }
 
+
     private fun fetchProfile() {
         lifecycleScope.launch {
             try {
@@ -201,6 +233,9 @@ class OpenProfileFragment : Fragment() {
                 if (response.isSuccessful) {
                     val profile = response.body()?.data?.profile
                     if (profile != null) {
+                        // Successful fetch: Show content, hide error view
+                        showProfileContent()
+
                         // Get the user's actual email from SessionManager
                         val userEmail = SessionManager.getEmail(requireContext())
 
@@ -230,13 +265,18 @@ class OpenProfileFragment : Fragment() {
                         Log.d("OpenProfile", "Emergency: ${profile.ename}, ${profile.enumber}")
 
                         bindProfile(profile, userEmail)
+                    } else {
+                        // Response successful but profile data is null/empty
+                        showNoProfileView("Profile data is missing.")
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Error loading profile: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    // API call failed (e.g., 404, 500)
+                    showNoProfileView("Status code: ${response.code()}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                // Network or other exception
+                showNoProfileView(e.message ?: "Network error")
             }
         }
     }
@@ -294,7 +334,7 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun highlightInterest(preference: String?) {
-        val allCards = listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric, cardExplore, cardNature)
+        val allCards = listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric)
 
         // Reset ALL cards to transparent (not selected)
         allCards.forEach { card ->
@@ -307,8 +347,8 @@ class OpenProfileFragment : Fragment() {
             "relaxation" -> cardRelaxation
             "spiritual" -> cardSpiritual
             "historic" -> cardHistoric
-            "explore" -> cardExplore
-            "nature" -> cardNature
+            "explore" -> cardAdventure
+            "nature" -> cardRelaxation
             else -> null
         }
 
@@ -320,6 +360,7 @@ class OpenProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        // Re-fetch profile data every time the fragment is resumed (e.g., after EditProfileFragment finishes)
         fetchProfile()
     }
 }

@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -63,8 +64,8 @@ class ContactVerifyFragment : Fragment() {
         tvResend.paintFlags = tvResend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         hiddenEditText.requestFocus()
 
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-        imm.showSoftInput(hiddenEditText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(hiddenEditText, InputMethodManager.SHOW_IMPLICIT)
 
         setupOtpInput()
 
@@ -91,7 +92,7 @@ class ContactVerifyFragment : Fragment() {
         boxes.forEach { box ->
             box.setOnClickListener {
                 hiddenEditText.requestFocus()
-                imm.showSoftInput(hiddenEditText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+                imm.showSoftInput(hiddenEditText, InputMethodManager.SHOW_IMPLICIT)
             }
         }
 
@@ -130,6 +131,10 @@ class ContactVerifyFragment : Fragment() {
                             email = profile.ename,
                             phone = profile.enumber,
                             avatarUrl = profile.profilePicUrl ?: profile.profilePic,
+                            medical = profile.medical,
+                            emergencyNumber = profile.enumber,
+                            emergencyName = profile.ename,
+                            emergencyRelation =profile.emergencyRelation,
                         )
 
                         // Also save to legacy SharedPreferences for backward compatibility

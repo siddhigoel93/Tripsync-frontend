@@ -35,6 +35,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.models.LogoutRequest
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         val menuProfile = drawerMenuView.findViewById<TextView>(R.id.menu_profile)
-        val chat = drawerMenuView.findViewById<ImageView>(R.id.menu_weather)
+        val chat = drawerMenuView.findViewById<MaterialTextView>(R.id.menu_weather)
         chat.setOnClickListener { handleNavigation(R.id.AIchatFragment) }
 
 //        val menuDelete = drawerMenuView.findViewById<ImageView>(R.id.menu_delete)
