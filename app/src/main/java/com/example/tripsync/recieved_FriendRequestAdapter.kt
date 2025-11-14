@@ -9,12 +9,12 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.accept_TripmateRespondService
 import com.example.tripsync.api.models.recieved_FriendRequestItem
-import com.example.tripsync.api.models.recieved_RespondBody
-import com.example.tripsync.api.recieved_TripmateReceivedService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class recieved_FriendRequestAdapter(
     private val items: MutableList<recieved_FriendRequestItem>
@@ -43,23 +43,25 @@ class recieved_FriendRequestAdapter(
             holder.acceptBtn.isEnabled = false
             CoroutineScope(Dispatchers.Main).launch {
                 try {
-                    val service = ApiClient.createService(holder.itemView.context, recieved_TripmateReceivedService::class.java)
-                    val resp = service.respondToRequest(recieved_RespondBody(item.id, "accept"))
+                    val service = ApiClient.createService(holder.itemView.context, accept_TripmateRespondService::class.java)
+                    val requestId = item.id
+                    val resp = withContext(Dispatchers.IO) { service.respond(requestId, com.example.tripsync.api.accept_RespondBody("accept")) }
                     if (resp.isSuccessful) {
                         val pos = holder.bindingAdapterPosition
-                        if (pos >= 0) {
+                        if (pos >= 0 && pos < items.size) {
                             items.removeAt(pos)
                             notifyItemRemoved(pos)
                         }
                         Toast.makeText(holder.itemView.context, "Request accepted", Toast.LENGTH_SHORT).show()
                     } else {
                         holder.acceptBtn.isEnabled = true
-                        Toast.makeText(holder.itemView.context, "Failed: ${resp.code()}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(holder.itemView.context, "failed to accept", Toast.LENGTH_SHORT).show()
+                        Log.i("recieved_Adapter", "accept failed code=${resp.code()}")
                     }
                 } catch (e: Exception) {
                     holder.acceptBtn.isEnabled = true
-                    Toast.makeText(holder.itemView.context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
-                    Log.e("req", e.toString())
+                    Toast.makeText(holder.itemView.context, "failed to accept", Toast.LENGTH_SHORT).show()
+                    Log.e("recieved_Adapter", "Error accepting request", e)
                 }
             }
         }
