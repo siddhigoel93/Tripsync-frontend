@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
+    <!-- Header -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="0dp"
@@ -19,10 +20,10 @@
 
         <ImageView
             android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/arrow_left"
-            android:padding="16dp"
+            android:layout_marginStart="16dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,17 +35,19 @@
             android:layout_height="wrap_content"
             android:text="Profile"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:layout_marginStart="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="12dp"
             app:layout_constraintStart_toEndOf="@id/back_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="none"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/header_container"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,8 +56,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp">
+            android:paddingBottom="32dp">
 
+            <!-- Cover Photo -->
             <ImageView
                 android:id="@+id/cover_photo"
                 android:layout_width="0dp"
@@ -66,81 +70,81 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:contentDescription="Cover photo" />
 
+            <!-- Avatar -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/avatar"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/placeholder_image"
                 android:layout_marginStart="16dp"
-                android:background="@color/gray_700"
+                android:layout_marginTop="-40dp"
                 app:layout_constraintTop_toBottomOf="@id/cover_photo"
-                app:layout_constraintBottom_toBottomOf="@id/cover_photo"
                 app:layout_constraintStart_toStartOf="parent"
                 android:contentDescription="User profile picture"
                 app:shapeAppearanceOverlay="@style/CircularShape"
-
-                app:strokeWidth="2dp"
+                app:strokeWidth="3dp"
                 app:strokeColor="@android:color/white" />
 
-            <EditText
+            <!-- Edit Icon -->
+            <ImageView
+                android:id="@+id/edit_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/edit"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintTop_toBottomOf="@id/avatar"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="Edit profile" />
+
+            <!-- Name -->
+            <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Keshav Kumar"
                 android:textStyle="bold"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:background="@null"
-                android:padding="0dp"
                 android:textColor="@color/black"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
                 app:layout_constraintTop_toBottomOf="@id/avatar"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <EditText
+            <!-- Email -->
+            <TextView
                 android:id="@+id/email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:textColor="#666666"
                 android:text="keshavkumar@gmail.com"
                 android:textSize="14sp"
+                android:layout_marginTop="4dp"
                 app:layout_constraintTop_toBottomOf="@id/name"
                 app:layout_constraintStart_toStartOf="@id/name" />
-            <EditText
+
+            <!-- Contact -->
+            <TextView
                 android:id="@+id/contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:textColor="#666666"
                 android:text="+91 9555174923"
                 android:textSize="14sp"
+                android:layout_marginTop="2dp"
                 app:layout_constraintTop_toBottomOf="@id/email"
                 app:layout_constraintStart_toStartOf="@id/email" />
 
-            <ImageView
-                android:id="@+id/edit_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/edit"
-                android:padding="8dp"
-                android:textColor="@color/black"
-                android:layout_marginEnd="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                app:layout_constraintTop_toTopOf="@id/name"
-                app:layout_constraintBottom_toBottomOf="@id/contact"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:contentDescription="Edit profile" />
-
+            <!-- Bio Section -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bio_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="#F5F5F5"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
-                android:layout_marginTop="8dp"
+                android:background="#F8F8F8"
+                android:padding="16dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/contact"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -153,24 +157,23 @@
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:textSize="16sp"
-                    android:layout_marginStart="16dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-                <EditText
+                <TextView
                     android:id="@+id/bio_content"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Hey there! I'm a passionate traveler who loves exploring new cities, cultures, and cuisines..."
                     android:textSize="14sp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:textColor="@color/black"
+                    android:textColor="#666666"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintTop_toBottomOf="@id/bio_title"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Interests Title -->
             <TextView
                 android:id="@+id/interests_title"
                 android:layout_width="wrap_content"
@@ -179,136 +182,169 @@
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@color/black"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginStart="16dp"
                 app:layout_constraintTop_toBottomOf="@id/bio_container"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/interest_flow"
-                android:layout_width="match_parent"
+            <!-- Interest Cards Container -->
+            <LinearLayout
+                android:id="@+id/interest_container"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:columnCount="3"
+                android:orientation="horizontal"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="12dp"
+                android:weightSum="4"
                 app:layout_constraintTop_toBottomOf="@id/interests_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!-- Adventure Card -->
+                <androidx.cardview.widget.CardView
                     android:id="@+id/cardAdventure"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_columnWeight="1"
-                    android:layout_marginBottom="11dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/travel_style_card">
-                    <ImageView android:id="@+id/iconAdventure"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/adventure"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="16dp"
-                        app:tint="@color/icon_tint_selector" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Adventure"
-                        android:textColor="@color/black"
-                        android:textSize="14sp"
-                        app:layout_constraintTop_toBottomOf="@id/iconAdventure"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginBottom="16dp" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cardRelaxation"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_columnWeight="1"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/travel_style_card">
-                    <ImageView
-                        android:id="@+id/iconRelaxation"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/relaxation"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:tint="@color/icon_tint_selector"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="16dp"
-                        android:contentDescription="Relaxation Icon" />
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Relaxation"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        app:layout_constraintTop_toBottomOf="@id/iconRelaxation"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginBottom="16dp" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cardSpiritual"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_columnWeight="1"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/travel_style_card">
-                    <ImageView android:id="@+id/iconSpiritual"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/spiritual"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:tint="@color/icon_tint_selector"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="16dp" />
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Spiritual"
-                        android:textColor="@color/black"
-                        android:textSize="14sp"
-                        app:layout_constraintTop_toBottomOf="@id/iconSpiritual"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginBottom="16dp" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cardHistoric"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_columnWeight="1"
-                        android:background="@drawable/travel_style_card">
-                    <ImageView android:id="@+id/iconHistoric"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/historic"
-                        app:tint="@color/icon_tint_selector"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="16dp" />
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Historic"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        app:layout_constraintTop_toBottomOf="@id/iconHistoric"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginBottom="16dp" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#E3F2FD">
 
-            </androidx.gridlayout.widget.GridLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
 
+                        <ImageView
+                            android:id="@+id/iconAdventure"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/adventure"
+                            app:tint="#2196F3" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Adventure"
+                            android:textColor="#2196F3"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="8dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Relaxation Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardRelaxation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#E8F5E9">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/iconRelaxation"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/relaxation"
+                            app:tint="#4CAF50" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Relaxation"
+                            android:textColor="#4CAF50"
+                            android:textSize="11.5sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="8dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Spiritual Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardSpiritual"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#F3E5F5">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/iconSpiritual"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/spiritual"
+                            app:tint="#9C27B0" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Spiritual"
+                            android:textColor="#9C27B0"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="8dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Historic Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardHistoric"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFF3E0">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/iconHistoric"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/historic"
+                            app:tint="#FF9800" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Historic"
+                            android:textColor="#FF9800"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="8dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <!-- Gender Title -->
             <TextView
                 android:id="@+id/gender_label"
                 android:layout_width="wrap_content"
@@ -317,221 +353,288 @@
                 android:textSize="16sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginStart="16dp"
-                app:layout_constraintTop_toBottomOf="@id/interest_flow"
+                app:layout_constraintTop_toBottomOf="@id/interest_container"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/genderM"
-                android:layout_width="wrap_content"
+            <!-- Gender Options -->
+            <LinearLayout
+                android:id="@+id/gender_container"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/gender_selector"
-                android:drawableStart="@drawable/malesign"
-                android:drawablePadding="8dp"
-                android:gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:paddingVertical="14dp"
-                android:paddingHorizontal="20dp"
-                android:text="Male"
-                android:textColor="@color/black"
-                android:textSize="14sp"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
                 app:layout_constraintTop_toBottomOf="@id/gender_label"
-                app:layout_constraintStart_toStartOf="parent" />
-            <TextView
-                android:id="@+id/genderF"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/gender_selector"
-                android:drawableStart="@drawable/femalesign"
-                android:drawablePadding="8dp"
-                android:gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:paddingVertical="14dp"
-                android:paddingHorizontal="20dp"
-                android:text="Female"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintTop_toTopOf="@id/genderM"
-                app:layout_constraintBottom_toBottomOf="@id/genderM"
-                app:layout_constraintStart_toEndOf="@id/genderM"
-                />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline_half"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
-
-            <TextView
-                android:id="@+id/blood_group_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Blood Group"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                app:layout_constraintTop_toBottomOf="@id/genderM"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/guideline_half" />
-
-            <EditText
-                android:id="@+id/blood_group_value"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="A+ (Positive)"
-                android:paddingVertical="8dp"
-                android:textColor="@color/black"
-                android:paddingStart="8dp"
-                android:background="@drawable/edittext_simple"
-                android:textSize="16sp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="4dp"
-                app:layout_constraintTop_toBottomOf="@id/blood_group_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/guideline_half" />
-
-            <TextView
-                android:id="@+id/allergies_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Allergies"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/black"
-                android:layout_marginStart="8dp"
-                app:layout_constraintTop_toBottomOf="@id/genderM"
-                app:layout_constraintStart_toEndOf="@id/guideline_half"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <EditText
-                android:id="@+id/allergies_value"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="None"
-                android:background="@drawable/edittext_simple"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
-                android:paddingVertical="8dp"
-                android:layout_marginTop="4dp"
-                android:paddingStart="8dp"
-                app:layout_constraintTop_toBottomOf="@id/allergies_label"
-                app:layout_constraintStart_toEndOf="@id/guideline_half"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/emergency_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/emergency_card"
-                android:padding="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginHorizontal="16dp"
-                app:layout_constraintTop_toBottomOf="@id/blood_group_value"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <TextView
-                    android:id="@+id/emergency_title"
+                    android:id="@+id/genderM"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Emergency Contact"
-                    android:textStyle="bold"
-                    android:textColor="#C2185B"
-                    android:textSize="18sp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:background="@drawable/gender_selector"
+                    android:drawableStart="@drawable/malesign"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="12dp"
+                    android:paddingHorizontal="24dp"
+                    android:text="Male"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:clickable="false" />
 
                 <TextView
-                    android:id="@+id/contact_name_label"
-                    android:layout_width="0dp"
+                    android:id="@+id/genderF"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Contact Name"
-                    android:textColor="@color/black"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/emergency_title"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-                <EditText
-                    android:id="@+id/contact_name_input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Yash Krishnan"
-                    android:inputType="textPersonName"
-                    android:background="@drawable/edittext_white"
+                    android:background="@drawable/gender_selector"
+                    android:drawableStart="@drawable/femalesign"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="12dp"
                     android:paddingVertical="12dp"
+                    android:paddingHorizontal="24dp"
+                    android:text="Female"
                     android:textColor="@color/black"
-                    android:paddingStart="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/contact_name_label"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    android:textSize="14sp"
+                    android:clickable="false" />
+            </LinearLayout>
 
-                <TextView
-                    android:id="@+id/contact_phone_label"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Contact Phone"
-                    android:textColor="@color/black"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@id/contact_name_input"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-                <EditText
-                    android:id="@+id/contact_phone_input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="4835984350"
-                    android:inputType="phone"
-                    android:textColor="@color/black"
-                    android:background="@drawable/edittext_white"
-                    android:paddingVertical="12dp"
-                    android:paddingStart="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/contact_phone_label"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-                <TextView
-                    android:id="@+id/relationship_label"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Relationship"
-                    android:textColor="@color/black"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@id/contact_phone_input"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-                <Spinner
-                    android:id="@+id/relationship_spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/relationship_options"
-                    android:background="@drawable/edittext_white"
-                    android:textColor="@color/black"
-                    android:paddingStart="12dp"
-                    android:paddingVertical="12dp"
-                    app:layout_constraintTop_toBottomOf="@id/relationship_label"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <ImageView
-                android:layout_width="wrap_content"
+            <!-- Two Column Container -->
+            <LinearLayout
+                android:id="@+id/two_column_container"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/delete_account"
-                android:src="@drawable/delete_profile"
-                android:layout_marginTop="17dp"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp"
+                android:weightSum="2"
+                app:layout_constraintTop_toBottomOf="@id/gender_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- Blood Group -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:id="@+id/blood_group_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Blood Group"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/blood_group_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="A+ (Positive)"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="12dp"
+                        android:textColor="@color/black"
+                        android:background="@drawable/edittext_simple"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+
+                <!-- Allergies -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:id="@+id/allergies_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Allergies"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/allergies_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="None"
+                        android:background="@drawable/edittext_simple"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="12dp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Emergency Contact Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/emergency_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFF5F7"
+                app:layout_constraintTop_toBottomOf="@id/two_column_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/emergency_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Emergency Contact"
+                        android:textStyle="bold"
+                        android:textColor="#C2185B"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/contact_name_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contact Name"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_marginTop="16dp" />
+
+                    <TextView
+                        android:id="@+id/contact_name_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Yash Krishnan"
+                        android:background="@drawable/edittext_white"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="12dp"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/contact_phone_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contact Phone"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_marginTop="12dp" />
+
+                    <TextView
+                        android:id="@+id/contact_phone_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="4835984350"
+                        android:textColor="@color/black"
+                        android:background="@drawable/edittext_white"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="12dp"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/relationship_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Relationship"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_marginTop="12dp" />
+
+                    <Spinner
+                        android:id="@+id/relationship_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/relationship_options"
+                        android:background="@drawable/edittext_simple"
+                        android:textColor="@color/black"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="12dp"
+                        android:enabled="false"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Delete/Logout Options -->
+            <LinearLayout
+                android:id="@+id/action_buttons"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp"
                 app:layout_constraintTop_toBottomOf="@id/emergency_card"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <LinearLayout
+                    android:id="@+id/delete_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="start|center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingVertical="12dp">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/delete_account"
+                        app:tint="#D32F2F" />
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Profile"
+                        android:textColor="#D32F2F"
+                        android:textSize="16sp"
+                        android:layout_marginStart="12dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/logout_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="start|center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingVertical="12dp"
+                    android:layout_marginTop="8dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/logout_btn"
+                        app:tint="#D32F2F" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Logout"
+                        android:textColor="#D32F2F"
+                        android:textSize="16sp"
+                        android:layout_marginStart="12dp" />
+                </LinearLayout>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

@@ -319,7 +319,14 @@
     <fragment
         android:id="@+id/openProfileFragment"
         android:name="com.example.tripsync.home.OpenProfileFragment"
-        android:label="openProfileFragment" />
+        android:label="openProfileFragment" >
+        <action
+            android:id="@+id/action_openProfileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_openProfileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/searchUsersFragment"
@@ -377,7 +384,10 @@
             android:id="@+id/action_newGroupFragment_to_chatThreadFragment"
             app:destination="@id/chatThreadFragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.tripsync.home.EditProfileFragment"
+        android:label="EditProfileFragment" />
 
 
 </navigation>

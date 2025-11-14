@@ -283,7 +283,6 @@
                         app:layout_constraintStart_toStartOf="@id/card_guideline_start"
                         app:layout_constraintTop_toBottomOf="@id/caption" />
 
-                    <!-- Media Preview Container -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/media_preview_container"
                         android:layout_width="0dp"
@@ -326,7 +325,6 @@
                         </FrameLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Media Upload Buttons Container -->
                     <LinearLayout
                         android:id="@+id/media_buttons_container"
                         android:layout_width="0dp"
@@ -355,7 +353,7 @@
                                 android:scaleType="center"
                                 android:clickable="true"
                                 android:focusable="true"
-                                android:background="?attr/selectableItemBackground"/>
+                                android:background="@color/white"/>
                         </androidx.cardview.widget.CardView>
 
                         <androidx.cardview.widget.CardView
@@ -374,7 +372,7 @@
                                 android:scaleType="center"
                                 android:clickable="true"
                                 android:focusable="true"
-                                android:background="?attr/selectableItemBackground"/>
+                                android:background="@color/white"/>
                         </androidx.cardview.widget.CardView>
                     </LinearLayout>
 

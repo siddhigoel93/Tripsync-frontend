@@ -196,7 +196,10 @@ class ExploreFragment : Fragment() {
         }
 
         (activity as? MainActivity)?.addProfileObserver { newUrl ->
-            newUrl?.let { updateExploreProfileImage(it) }}
+            if (isAdded && view != null) {
+                newUrl?.let { updateExploreProfileImage(it) }
+            }
+        }
     }
 
     private fun fetchWeather(location: String) {
@@ -231,6 +234,8 @@ class ExploreFragment : Fragment() {
     }
 
     fun updateExploreProfileImage(url: String?) {
+
+        if (!isAdded || view == null) return
 
         val exploreProfileImage = requireView().findViewById<ImageView>(R.id.menu_icon)
         if (!url.isNullOrEmpty()) {

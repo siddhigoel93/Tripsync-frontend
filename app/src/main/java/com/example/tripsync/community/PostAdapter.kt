@@ -133,10 +133,8 @@ class PostAdapter(
                     videoView.setVideoURI(Uri.parse(post.vid_url))
 
                     videoView.setOnPreparedListener { mp ->
-                        mp.isLooping = true
-                        mp.setVolume(0f, 0f) // Mute by default
-                        playButton.visibility = View.GONE
-                        videoView.start()
+                        mp.isLooping = false
+                        playButton.visibility = View.VISIBLE
                     }
 
                     videoView.setOnErrorListener { _, what, extra ->

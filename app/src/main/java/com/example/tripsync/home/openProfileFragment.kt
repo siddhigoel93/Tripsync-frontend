@@ -1,50 +1,35 @@
 package com.example.tripsync.home
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.example.tripsync.MainActivity
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
+import com.example.tripsync.api.SessionManager
 import com.example.tripsync.api.models.GetProfileResponse
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 
 class OpenProfileFragment : Fragment() {
 
-    private lateinit var nameField: EditText
-    private lateinit var emailField: EditText
-    private lateinit var contactField: EditText
-    private lateinit var bioField: EditText
+    private lateinit var nameField: TextView
+    private lateinit var emailField: TextView
+    private lateinit var contactField: TextView
+    private lateinit var bioField: TextView
     private lateinit var genderM: TextView
     private lateinit var genderF: TextView
-    private lateinit var bloodGroupField: EditText
-    private lateinit var allergiesField: EditText
-    private lateinit var emergencyName: EditText
-    private lateinit var emergencyNumber: EditText
+    private lateinit var bloodGroupField: TextView
+    private lateinit var allergiesField: TextView
+    private lateinit var emergencyName: TextView
+    private lateinit var emergencyNumber: TextView
     private lateinit var emergencyRelation: Spinner
     private lateinit var avatarImage: ImageView
     private lateinit var coverPhoto: ImageView
@@ -55,16 +40,6 @@ class OpenProfileFragment : Fragment() {
     private lateinit var cardSpiritual: View
     private lateinit var cardHistoric: View
 
-    private var selectedInterest: String? = null
-    private var isEditing = false
-    private var selectedGender: String? = null
-    private var imageUri: Uri? = null
-
-    companion object {
-        private const val PICK_IMAGE_REQUEST = 1001
-        private const val READ_PERMISSION_REQUEST = 101
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,14 +47,10 @@ class OpenProfileFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_open_profile, container, false)
         initViews(view)
         setupSpinner()
-        toggleEditable(false)
-        setupInterestClicks()
-        setupEditButton()
-        setupGenderClicks()
-        setupAvatarClick()
         setupBackButton(view)
+        setupEditButton()
+        setupLogoutButton(view)
         fetchProfile()
-        requestReadPermission()
         return view
     }
 
@@ -109,93 +80,40 @@ class OpenProfileFragment : Fragment() {
         val adapter = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.relationship_options,
-            R.layout.spinner_item
+            android.R.layout.simple_spinner_item
         )
-        adapter.setDropDownViewResource(R.layout.spinner_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         emergencyRelation.adapter = adapter
-    }
-
-    private fun setupInterestClicks() {
-        val clickListener = View.OnClickListener { view ->
-            listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric).forEach {
-                it.alpha = 0.5f
-            }
-            view.alpha = 1f
-            selectedInterest = when (view.id) {
-                R.id.cardAdventure -> "Adventure"
-                R.id.cardRelaxation -> "Relaxation"
-                R.id.cardSpiritual -> "Spiritual"
-                R.id.cardHistoric -> "Historic"
-                else -> null
-            }
-        }
-        cardAdventure.setOnClickListener(clickListener)
-        cardRelaxation.setOnClickListener(clickListener)
-        cardSpiritual.setOnClickListener(clickListener)
-        cardHistoric.setOnClickListener(clickListener)
-    }
-
-    private fun setupGenderClicks() {
-        val normalBg = ContextCompat.getDrawable(requireContext(), R.drawable.selected_gender)
-        val selectedBg = ContextCompat.getDrawable(requireContext(), R.drawable.selected_gender)
-
-        genderM.setOnClickListener {
-            if (isEditing) {
-                selectedGender = "Male"
-                genderM.background = selectedBg
-                genderF.background = normalBg
-            }
-        }
-        genderF.setOnClickListener {
-            if (isEditing) {
-                selectedGender = "Female"
-                genderF.background = selectedBg
-                genderM.background = normalBg
-            }
-        }
+        emergencyRelation.isEnabled = false
     }
 
     private fun setupEditButton() {
         editIcon.setOnClickListener {
-            isEditing = !isEditing
-            toggleEditable(isEditing)
-            if (!isEditing) updateProfile()
-
-            if (isEditing) {
-                editIcon.setColorFilter(
-                    ContextCompat.getColor(requireContext(), R.color.green_gradient_end)
-                )
-            } else {
-                editIcon.clearColorFilter()
-                updateProfile()
-            }
-
-        }
-    }
-
-    private fun setupAvatarClick() {
-        avatarImage.setOnClickListener {
-            if (isEditing) {
-                val intent = Intent(Intent.ACTION_PICK).apply {
-                    type = "image/*"
-                }
-                startActivityForResult(intent, PICK_IMAGE_REQUEST)
-            }
+            findNavController().navigate(R.id.action_openProfileFragment_to_editProfileFragment)
         }
     }
 
     private fun setupBackButton(view: View) {
         val backButton = view.findViewById<ImageView>(R.id.back_button)
-        backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        backButton.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
     }
 
-    private fun toggleEditable(enable: Boolean) {
-        listOf(
-            nameField, emailField, contactField, bioField,
-            bloodGroupField, allergiesField, emergencyName, emergencyNumber
-        ).forEach { it.isEnabled = enable }
-        emergencyRelation.isEnabled = enable
-        listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric).forEach { it.isClickable = enable }
+    private fun setupLogoutButton(view: View) {
+        val logoutButton = view.findViewById<LinearLayout>(R.id.logout_button)
+        logoutButton.setOnClickListener {
+            performLogout()
+        }
+    }
+
+    private fun performLogout() {
+        // Use SessionManager to properly clear only auth data
+        SessionManager.logout(requireContext())
+
+        // Navigate to login
+        findNavController().navigate(R.id.action_openProfileFragment_to_loginFragment)
+        Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
     }
 
     private fun fetchProfile() {
@@ -204,107 +122,27 @@ class OpenProfileFragment : Fragment() {
                 val response = ApiClient.getTokenService(requireContext()).getProfile()
                 if (response.isSuccessful) {
                     val profile = response.body()?.data?.profile
-                    if (profile != null) bindProfile(profile)
-                } else Toast.makeText(requireContext(), "Error ${response.code()}", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+                    if (profile != null) {
+                        // Save profile to SessionManager
+                        SessionManager.saveUserProfile(
+                            requireContext(),
+                            firstName = profile.fname,
+                            lastName = profile.lname,
+                            email = SessionManager.getEmail(requireContext()),
+                            phone = profile.phone_number,
+                            avatarUrl = profile.profile_pic_url,
+                            bio = profile.bio,
+                            gender = profile.gender,
+                            preference = profile.prefrence,
+                            bloodGroup = profile.bgroup,
+                            allergies = profile.allergies
+                        )
 
-    private fun bindProfile(profile: GetProfileResponse.ProfileData) {
-        val sp = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val email = sp.getString("currentUserEmail", "example@email.com")
-        nameField.setText("${profile.fname ?: ""} ${profile.lname ?: ""}")
-        emailField.setText(email ?: "")
-        contactField.setText(profile.phone_number ?: "")
-        bioField.setText(profile.bio ?: "")
-        bloodGroupField.setText(profile.bgroup ?: "")
-        allergiesField.setText(profile.allergies ?: "")
-        emergencyName.setText(profile.ename ?: "")
-        emergencyNumber.setText(profile.enumber ?: "")
-
-        val relations = resources.getStringArray(R.array.relationship_options)
-        val index = relations.indexOfFirst { it.equals(profile.erelation, true) }
-        if (index >= 0) emergencyRelation.setSelection(index)
-
-        highlightInterest(profile.prefrence)
-
-        Glide.with(this).load(profile.profile_pic_url ?: R.drawable.placeholder_image)
-            .circleCrop()
-            .into(avatarImage)
-
-        Glide.with(this).load(R.drawable.cover_image)
-            .centerCrop()
-            .into(coverPhoto)
-    }
-
-    private fun highlightInterest(preference: String?) {
-        val all = listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric)
-        all.forEach { it.alpha = 0.5f }
-        when (preference?.lowercase()) {
-            "adventure" -> cardAdventure.alpha = 1f
-            "relaxation" -> cardRelaxation.alpha = 1f
-            "spiritual" -> cardSpiritual.alpha = 1f
-            "historic" -> cardHistoric.alpha = 1f
-        }
-    }
-
-    private fun updateProfile() {
-        lifecycleScope.launch {
-            try {
-                val api = ApiClient.getTokenService(requireContext())
-
-                val fname = nameField.text.toString().split(" ").firstOrNull().orEmpty()
-                val lname = nameField.text.toString().split(" ").getOrNull(1).orEmpty()
-
-                val fnamePart = fname.toRequestBody("text/plain".toMediaTypeOrNull())
-                val lnamePart = lname.toRequestBody("text/plain".toMediaTypeOrNull())
-                val bioPart = bioField.text.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-                val bgroupPart = bloodGroupField.text.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-                val allergiesPart = allergiesField.text.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-                val enamePart = emergencyName.text.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-                val enumberPart = emergencyNumber.text.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-                val erelationPart = emergencyRelation.selectedItem.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-                val preferencePart = selectedInterest?.toRequestBody("text/plain".toMediaTypeOrNull())
-
-                val imagePart = imageUri?.let { uri ->
-                    compressImage(uri)?.let { file ->
-                        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                        MultipartBody.Part.createFormData("profile_pic", file.name, requestFile)
+                        bindProfile(profile)
                     }
-                }
-
-                val response = api.updateProfile(
-                    fnamePart, lnamePart, null, null, bioPart,
-                    imagePart, bgroupPart, allergiesPart, null,
-                    enamePart, enumberPart, erelationPart, preferencePart
-                )
-
-                if (response.isSuccessful) {
-                    val updatedProfile = response.body()?.data?.profile
-
-                    if (updatedProfile != null) {
-                        val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                        with(sharedPref.edit()) {
-                            putString("fname", updatedProfile.fname ?: "")
-                            putString("lname", updatedProfile.lname ?: "")
-                            putString("currentUserEmail", sharedPref.getString("currentUserEmail", ""))
-                            putString("userAvatarUrl", updatedProfile.profile_pic_url ?: "")
-                            apply()
-                        }
-
-                        // Update drawer profile immediately
-                        (activity as? MainActivity)?.updateDrawerProfileImage(updatedProfile.profile_pic_url)
-                    }
-
-                    Toast.makeText(requireContext(), "Profile updated!", Toast.LENGTH_SHORT).show()
-                    fetchProfile()
-
                 } else {
-                    Toast.makeText(requireContext(), "Update failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Error loading profile: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
-
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -312,44 +150,79 @@ class OpenProfileFragment : Fragment() {
         }
     }
 
-    private fun compressImage(uri: Uri, maxSizeKB: Int = 500): File? {
-        return try {
-            val inputStream: InputStream? = requireContext().contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream?.close()
-            if (bitmap == null) return null
+    private fun bindProfile(profile: GetProfileResponse.ProfileData) {
+        val email = SessionManager.getEmail(requireContext())
 
-            val outputStream = ByteArrayOutputStream()
-            var quality = 100
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        nameField.text = "${profile.fname ?: ""} ${profile.lname ?: ""}".trim()
+        emailField.text = email ?: ""
+        contactField.text = profile.phone_number ?: ""
+        bioField.text = profile.bio ?: "No bio available"
+        bloodGroupField.text = profile.bgroup ?: "Not specified"
+        allergiesField.text = profile.allergies ?: "None"
+        emergencyName.text = profile.ename ?: ""
+        emergencyNumber.text = profile.enumber ?: ""
 
-            while (outputStream.toByteArray().size / 1024 > maxSizeKB && quality > 10) {
-                outputStream.reset()
-                quality -= 10
-                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        // Set relationship spinner
+        val relations = resources.getStringArray(R.array.relationship_options)
+        val index = relations.indexOfFirst { it.equals(profile.erelation, true) }
+        if (index >= 0) emergencyRelation.setSelection(index)
+
+        // Set gender
+        when (profile.gender?.lowercase()) {
+            "male" -> {
+                genderM.alpha = 1f
+                genderF.alpha = 0.3f
             }
+            "female" -> {
+                genderF.alpha = 1f
+                genderM.alpha = 0.3f
+            }
+            else -> {
+                genderM.alpha = 0.5f
+                genderF.alpha = 0.5f
+            }
+        }
 
-            val file = File(requireContext().cacheDir, "compressed_${System.currentTimeMillis()}.jpg")
-            FileOutputStream(file).use { it.write(outputStream.toByteArray()) }
-            file
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+        // Highlight selected interest
+        highlightInterest(profile.prefrence)
+
+        // Load profile picture
+        Glide.with(this)
+            .load(profile.profile_pic_url ?: R.drawable.placeholder_image)
+            .circleCrop()
+            .into(avatarImage)
+
+        // Load cover photo
+        Glide.with(this)
+            .load(R.drawable.cover_image)
+            .centerCrop()
+            .into(coverPhoto)
+    }
+
+    private fun highlightInterest(preference: String?) {
+        val all = listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric)
+
+        // Reset all to default state
+        all.forEach { card ->
+            card.alpha = 0.3f
+        }
+
+        // Highlight selected preference
+        when (preference?.lowercase()) {
+            "adventure" -> cardAdventure.alpha = 1f
+            "relaxation" -> cardRelaxation.alpha = 1f
+            "spiritual" -> cardSpiritual.alpha = 1f
+            "historic" -> cardHistoric.alpha = 1f
+            else -> {
+                // If no preference, show all at half opacity
+                all.forEach { it.alpha = 0.5f }
+            }
         }
     }
 
-    private fun requestReadPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_PERMISSION_REQUEST)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data?.data != null) {
-            imageUri = data.data
-            Glide.with(this).load(imageUri).circleCrop().into(avatarImage)
-        }
+    override fun onResume() {
+        super.onResume()
+        // Refresh profile when returning from edit
+        fetchProfile()
     }
 }
