@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.tripsync.api.interceptors.AuthInterceptor
 import com.example.tripsync.BuildConfig
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -27,34 +28,37 @@ object ApiClient {
                     return if (base.endsWith("/")) base else "$base/"
                 }
             }
-        } catch (e: IOException) {
-            Log.e("ApiClient", "Error loading BASE_URL", e)
-        }
+        } catch (_: IOException) {}
         return DEFAULT_BASE_URL
     }
 
     private fun buildRetrofit(context: Context, secure: Boolean): Retrofit {
         val baseUrl = getBaseUrl(context)
 
-        val logging = HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-            else HttpLoggingInterceptor.Level.NONE
+        val httpLogging = HttpLoggingInterceptor { message -> Log.i("OkHttp", message) }
+        httpLogging.level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+
+        val requestLogger = Interceptor { chain ->
+            val request = chain.request()
+            val t1 = System.nanoTime()
+            Log.i("ApiClient", "Request: ${request.method} ${request.url}")
+            val response = chain.proceed(request)
+            val t2 = System.nanoTime()
+            Log.i("ApiClient", "Response: ${response.code} ${response.request.url} in ${(t2 - t1) / 1_000_000}ms")
+            response
         }
 
         val clientBuilder = OkHttpClient.Builder()
             .connectTimeout(25, TimeUnit.SECONDS)
             .readTimeout(25, TimeUnit.SECONDS)
             .writeTimeout(25, TimeUnit.SECONDS)
+            .addInterceptor(requestLogger)
 
-        if (BuildConfig.DEBUG) {
-            clientBuilder.addInterceptor(logging)
-        }
-
-        if (secure) {
-            clientBuilder.addInterceptor(AuthInterceptor(context.applicationContext))
-        }
+        if (BuildConfig.DEBUG) clientBuilder.addInterceptor(httpLogging)
+        if (secure) clientBuilder.addInterceptor(AuthInterceptor(context.applicationContext))
 
         val client = clientBuilder.build()
+
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(client)
@@ -92,5 +96,9 @@ object ApiClient {
 
     fun getBudgetService(context: Context): com.example.tripsync.api.budget.BudgetService {
         return getRetrofitInstance(context, secure = true).create(com.example.tripsync.api.budget.BudgetService::class.java)
+    }
+
+    fun getTripmateService(context: Context): TripmateService {
+        return getRetrofitInstance(context, secure = true).create(TripmateService::class.java)
     }
 }
