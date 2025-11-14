@@ -88,7 +88,11 @@ object SessionManager {
         gender: String? = null,
         preference: String? = null,
         bloodGroup: String? = null,
-        allergies: String? = null
+        allergies: String? = null,
+        medical: String?,
+        emergencyNumber: String?,
+        emergencyName: String?,
+        emergencyRelation: String?
     ) {
         getAppPrefs(context).edit().apply {
             userId?.let { putInt(KEY_USER_ID, it) }

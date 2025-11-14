@@ -3,7 +3,6 @@ package com.example.tripsync.home
 import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -364,7 +363,7 @@ class EditProfileFragment : Fragment() {
                                 gender = updatedProfile.gender,
                                 preference = updatedProfile.prefrence,
                                 bloodGroup = updatedProfile.bgroup,
-                                allergies = updatedProfile.allergies
+                                allergies = updatedProfile.allergies,
                             )
 
                             if (activity != null && isAdded) {

@@ -156,16 +156,19 @@ class MainActivity : AppCompatActivity() {
         })
 
         val menuProfile = drawerMenuView.findViewById<TextView>(R.id.menu_profile)
-        val menuDelete = drawerMenuView.findViewById<ImageView>(R.id.menu_delete)
-        val menuLogout = drawerMenuView.findViewById<ImageView>(R.id.menu_logout)
-        val menuSOS = drawerMenuView.findViewById<ImageView>(R.id.menu_sos)
+        val chat = drawerMenuView.findViewById<ImageView>(R.id.menu_weather)
+        chat.setOnClickListener { handleNavigation(R.id.AIchatFragment) }
+
+//        val menuDelete = drawerMenuView.findViewById<ImageView>(R.id.menu_delete)
+//        val menuLogout = drawerMenuView.findViewById<ImageView>(R.id.menu_logout)
+//        val menuSOS = drawerMenuView.findViewById<ImageView>(R.id.menu_sos)
 
         menuProfile.setOnClickListener { handleNavigation(R.id.openProfileFragment) }
-        menuLogout.setOnClickListener { logoutUser() }
-        menuDelete.setOnClickListener {
-            showDeleteConfirmationDialog()
-        }
-        menuSOS.setOnClickListener { handleNavigation(R.id.emergencySosFragment) }
+//        menuLogout.setOnClickListener { logoutUser() }
+//        menuDelete.setOnClickListener {
+//            showDeleteConfirmationDialog()
+//        }
+//        menuSOS.setOnClickListener { handleNavigation(R.id.emergencySosFragment) }
     }
 
     private fun refreshDrawerProfile() {

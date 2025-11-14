@@ -129,7 +129,7 @@ class ContactVerifyFragment : Fragment() {
                             lastName = profile.lname,
                             email = profile.ename,
                             phone = profile.enumber,
-                            avatarUrl = profile.profilePicUrl ?: profile.profilePic
+                            avatarUrl = profile.profilePicUrl ?: profile.profilePic,
                         )
 
                         // Also save to legacy SharedPreferences for backward compatibility

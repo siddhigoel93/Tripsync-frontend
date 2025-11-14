@@ -1,13 +1,12 @@
 package com.example.tripsync.home
 
-import android.content.Context
-import android.content.Intent
+import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -39,6 +38,8 @@ class OpenProfileFragment : Fragment() {
     private lateinit var cardRelaxation: View
     private lateinit var cardSpiritual: View
     private lateinit var cardHistoric: View
+    private lateinit var cardExplore: View
+    private lateinit var cardNature: View
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +51,7 @@ class OpenProfileFragment : Fragment() {
         setupBackButton(view)
         setupEditButton()
         setupLogoutButton(view)
+        setupDeleteProfileButton(view)
         fetchProfile()
         return view
     }
@@ -74,6 +76,82 @@ class OpenProfileFragment : Fragment() {
         cardRelaxation = view.findViewById(R.id.cardRelaxation)
         cardSpiritual = view.findViewById(R.id.cardSpiritual)
         cardHistoric = view.findViewById(R.id.cardHistoric)
+        cardExplore = view.findViewById(R.id.cardExplore)
+        cardNature = view.findViewById(R.id.cardNature)
+    }
+
+    private fun setupDeleteProfileButton(view: View) {
+        val deleteButton = view.findViewById<LinearLayout>(R.id.delete_account)
+        deleteButton.setOnClickListener {
+            showDeleteConfirmationDialog()
+        }
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Account")
+            .setMessage("Are you sure you want to permanently delete your profile and account? This action cannot be undone.")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteUserAccount()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deleteUserAccount() {
+        lifecycleScope.launch {
+            try {
+                // Show loading state
+                Toast.makeText(requireContext(), "Deleting account...", Toast.LENGTH_SHORT).show()
+
+                val response = ApiClient.getTokenService(requireContext()).deleteProfile()
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+
+                    if (body?.success == true) {
+                        Log.d("OpenProfile", "Account deleted successfully")
+
+                        // Clear ALL data including auth tokens
+                        SessionManager.clearAllData(requireContext())
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Account deleted successfully",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        // Navigate to Login and clear backstack
+                        findNavController().navigate(R.id.action_openProfileFragment_to_loginFragment)
+                    } else {
+                        val errorMessage = body?.message ?: "Unable to delete account"
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        Log.e("OpenProfile", "Delete failed: $errorMessage")
+                    }
+                } else {
+                    handleDeleteError(response.code(), response.errorBody()?.string())
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("OpenProfile", "Delete exception: ${e.message}")
+                Toast.makeText(
+                    requireContext(),
+                    "Error: ${e.message ?: "Network error"}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun handleDeleteError(code: Int, errorBody: String?) {
+        val message = when (code) {
+            404 -> "Profile not found"
+            500 -> "Server error. Please try again later."
+            else -> "Failed to delete account (Code: $code)"
+        }
+
+        Log.e("OpenProfile", "Delete error $code: $errorBody")
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
     }
 
     private fun setupSpinner() {
@@ -108,7 +186,7 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun performLogout() {
-        // Use SessionManager to properly clear only auth data
+        // Use SessionManager to properly clear only auth data (keeps profile data)
         SessionManager.logout(requireContext())
 
         // Navigate to login
@@ -123,22 +201,35 @@ class OpenProfileFragment : Fragment() {
                 if (response.isSuccessful) {
                     val profile = response.body()?.data?.profile
                     if (profile != null) {
-                        // Save profile to SessionManager
+                        // Get the user's actual email from SessionManager
+                        val userEmail = SessionManager.getEmail(requireContext())
+
+                        // Save CORRECT profile data to SessionManager
                         SessionManager.saveUserProfile(
                             requireContext(),
                             firstName = profile.fname,
                             lastName = profile.lname,
-                            email = SessionManager.getEmail(requireContext()),
-                            phone = profile.phone_number,
+                            email = userEmail, // User's email from SessionManager
+                            phone = profile.phone_number, // User's phone
                             avatarUrl = profile.profile_pic_url,
                             bio = profile.bio,
                             gender = profile.gender,
                             preference = profile.prefrence,
                             bloodGroup = profile.bgroup,
-                            allergies = profile.allergies
+                            allergies = profile.allergies,
+                            medical = profile.medical,
+                            emergencyNumber = profile.enumber,
+                            emergencyName = profile.ename,
+                            emergencyRelation = profile.erelation,
                         )
 
-                        bindProfile(profile)
+                        // Update profile completion status
+                        SessionManager.checkAndUpdateProfileStatus(requireContext())
+
+                        Log.d("OpenProfile", "User Email: $userEmail, Phone: ${profile.phone_number}")
+                        Log.d("OpenProfile", "Emergency: ${profile.ename}, ${profile.enumber}")
+
+                        bindProfile(profile, userEmail)
                     }
                 } else {
                     Toast.makeText(requireContext(), "Error loading profile: ${response.code()}", Toast.LENGTH_SHORT).show()
@@ -150,22 +241,25 @@ class OpenProfileFragment : Fragment() {
         }
     }
 
-    private fun bindProfile(profile: GetProfileResponse.ProfileData) {
-        val email = SessionManager.getEmail(requireContext())
-
+    private fun bindProfile(profile: GetProfileResponse.ProfileData, userEmail: String?) {
+        // Display USER data (not emergency contact data!)
         nameField.text = "${profile.fname ?: ""} ${profile.lname ?: ""}".trim()
-        emailField.text = email ?: ""
-        contactField.text = profile.phone_number ?: ""
+        emailField.text = userEmail ?: "No email" // User's email
+        contactField.text = profile.phone_number ?: "No phone" // User's phone
         bioField.text = profile.bio ?: "No bio available"
         bloodGroupField.text = profile.bgroup ?: "Not specified"
         allergiesField.text = profile.allergies ?: "None"
-        emergencyName.text = profile.ename ?: ""
-        emergencyNumber.text = profile.enumber ?: ""
+
+        // Display EMERGENCY CONTACT data
+        emergencyName.text = profile.ename ?: "Not set"
+        emergencyNumber.text = profile.enumber ?: "Not set"
 
         // Set relationship spinner
         val relations = resources.getStringArray(R.array.relationship_options)
-        val index = relations.indexOfFirst { it.equals(profile.erelation, true) }
-        if (index >= 0) emergencyRelation.setSelection(index)
+        val index = relations.indexOfFirst { it.equals(profile.erelation, ignoreCase = true) }
+        if (index >= 0) {
+            emergencyRelation.setSelection(index)
+        }
 
         // Set gender
         when (profile.gender?.lowercase()) {
@@ -183,7 +277,7 @@ class OpenProfileFragment : Fragment() {
             }
         }
 
-        // Highlight selected interest
+        // Highlight ONLY the selected interest
         highlightInterest(profile.prefrence)
 
         // Load profile picture
@@ -200,24 +294,28 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun highlightInterest(preference: String?) {
-        val all = listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric)
+        val allCards = listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric, cardExplore, cardNature)
 
-        // Reset all to default state
-        all.forEach { card ->
+        // Reset ALL cards to transparent (not selected)
+        allCards.forEach { card ->
             card.alpha = 0.3f
         }
 
-        // Highlight selected preference
-        when (preference?.lowercase()) {
-            "adventure" -> cardAdventure.alpha = 1f
-            "relaxation" -> cardRelaxation.alpha = 1f
-            "spiritual" -> cardSpiritual.alpha = 1f
-            "historic" -> cardHistoric.alpha = 1f
-            else -> {
-                // If no preference, show all at half opacity
-                all.forEach { it.alpha = 0.5f }
-            }
+        // Highlight ONLY the selected preference
+        val selectedCard = when (preference?.lowercase()?.trim()) {
+            "adventure" -> cardAdventure
+            "relaxation" -> cardRelaxation
+            "spiritual" -> cardSpiritual
+            "historic" -> cardHistoric
+            "explore" -> cardExplore
+            "nature" -> cardNature
+            else -> null
         }
+
+        // Make ONLY selected card fully visible
+        selectedCard?.alpha = 1f
+
+        Log.d("OpenProfile", "Highlighting preference: $preference")
     }
 
     override fun onResume() {
