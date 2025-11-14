@@ -1,6 +1,5 @@
 package com.example.tripsync
 
-import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -15,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.tripsync.utils.DialogUtils
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -141,9 +141,12 @@ class AIItinearyPlannerFragment : Fragment() {
 
         val startClick = View.OnClickListener {
             val now = Calendar.getInstance()
-            val dp = DatePickerDialog(
+
+            DialogUtils.showDatePicker(
                 requireContext(),
-                { _, year, month, dayOfMonth ->
+                initialCalendar = startCalendar,
+                minDate = now.timeInMillis,
+                onDateSelected = { year, month, dayOfMonth ->
                     startCalendar.set(year, month, dayOfMonth, 0, 0, 0)
                     etStartDate.setText(dateFormat.format(startCalendar.time))
                     val maxEndAllowed = startCalendar.timeInMillis + (maxDays - 1) * oneDayMillis
@@ -155,26 +158,25 @@ class AIItinearyPlannerFragment : Fragment() {
                         etEndDate.setText(dateFormat.format(endCalendar.time))
                     }
                     updateTripLength()
-                },
-                startCalendar.get(Calendar.YEAR),
-                startCalendar.get(Calendar.MONTH),
-                startCalendar.get(Calendar.DAY_OF_MONTH)
+                }
             )
-            dp.datePicker.minDate = now.timeInMillis
-            dp.show()
         }
         etStartDate.setOnClickListener(startClick)
 
         val endClick = View.OnClickListener {
             val minDate = if (etStartDate.text.isNullOrBlank()) Calendar.getInstance().timeInMillis else startCalendar.timeInMillis
             val maxEndAllowed = if (etStartDate.text.isNullOrBlank()) Long.MAX_VALUE else startCalendar.timeInMillis + (maxDays - 1) * oneDayMillis
-            val dp = DatePickerDialog(
+
+            DialogUtils.showDatePicker(
                 requireContext(),
-                { _, year, month, dayOfMonth ->
+                initialCalendar = endCalendar,
+                minDate = minDate,
+                maxDate = if (maxEndAllowed != Long.MAX_VALUE) maxEndAllowed else null,
+                onDateSelected = { year, month, dayOfMonth ->
                     endCalendar.set(year, month, dayOfMonth, 0, 0, 0)
                     if (endCalendar.timeInMillis < startCalendar.timeInMillis) {
                         Toast.makeText(requireContext(), "End date must be after start date", Toast.LENGTH_SHORT).show()
-                        return@DatePickerDialog
+                        return@showDatePicker
                     }
                     val diffMillis = endCalendar.timeInMillis - startCalendar.timeInMillis
                     val daysInc = (diffMillis / oneDayMillis).toInt() + 1
@@ -184,14 +186,8 @@ class AIItinearyPlannerFragment : Fragment() {
                     }
                     etEndDate.setText(dateFormat.format(endCalendar.time))
                     updateTripLength()
-                },
-                endCalendar.get(Calendar.YEAR),
-                endCalendar.get(Calendar.MONTH),
-                endCalendar.get(Calendar.DAY_OF_MONTH)
+                }
             )
-            dp.datePicker.minDate = minDate
-            if (maxEndAllowed != Long.MAX_VALUE) dp.datePicker.maxDate = maxEndAllowed
-            dp.show()
         }
         etEndDate.setOnClickListener(endClick)
 

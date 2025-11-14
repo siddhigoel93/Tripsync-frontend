@@ -1,14 +1,14 @@
 package com.example.tripsync
 
-import android.app.AlertDialog
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tripsync.api.models.Message
+import com.example.tripsync.utils.DialogUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -119,44 +119,53 @@ class MessagesAdapter(
     private fun showMessageOptions(context: android.content.Context, message: Message) {
         val options = arrayOf("Edit", "Delete")
 
-        AlertDialog.Builder(context)
-            .setTitle("Message Options")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> showEditDialog(context, message)
-                    1 -> showDeleteConfirmation(context, message)
-                }
+        DialogUtils.showOptionsDialog(
+            context,
+            "Message Options",
+            options
+        ) { which ->
+            when (which) {
+                0 -> showEditDialog(context, message)
+                1 -> showDeleteConfirmation(context, message)
             }
-            .show()
+        }
     }
 
-    private fun showEditDialog(context: android.content.Context, message: Message) {
-        val input = EditText(context)
-        input.setText(message.content)
-        input.setSelection(message.content.length)
+    private fun showEditDialog(context: Context, message: Message) {
 
-        AlertDialog.Builder(context)
-            .setTitle("Edit Message")
-            .setView(input)
-            .setPositiveButton("Save") { _, _ ->
-                val newContent = input.text.toString().trim()
-                if (newContent.isNotEmpty() && newContent != message.content) {
-                    onEditMessage(message, newContent)
+        DialogUtils.showInputDialog(
+            context = context,
+            title = "Edit Message",
+            hint = "Enter your message",
+            prefillText = message.content ?: "",
+            positiveButtonText = "Save",
+            negativeButtonText = "Cancel",
+            onPositiveClick = { newContent ->
+                val updated = newContent.trim()
+
+                if (updated.isNotEmpty() && updated != message.content) {
+                    onEditMessage(message, updated)
                 }
+            },
+            onNegativeClick = {
+
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        )
     }
+
+
 
     private fun showDeleteConfirmation(context: android.content.Context, message: Message) {
-        AlertDialog.Builder(context)
-            .setTitle("Delete Message")
-            .setMessage("Are you sure you want to delete this message?")
-            .setPositiveButton("Delete") { _, _ ->
+        DialogUtils.showConfirmationDialog(
+            context,
+            "Delete Message",
+            "Are you sure you want to delete this message?",
+            positiveButtonText = "Delete",
+            negativeButtonText = "Cancel",
+            onPositiveClick = {
                 onDeleteMessage(message)
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        )
     }
 
     override fun getItemCount() = messages.size

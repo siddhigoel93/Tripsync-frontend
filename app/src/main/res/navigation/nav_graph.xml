@@ -403,6 +403,16 @@
         android:id="@+id/editProfileFragment"
         android:name="com.example.tripsync.home.EditProfileFragment"
         android:label="EditProfileFragment" />
+    <dialog
+        android:id="@+id/congratsDialogFragment"
+        android:name="com.example.tripsync.CongratsDialogFragment"
+        android:label="CongratsDialogFragment" >
+        <action
+            android:id="@+id/action_congratsDialogFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
+    </dialog>
 
 
 </navigation>

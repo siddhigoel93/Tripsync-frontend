@@ -1,6 +1,7 @@
 package com.example.tripsync
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.example.tripsync.adapters.ConversationsAdapter
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.ChatApi
 import com.example.tripsync.api.models.Conversation
+import com.example.tripsync.utils.DialogUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -43,7 +45,7 @@ class ChatFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
         swipeRefresh.setOnRefreshListener {
-            loadConversations()
+            loadConversations(showLoading = false)
         }
 
         val addButton = root.findViewById<ImageButton>(R.id.bottom_btn_add)
@@ -58,41 +60,44 @@ class ChatFragment : Fragment() {
         recycler.adapter = adapter
 
         // Initial load
-        loadConversations()
+        loadConversations(showLoading = true)
 
         return root
     }
 
     override fun onResume() {
         super.onResume()
-        // Reload conversations when returning to this fragment
-        loadConversations()
-        // Start auto-refresh
+        Log.d("ChatFragment", "onResume - reloading conversations")
+        loadConversations(showLoading = false)
         startAutoRefresh()
     }
 
     override fun onPause() {
         super.onPause()
-        // Stop auto-refresh when not visible
+        Log.d("ChatFragment", "onPause - stopping auto-refresh")
         stopAutoRefresh()
     }
 
     private fun showNewChatOptions() {
-        val options = arrayOf("New Chat", "New Group")
-        android.app.AlertDialog.Builder(requireContext())
-            .setTitle("Start a conversation")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> findNavController().navigate(R.id.action_chatFragment_to_searchUsersFragment)
-                    1 -> findNavController().navigate(R.id.action_chatFragment_to_newGroupFragment)
-                }
+        DialogUtils.showOptionsDialog(
+            context = requireContext(),
+            title = "Start a conversation",
+            options = arrayOf("New Chat", "New Group")
+        ) { which ->
+            when (which) {
+                0 -> findNavController().navigate(R.id.action_chatFragment_to_searchUsersFragment)
+                1 -> findNavController().navigate(R.id.action_chatFragment_to_newGroupFragment)
             }
-            .show()
+        }
     }
 
-    private fun loadConversations() {
+    private fun loadConversations(showLoading: Boolean = false) {
         lifecycleScope.launch {
             try {
+                if (showLoading) {
+                    swipeRefresh.isRefreshing = true
+                }
+
                 val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
                 val response = chatApi.getConversations()
 
@@ -100,6 +105,18 @@ class ChatFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     val conversationsList = response.body() ?: emptyList()
+
+                    Log.d("ChatFragment", "========================================")
+                    Log.d("ChatFragment", "Loaded ${conversationsList.size} conversations")
+                    conversationsList.forEachIndexed { index, conv ->
+                        Log.d("ChatFragment", "  [$index] ID: ${conv.id}")
+                        Log.d("ChatFragment", "       Name: ${conv.name}")
+                        Log.d("ChatFragment", "       IsGroup: ${conv.is_group}")
+                        Log.d("ChatFragment", "       Unread: ${conv.unread_count}")
+                        Log.d("ChatFragment", "       LastMsg: ${conv.last_message?.content?.take(30)}")
+                        Log.d("ChatFragment", "       Participants: ${conv.participants.size}")
+                    }
+                    Log.d("ChatFragment", "========================================")
 
                     if (conversationsList.isEmpty()) {
                         emptyState.visibility = View.VISIBLE
@@ -110,15 +127,22 @@ class ChatFragment : Fragment() {
                         adapter.updateList(conversationsList)
                     }
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to load chats",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatFragment", "Failed to load conversations: ${response.code()} - $errorBody")
+
+                    DialogUtils.showErrorDialog(
+                        context = requireContext(),
+                        message = "Failed to load chats: ${response.code()}"
+                    )
                 }
             } catch (e: Exception) {
                 swipeRefresh.isRefreshing = false
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("ChatFragment", "Error loading conversations", e)
+
+                DialogUtils.showErrorDialog(
+                    context = requireContext(),
+                    message = "Error: ${e.message ?: "Unknown error occurred"}"
+                )
             }
         }
     }
@@ -153,9 +177,10 @@ class ChatFragment : Fragment() {
 
         autoRefreshJob = viewLifecycleOwner.lifecycleScope.launch {
             while (isActive) {
-                delay(3000) // Refresh every 3 seconds
+                delay(5000) // Refresh every 5 seconds
                 if (!swipeRefresh.isRefreshing) {
-                    loadConversations()
+                    Log.d("ChatFragment", "Auto-refreshing conversations...")
+                    loadConversations(showLoading = false)
                 }
             }
         }

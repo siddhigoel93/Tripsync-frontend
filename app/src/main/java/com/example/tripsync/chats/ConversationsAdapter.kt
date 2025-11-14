@@ -24,7 +24,7 @@ class ConversationsAdapter(
         val name: TextView = view.findViewById(R.id.conversation_name)
         val lastMessage: TextView = view.findViewById(R.id.last_message)
         val timestamp: TextView = view.findViewById(R.id.timestamp)
-        val unreadBadge: TextView = view.findViewById(R.id.unread_badge)
+//        val unreadBadge: TextView = view.findViewById(R.id.unread_badge)
 //        val groupIndicatorCard: View = view.findViewById(R.id.group_indicator_card)
         val groupIndicator: ImageView = view.findViewById(R.id.group_indicator)
 
@@ -106,13 +106,13 @@ class ConversationsAdapter(
         holder.timestamp.text = formatTimestamp(conversation.updated_at)
 
         // Unread badge
-        val unreadCount = conversation.unread_count ?: 0
-        if (unreadCount > 0) {
-            holder.unreadBadge.visibility = View.VISIBLE
-            holder.unreadBadge.text = if (unreadCount > 99) "99+" else unreadCount.toString()
-        } else {
-            holder.unreadBadge.visibility = View.GONE
-        }
+//        val unreadCount = conversation.unread_count ?: 0
+//        if (unreadCount > 0) {
+//            holder.unreadBadge.visibility = View.VISIBLE
+//            holder.unreadBadge.text = if (unreadCount > 99) "99+" else unreadCount.toString()
+//        } else {
+//            holder.unreadBadge.visibility = View.GONE
+//        }
 
         holder.itemView.setOnClickListener {
             onConversationClick(conversation)

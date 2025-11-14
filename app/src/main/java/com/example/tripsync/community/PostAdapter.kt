@@ -13,12 +13,12 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.VideoView
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tripsync.R
 import com.example.tripsync.api.models.Post
 import com.example.tripsync.api.models.PostActionListener
+import com.example.tripsync.utils.DialogUtils
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -212,15 +212,16 @@ class PostAdapter(
     }
 
     private fun confirmAndDelete(context: Context, post: Post) {
-        AlertDialog.Builder(context)
-            .setTitle("Delete Post")
-            .setMessage("Are you sure you want to permanently delete this post?")
-            .setPositiveButton("Delete") { dialog, _ ->
+        DialogUtils.showConfirmationDialog(
+            context,
+            "Delete Post",
+            "Are you sure you want to permanently delete this post?",
+            positiveButtonText = "Delete",
+            negativeButtonText = "Cancel",
+            onPositiveClick = {
                 listener.onDelete(post.id)
-                dialog.dismiss()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        )
     }
 
     override fun getItemCount(): Int = posts.size

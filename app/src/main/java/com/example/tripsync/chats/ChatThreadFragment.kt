@@ -62,25 +62,32 @@ class ChatThreadFragment : Fragment() {
 
         Log.d("ChatThread", "Current User ID: $currentUserId")
 
+        // Initialize views
         messagesRecycler = view.findViewById(R.id.recycler_messages)
         messageInput = view.findViewById(R.id.message_edit_text)
         sendButton = view.findViewById(R.id.button_send)
         chatName = view.findViewById(R.id.toolbar_name)
         chatAvatar = view.findViewById(R.id.toolbar_profile)
 
-        menuButton = view.findViewById(R.id.toolbar_options)
+        // Find menu button (three dots) - adjust the ID based on your layout
+        menuButton = view.findViewById(R.id.toolbar_options) // or whatever ID you use
 
         val backButton = view.findViewById<ImageView>(R.id.toolbar_back)
 
+        // Set name
         chatName.text = name
 
+        // Setup back button
         backButton.setOnClickListener {
             findNavController().navigateUp()
         }
+
+        // Setup menu button to show options
         menuButton.setOnClickListener {
             showConversationOptions()
         }
 
+        // Setup RecyclerView
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
         messagesRecycler.layoutManager = layoutManager
@@ -94,10 +101,12 @@ class ChatThreadFragment : Fragment() {
         )
         messagesRecycler.adapter = adapter
 
+        // Setup send button
         sendButton.setOnClickListener {
             sendMessage()
         }
 
+        // Load messages immediately
         loadMessages(scrollToBottom = true, showToast = true)
 
         return view
@@ -105,7 +114,9 @@ class ChatThreadFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("ChatThread", "onResume - starting auto-refresh")
+        Log.d("ChatThread", "onResume - starting auto-refresh and reloading messages")
+        // Reload messages to mark them as read (backend should handle this automatically)
+        loadMessages(scrollToBottom = true, showToast = false)
         startAutoRefresh()
     }
 
@@ -118,25 +129,28 @@ class ChatThreadFragment : Fragment() {
     private fun showConversationOptions() {
         val options = arrayOf("Leave Conversation")
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Conversation Options")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> showLeaveConfirmation()
-                }
+        com.example.tripsync.utils.DialogUtils.showOptionsDialog(
+            requireContext(),
+            "Conversation Options",
+            options
+        ) { which ->
+            when (which) {
+                0 -> showLeaveConfirmation()
             }
-            .show()
+        }
     }
 
     private fun showLeaveConfirmation() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Leave Conversation")
-            .setMessage("Are you sure you want to leave this conversation? You will no longer receive messages from this chat.")
-            .setPositiveButton("Leave") { _, _ ->
+        com.example.tripsync.utils.DialogUtils.showConfirmationDialog(
+            requireContext(),
+            "Leave Conversation",
+            "Are you sure you want to leave this conversation? You will no longer receive messages from this chat.",
+            positiveButtonText = "Leave",
+            negativeButtonText = "Cancel",
+            onPositiveClick = {
                 leaveConversation()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        )
     }
 
     private fun leaveConversation() {

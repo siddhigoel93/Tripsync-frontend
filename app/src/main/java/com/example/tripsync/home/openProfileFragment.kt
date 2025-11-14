@@ -1,6 +1,5 @@
 package com.example.tripsync.home
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +15,7 @@ import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.SessionManager
 import com.example.tripsync.api.models.GetProfileResponse
+import com.example.tripsync.utils.DialogUtils
 import kotlinx.coroutines.launch
 
 class OpenProfileFragment : Fragment() {
@@ -62,7 +62,6 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun initViews(view: View) {
-
         nameField = view.findViewById(R.id.name)
         emailField = view.findViewById(R.id.email)
         contactField = view.findViewById(R.id.contact)
@@ -103,7 +102,6 @@ class OpenProfileFragment : Fragment() {
         profileScrollView.visibility = View.GONE
         noProfileView.visibility = View.VISIBLE
 
-        // Optional: Display a specific error message if needed, e.g. in a hidden TextView within noProfileView
         Log.e("OpenProfile", "Profile fetch failed: $errorMessage")
         Toast.makeText(requireContext(), "Failed to load profile. $errorMessage", Toast.LENGTH_LONG).show()
     }
@@ -116,20 +114,21 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun showDeleteConfirmationDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Delete Account")
-            .setMessage("Are you sure you want to permanently delete your profile and account? This action cannot be undone.")
-            .setPositiveButton("Delete") { _, _ ->
+        DialogUtils.showConfirmationDialog(
+            requireContext(),
+            "Delete Account",
+            "Are you sure you want to permanently delete your profile and account? This action cannot be undone.",
+            positiveButtonText = "Delete",
+            negativeButtonText = "Cancel",
+            onPositiveClick = {
                 deleteUserAccount()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        )
     }
 
     private fun deleteUserAccount() {
         lifecycleScope.launch {
             try {
-                // Show loading state
                 Toast.makeText(requireContext(), "Deleting account...", Toast.LENGTH_SHORT).show()
 
                 val response = ApiClient.getTokenService(requireContext()).deleteProfile()
@@ -140,7 +139,6 @@ class OpenProfileFragment : Fragment() {
                     if (body?.success == true) {
                         Log.d("OpenProfile", "Account deleted successfully")
 
-                        // Clear ALL data including auth tokens
                         SessionManager.clearAllData(requireContext())
 
                         Toast.makeText(
@@ -149,7 +147,6 @@ class OpenProfileFragment : Fragment() {
                             Toast.LENGTH_LONG
                         ).show()
 
-                        // Navigate to Login and clear backstack
                         findNavController().navigate(R.id.action_openProfileFragment_to_loginFragment)
                     } else {
                         val errorMessage = body?.message ?: "Unable to delete account"
@@ -216,11 +213,9 @@ class OpenProfileFragment : Fragment() {
     private fun performLogout() {
         SessionManager.logout(requireContext())
 
-        // Navigate to login
         findNavController().navigate(R.id.action_openProfileFragment_to_loginFragment)
         Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
     }
-
 
     private fun fetchProfile() {
         lifecycleScope.launch {
@@ -258,7 +253,6 @@ class OpenProfileFragment : Fragment() {
 
                         bindProfile(profile, userEmail)
                     } else {
-                        // Response successful but profile data is null/empty
                         showNoProfileView("Profile data is missing.")
                     }
                 } else {
@@ -272,10 +266,9 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun bindProfile(profile: GetProfileResponse.ProfileData, userEmail: String?) {
-        // Display USER data (not emergency contact data!)
         nameField.text = "${profile.fname ?: ""} ${profile.lname ?: ""}".trim()
-        emailField.text = userEmail ?: "No email" // User's email
-        contactField.text = profile.phone_number ?: "No phone" // User's phone
+        emailField.text = userEmail ?: "No email"
+        contactField.text = profile.phone_number ?: "No phone"
         bioField.text = profile.bio ?: "No bio available"
         bloodGroupField.text = profile.bgroup ?: "Not specified"
         allergiesField.text = profile.allergies ?: "None"
@@ -289,7 +282,6 @@ class OpenProfileFragment : Fragment() {
             emergencyRelation.setSelection(index)
         }
 
-        // Set gender
         when (profile.gender?.lowercase()) {
             "male" -> {
                 genderM.alpha = 1f
@@ -324,7 +316,6 @@ class OpenProfileFragment : Fragment() {
             card.alpha = 0.3f
         }
 
-        // Highlight ONLY the selected preference
         val selectedCard = when (preference?.lowercase()?.trim()) {
             "adventure" -> cardAdventure
             "relaxation" -> cardRelaxation
