@@ -143,7 +143,11 @@
         android:id="@+id/fragment_connections_tripmates"
         android:name="com.example.tripsync.ConnectionsTripmatesFragment"
         android:label="ConnectionsTripmates"
-        tools:layout="@layout/fragment_connections_tripmates" />
+        tools:layout="@layout/fragment_connections_tripmates">
+        <action
+            android:id="@+id/action_fragment_connections_tripmates_to_recievedRequestsFragment"
+            app:destination="@id/recievedRequestsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/emergencyFragment"
@@ -361,5 +365,11 @@
             app:argType="integer"
             android:defaultValue="-1" />
     </fragment>
+
+    <fragment
+        android:id="@+id/recievedRequestsFragment"
+        android:name="com.example.tripsync.recieved_RequestsFragment"
+        android:label="ReceivedRequests"
+        tools:layout="@layout/recieved_fragment_received_requests" />
 
 </navigation>

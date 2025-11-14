@@ -47,6 +47,11 @@ class ConnectionsTripmatesFragment : Fragment() {
             catch (_: Exception) {}
         }
 
+        val bellBtn = root.findViewById<ImageButton>(R.id.btn_bell)
+        bellBtn?.setOnClickListener {
+            findNavController().navigate(R.id.action_fragment_connections_tripmates_to_recievedRequestsFragment)
+        }
+
         setupRecyclerViews()
         setupSearchHandlers()
         loadMyTripmates()
