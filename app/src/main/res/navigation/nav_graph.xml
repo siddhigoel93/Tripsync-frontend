@@ -15,7 +15,9 @@
             app:destination="@id/fragment_otp" />
         <action
             android:id="@+id/action_fragment_signup_to_login"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -25,7 +27,9 @@
         tools:layout="@layout/fragment_otp">
         <action
             android:id="@+id/action_fragment_otp_to_login"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_fragment_otp_to_welcomeFragment"
             app:destination="@id/welcomeFragment"
@@ -72,7 +76,9 @@
         android:label="Reset Password">
         <action
             android:id="@+id/action_resetPasswordFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_resetPasswordFragment_to_resetOTP"
             app:destination="@id/resetOTP" />
@@ -84,7 +90,9 @@
         android:label="Forgot Password">
         <action
             android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="false"/>
         <action
             android:id="@+id/action_forgotPasswordFragment_to_resetPasswordFragment"
             app:destination="@id/resetPasswordFragment" />
@@ -173,7 +181,9 @@
             app:destination="@id/fragment_personal_details" />
         <action
             android:id="@+id/action_welcomeFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/fragment_personal_details"
@@ -192,7 +202,9 @@
             app:destination="@id/preferencesFragment" />
         <action
             android:id="@+id/action_contactVerifyFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -322,7 +334,10 @@
         android:label="openProfileFragment" >
         <action
             android:id="@+id/action_openProfileFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true"/>
         <action
             android:id="@+id/action_openProfileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />

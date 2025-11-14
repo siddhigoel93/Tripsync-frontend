@@ -131,7 +131,7 @@ class LoginFragment : Fragment() {
 
                         requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE).edit()
                             .putString("currentUserEmail" , emailText)
-                            .putInt("self_id", body.data?.user?.id ?: -1)
+                            .putString("self_id", body.data?.user?.id.toString())
                             .apply()
 
                         verified.visibility = View.VISIBLE
