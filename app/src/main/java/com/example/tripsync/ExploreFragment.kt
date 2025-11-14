@@ -21,9 +21,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.AuthService
+import com.example.tripsync.api.SessionManager
 import com.example.tripsync.api.models.TrendingPlace
 import com.example.tripsync.api.models.TravelStory
 import com.example.tripsync.api.models.TravelStoryAdapter
+import com.example.tripsync.api.models.WeatherResponse
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
@@ -36,15 +38,14 @@ import android.util.Log
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import com.example.tripsync.api.models.WeatherResponse
 import kotlinx.coroutines.Dispatchers
 
 class ExploreFragment : Fragment() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    lateinit var city : TextView
-    lateinit var sos_btn : MaterialButton
-  private val args: ExploreFragmentArgs by navArgs()
+    private lateinit var city: TextView
+    private lateinit var sos_btn: MaterialButton
+    private val args: ExploreFragmentArgs by navArgs()
     private lateinit var storiesAdapter: TravelStoryAdapter
 
     override fun onCreateView(
@@ -55,57 +56,82 @@ class ExploreFragment : Fragment() {
         city = view.findViewById(R.id.weather_subtitle)
         sos_btn = view.findViewById(R.id.sos_btn)
 
+        // Setup SOS button click listener
+        sos_btn.setOnClickListener {
+            navigateToEmergencySos()
+        }
 
-            sos_btn.setOnClickListener {
-                findNavController().navigate(R.id.action_homeFragment_to_emergencySosFragment)
+        view.findViewById<CardView>(R.id.card_emergency_sos).setOnClickListener {
+            navigateToEmergencySos()
+        }
+
+        // Complete profile button
+        view.findViewById<MaterialButton>(R.id.complete_profile_button).setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
+        }
+
+        // Menu icon click
+        view.findViewById<ImageView>(R.id.menu_icon).setOnClickListener {
+            val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
+            if (drawerLayout != null) {
+                drawerLayout.openDrawer(GravityCompat.END)
+            } else {
+                Toast.makeText(requireContext(), "DrawerLayout not found", Toast.LENGTH_SHORT).show()
             }
+        }
 
-            view.findViewById<MaterialButton>(R.id.complete_profile_button).setOnClickListener {
-                findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
-            }
+        // Chat button
+        val chatButton = view.findViewById<ImageButton>(R.id.toolbar_btn_chat)
+        chatButton.setOnClickListener {
+            findNavController().navigate(R.id.chatFragment)
+        }
 
-            view.findViewById<ImageView>(R.id.menu_icon).setOnClickListener {
-                val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_layout)
-                if (drawerLayout != null) {
-                    drawerLayout.openDrawer(GravityCompat.END)
-                } else {
-                    Toast.makeText(requireContext(), "DrawerLayout not found", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-
-            val chatButton = view.findViewById<ImageButton>(R.id.toolbar_btn_chat)
-
-            chatButton.setOnClickListener {
-                findNavController().navigate(R.id.chatFragment)
-            }
-
-            view.findViewById<CardView>(R.id.card_ai_planner).setOnClickListener {
+        // AI Planner card with profile check
+        view.findViewById<CardView>(R.id.card_ai_planner).setOnClickListener {
+            if (SessionManager.isProfileCompleted(requireContext())) {
                 findNavController().navigate(R.id.action_homeFragment_to_AIItinearyPlannerFragment)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Please complete your profile to create itineraries",
+                    Toast.LENGTH_LONG
+                ).show()
             }
+        }
 
+        // Setup Travel Stories RecyclerView
         val storiesRv = view.findViewById<RecyclerView>(R.id.travel_stories_recycler_view)
         storiesRv.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
         storiesRv.overScrollMode = View.OVER_SCROLL_NEVER
 
-            val placeholderList = listOf(
-                TravelStory(cityName = "Loading...", imageUrl = "https://via.placeholder.com/300"),
-                TravelStory(cityName = "Loading...", imageUrl = "https://via.placeholder.com/300"),
-                TravelStory(cityName = "Loading...", imageUrl = "https://via.placeholder.com/300"),
-                TravelStory(cityName = "Loading...", imageUrl = "https://via.placeholder.com/300")
-            )
+        val placeholderList = listOf(
+            TravelStory(cityName = "Loading...", imageUrl = "https://via.placeholder.com/300"),
+            TravelStory(cityName = "Loading...", imageUrl = "https://via.placeholder.com/300"),
+            TravelStory(cityName = "Loading...", imageUrl = "https://via.placeholder.com/300"),
+            TravelStory(cityName = "Loading...", imageUrl = "https://via.placeholder.com/300")
+        )
 
-            storiesAdapter = TravelStoryAdapter(placeholderList) { story ->
-                Toast.makeText(requireContext(), "Clicked ${story.cityName}", Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-            storiesRv.adapter = storiesAdapter
-
-            fetchTrendingPlacesAndPopulate(requireContext(), storiesRv)
-
-            return view
+        storiesAdapter = TravelStoryAdapter(placeholderList) { story ->
+            Toast.makeText(requireContext(), "Clicked ${story.cityName}", Toast.LENGTH_SHORT).show()
         }
+
+        storiesRv.adapter = storiesAdapter
+        fetchTrendingPlacesAndPopulate(requireContext(), storiesRv)
+
+        return view
+    }
+
+    private fun navigateToEmergencySos() {
+        if (SessionManager.isProfileCompleted(requireContext())) {
+            findNavController().navigate(R.id.action_homeFragment_to_emergencySosFragment)
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Please complete your profile to access Emergency SOS",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     private fun fetchTrendingPlacesAndPopulate(context: Context, recyclerView: RecyclerView) {
         lifecycleScope.launch {
@@ -126,7 +152,7 @@ class ExploreFragment : Fragment() {
                             findNavController().navigate(R.id.travelStoryDetailFragment, bundle)
                         } catch (_: Exception) {
                             try {
-                                val frag = com.example.tripsync.TravelStoryDetailFragment().apply {
+                                val frag = TravelStoryDetailFragment().apply {
                                     arguments = Bundle().apply {
                                         putInt("place_id", story.id ?: -1)
                                     }
@@ -158,9 +184,12 @@ class ExploreFragment : Fragment() {
         val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
         val chatbot = view.findViewById<ImageButton>(R.id.toolbar_btn_chat)
 
-        val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
-        val savedUrl = sharedPrefs.getString("userAvatarUrl", null)
+        view.findViewById<MaterialButton>(R.id.sos_btn).bringToFront()
+
+
+        // Use SessionManager instead of direct SharedPreferences access
+        val isProfileCompleted = SessionManager.isProfileCompleted(requireContext())
+        val savedUrl = SessionManager.getAvatarUrl(requireContext())
         updateExploreProfileImage(savedUrl)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
@@ -169,7 +198,7 @@ class ExploreFragment : Fragment() {
         customHeader.visibility = if (isProfileCompleted) View.GONE else View.VISIBLE
 
         if (args.showHeader) {
-            val avatarUrl = sharedPrefs.getString("userAvatarUrl", null)
+            val avatarUrl = SessionManager.getAvatarUrl(requireContext())
             val profileImageView = view.findViewById<ImageView>(R.id.menu_icon)
             if (!avatarUrl.isNullOrEmpty()) {
                 Glide.with(this)
@@ -190,6 +219,8 @@ class ExploreFragment : Fragment() {
         appBarLayout.bringToFront()
 
         chatbot.bringToFront()
+        customHeader.setOnTouchListener { _, _ -> false }
+
 
         chatbot.setOnClickListener {
             findNavController().navigate(R.id.AIchatFragment)
@@ -204,37 +235,33 @@ class ExploreFragment : Fragment() {
 
     private fun fetchWeather(location: String) {
         lifecycleScope.launch {
-                try {
-                    if (!isAdded) return@launch
+            try {
+                if (!isAdded) return@launch
 
-                    val api = ApiClient.getAuthService(requireContext())
-                    val weatherResponse: WeatherResponse = withContext(Dispatchers.IO) {
-                        api.getWeather(location)
+                val api = ApiClient.getAuthService(requireContext())
+                val weatherResponse: WeatherResponse = withContext(Dispatchers.IO) {
+                    api.getWeather(location)
+                }
 
-                    }
+                if (!isAdded || view == null) return@launch
+                val weather = weatherResponse.data
+                view?.findViewById<TextView>(R.id.temp_yesterday)?.text = "${weather.wind} km/h"
+                view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.chance_of_rain}%"
+                view?.findViewById<TextView>(R.id.temp_tomorrow)?.text = "${weather.temperature}°"
 
-                    if (!isAdded || view == null) return@launch
-                    val weather = weatherResponse.data
-                    view?.findViewById<TextView>(R.id.temp_yesterday)?.text = "${weather.wind} km/h"
-                    view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.chance_of_rain}%"
-                    view?.findViewById<TextView>(R.id.temp_tomorrow)?.text = "${weather.temperature}°"
-
-
-                } catch (e: Exception) {
-                    if (isAdded && context != null) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Error: ${e.localizedMessage}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+            } catch (e: Exception) {
+                if (isAdded && context != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error: ${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-
+        }
     }
 
     fun updateExploreProfileImage(url: String?) {
-
         if (!isAdded || view == null) return
 
         val exploreProfileImage = requireView().findViewById<ImageView>(R.id.menu_icon)
@@ -249,6 +276,7 @@ class ExploreFragment : Fragment() {
             exploreProfileImage.setImageResource(R.drawable.profile)
         }
     }
+
     private fun getUserLocation() {
         when {
             ContextCompat.checkSelfPermission(
@@ -264,7 +292,7 @@ class ExploreFragment : Fragment() {
                         val cityName = getCityNameFromLocation(lat, lon)
                         Log.d("Location", "City: $cityName")
                         fetchWeather(cityName ?: "Delhi")
-                        city.text=cityName
+                        city.text = cityName
                     } else {
                         fetchWeather("Delhi")
                     }
@@ -275,6 +303,7 @@ class ExploreFragment : Fragment() {
             }
         }
     }
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -284,6 +313,7 @@ class ExploreFragment : Fragment() {
                 fetchWeather("Delhi")
             }
         }
+
     private fun getCityNameFromLocation(lat: Double, lon: Double): String? {
         return try {
             val geocoder = android.location.Geocoder(requireContext(), java.util.Locale.getDefault())
@@ -294,7 +324,4 @@ class ExploreFragment : Fragment() {
             null
         }
     }
-
-
-
 }

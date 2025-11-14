@@ -31,6 +31,7 @@ object SessionManager {
     private const val KEY_PREFERENCE = "preference"
     private const val KEY_BLOOD_GROUP = "bgroup"
     private const val KEY_ALLERGIES = "allergies"
+    private const val KEY_PROFILE_COMPLETED = "profile_completed"
 
     private fun getAuthPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(AUTH_PREF, Context.MODE_PRIVATE)
@@ -157,6 +158,30 @@ object SessionManager {
 
     fun getAllergies(context: Context): String? {
         return getAppPrefs(context).getString(KEY_ALLERGIES, null)
+    }
+
+    // ============ Profile Completion Methods ============
+
+    fun isProfileCompleted(context: Context): Boolean {
+        return getAppPrefs(context).getBoolean(KEY_PROFILE_COMPLETED, false)
+    }
+
+    fun setProfileCompleted(context: Context, completed: Boolean) {
+        getAppPrefs(context).edit {
+            putBoolean(KEY_PROFILE_COMPLETED, completed)
+        }
+    }
+
+    /**
+     * Check if all required profile fields are filled and update completion status
+     * Required fields: firstName, lastName, email, phone
+     */
+    fun checkAndUpdateProfileStatus(context: Context) {
+        val hasRequiredFields = !getFirstName(context).isNullOrEmpty() &&
+                !getLastName(context).isNullOrEmpty() &&
+                !getEmail(context).isNullOrEmpty() &&
+                !getPhone(context).isNullOrEmpty()
+        setProfileCompleted(context, hasRequiredFields)
     }
 
     // ============ Utility Methods ============
