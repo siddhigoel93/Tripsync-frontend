@@ -30,7 +30,7 @@ class MessagesAdapter(
     }
 
     class ReceivedMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val senderAvatar: ShapeableImageView = view.findViewById(R.id.sender_avatar)
+//        val senderAvatar: ShapeableImageView = view.findViewById(R.id.sender_avatar)
         val senderName: TextView = view.findViewById(R.id.sender_name)
         val messageText: TextView = view.findViewById(R.id.message_text)
         val messageTime: TextView = view.findViewById(R.id.message_time)

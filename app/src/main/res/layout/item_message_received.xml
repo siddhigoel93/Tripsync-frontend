@@ -6,15 +6,7 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/sender_avatar"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/placeholder_image"
-        android:scaleType="centerCrop"
-        app:shapeAppearanceOverlay="@style/CircleImageView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/message_bubble"
@@ -25,7 +17,7 @@
         android:background="@drawable/message_received"
         android:padding="12dp"
         android:maxWidth="280dp"
-        app:layout_constraintStart_toEndOf="@id/sender_avatar"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView

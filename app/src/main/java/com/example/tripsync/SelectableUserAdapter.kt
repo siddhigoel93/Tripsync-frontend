@@ -57,16 +57,20 @@ class SelectableUsersAdapter(
             holder.avatar.setImageResource(R.drawable.placeholder_image)
         }
 
+        // Remove previous listeners to avoid multiple triggers
+        holder.checkbox.setOnCheckedChangeListener(null)
+
         // Set checkbox state
         holder.checkbox.isChecked = selectedUsers.contains(user)
 
-        // Handle selection
+        // Handle item click
         holder.itemView.setOnClickListener {
-            val isNowSelected = !holder.checkbox.isChecked
-            holder.checkbox.isChecked = isNowSelected
-            onSelectionChanged(user, isNowSelected)
+            val newState = !holder.checkbox.isChecked
+            holder.checkbox.isChecked = newState
+            onSelectionChanged(user, newState)
         }
 
+        // Handle checkbox click
         holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
             onSelectionChanged(user, isChecked)
         }

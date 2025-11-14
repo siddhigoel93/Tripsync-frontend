@@ -10,9 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -71,16 +69,19 @@ class NewGroupFragment : Fragment() {
 
         participantsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = SelectableUsersAdapter(emptyList(), selectedUsers) { user, isSelected ->
+            Log.d("NewGroup", "User ${user.fname} ${user.lname} selected: $isSelected")
             if (isSelected) {
                 selectedUsers.add(user)
             } else {
                 selectedUsers.remove(user)
             }
+            Log.d("NewGroup", "Total selected: ${selectedUsers.size}")
             checkCreateButtonState()
         }
         participantsRecyclerView.adapter = adapter
 
         setupSearchListener()
+        checkCreateButtonState()
 
         return view
     }
@@ -92,7 +93,7 @@ class NewGroupFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
-                    delay(2500)
+                    delay(500) // Reduced from 2500ms
                     val query = s.toString().trim()
                     if (query.isNotEmpty()) {
                         searchUsers(query)
@@ -109,6 +110,8 @@ class NewGroupFragment : Fragment() {
     private fun searchUsers(query: String) {
         lifecycleScope.launch {
             try {
+                Log.d("NewGroup", "Searching for: $query")
+
                 val userApi = ApiClient.createService(requireContext(), UserApi::class.java)
 
                 val parts = query.trim().split("\\s+".toRegex(), limit = 2)
@@ -120,8 +123,10 @@ class NewGroupFragment : Fragment() {
 
                 if (response.isSuccessful) {
                     val users = response.body()?.data?.users ?: emptyList()
+                    Log.d("NewGroup", "Found ${users.size} users")
                     adapter.updateUsers(users)
                 } else {
+                    Log.e("NewGroup", "Search failed: ${response.code()}")
                     Toast.makeText(requireContext(), "Please enter full name", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
@@ -137,6 +142,8 @@ class NewGroupFragment : Fragment() {
         val hasEnoughParticipants = selectedUsers.size >= 2
 
         createButton.isEnabled = hasValidName && hasEnoughParticipants
+
+        Log.d("NewGroup", "Button state: name=$hasValidName, participants=${selectedUsers.size}, enabled=${createButton.isEnabled}")
     }
 
     private fun createGroup() {
@@ -156,18 +163,26 @@ class NewGroupFragment : Fragment() {
 
         lifecycleScope.launch {
             try {
+                Log.d("NewGroup", "Creating group: $groupName with ${selectedUsers.size} participants")
+
                 val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
 
+                val participantIds = selectedUsers.map { it.id }
+                Log.d("NewGroup", "Participant IDs: $participantIds")
+
                 val request = CreateConversationRequest(
-                    participant_ids = selectedUsers.map { it.id },
+                    participant_ids = participantIds,
                     name = groupName
                 )
 
                 val response = chatApi.createConversation(request)
 
+                Log.d("NewGroup", "Create response code: ${response.code()}")
+
                 if (response.isSuccessful) {
-                    val conversation = response.body()?.data
+                    val conversation = response.body()
                     if (conversation != null) {
+                        Log.d("NewGroup", "Group created successfully! ID: ${conversation.id}")
                         Toast.makeText(requireContext(), "Group created!", Toast.LENGTH_SHORT).show()
 
                         val bundle = Bundle().apply {
@@ -180,13 +195,19 @@ class NewGroupFragment : Fragment() {
                             R.id.action_newGroupFragment_to_chatThreadFragment,
                             bundle
                         )
+                    } else {
+                        Log.e("NewGroup", "Response body is null")
+                        Toast.makeText(requireContext(), "Failed to create group", Toast.LENGTH_SHORT).show()
+                        createButton.isEnabled = true
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to create group", Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("NewGroup", "Failed: ${response.code()} - $errorBody")
+                    Toast.makeText(requireContext(), "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
                     createButton.isEnabled = true
                 }
             } catch (e: Exception) {
-                Log.e("NewGroup", "Error: ${e.message}", e)
+                Log.e("NewGroup", "Error creating group", e)
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 createButton.isEnabled = true
             }

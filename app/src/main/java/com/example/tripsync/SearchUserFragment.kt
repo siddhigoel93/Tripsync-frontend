@@ -21,8 +21,8 @@ import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.ChatApi
 import com.example.tripsync.api.UserApi
 import com.example.tripsync.api.UserSearchRequest
+import com.example.tripsync.api.models.Conversation
 import com.example.tripsync.api.models.CreateConversationRequest
-import com.example.tripsync.api.models.CreateConversationResponse
 import com.example.tripsync.api.models.UserSearchResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -69,7 +69,7 @@ class SearchUsersFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchJob?.cancel()
                 searchJob = lifecycleScope.launch {
-                    delay(500) // debounce
+                    delay(500)
                     val query = s.toString().trim()
                     if (query.isNotEmpty()) {
                         searchUsers(query)
@@ -127,7 +127,6 @@ class SearchUsersFragment : Fragment() {
                 val existingConversations = try {
                     val listResponse = chatApi.getConversations()
                     if (listResponse.isSuccessful) {
-                        // API returns List<Conversation> directly
                         listResponse.body() ?: emptyList()
                     } else {
                         emptyList()
@@ -160,8 +159,7 @@ class SearchUsersFragment : Fragment() {
                     Log.d("CreateConversation", "Create response code: ${response.code()}")
 
                     if (response.isSuccessful) {
-                        val responseBody = response.body()
-                        val conversation = responseBody?.data
+                        val conversation = response.body()
 
                         if (conversation != null) {
                             conversationId = conversation.id
@@ -171,7 +169,7 @@ class SearchUsersFragment : Fragment() {
                             progressBar.visibility = View.GONE
                             Toast.makeText(
                                 requireContext(),
-                                responseBody?.message ?: "Failed to create conversation",
+                                "Failed to create conversation",
                                 Toast.LENGTH_SHORT
                             ).show()
                             return@launch
@@ -183,8 +181,7 @@ class SearchUsersFragment : Fragment() {
                             Log.d("CreateConversation", "409 error body: $errorBody")
 
                             val gson = com.google.gson.Gson()
-                            val errorResponse = gson.fromJson(errorBody, CreateConversationResponse::class.java)
-                            val existingConv = errorResponse?.data
+                            val existingConv = gson.fromJson(errorBody, Conversation::class.java)
 
                             if (existingConv != null) {
                                 conversationId = existingConv.id
@@ -233,6 +230,7 @@ class SearchUsersFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("name", displayName)
                     putInt("conversationId", conversationId)
+                    putBoolean("isGroup", false)
                 }
 
                 val message = if (isNewConversation) "Conversation created" else "Opening conversation"

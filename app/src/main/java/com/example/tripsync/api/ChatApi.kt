@@ -5,14 +5,14 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ChatApi {
-    // This endpoint returns array directly, not wrapped in response object
+    // Conversations
     @GET("/api/chat/conversations/")
     suspend fun getConversations(): Response<List<Conversation>>
 
     @POST("/api/chat/conversations/")
     suspend fun createConversation(
         @Body body: CreateConversationRequest
-    ): Response<CreateConversationResponse>
+    ): Response<Conversation>
 
     @GET("/api/chat/conversations/{id}/")
     suspend fun getConversationDetails(@Path("id") conversationId: Int): Response<Conversation>
@@ -20,7 +20,26 @@ interface ChatApi {
     @DELETE("/api/chat/conversations/{id}/")
     suspend fun leaveConversation(@Path("id") conversationId: Int): Response<Unit>
 
-    // These endpoints also return arrays directly
+    // Group-specific endpoints
+    @PATCH("/api/chat/conversations/{id}/")
+    suspend fun updateGroupInfo(
+        @Path("id") conversationId: Int,
+        @Body request: UpdateGroupRequest
+    ): Response<Conversation>
+
+    @POST("/api/chat/conversations/{id}/participants/")
+    suspend fun addParticipants(
+        @Path("id") conversationId: Int,
+        @Body request: AddParticipantsRequest
+    ): Response<Conversation>
+
+    @DELETE("/api/chat/conversations/{id}/participants/{participant_id}/")
+    suspend fun removeParticipant(
+        @Path("id") conversationId: Int,
+        @Path("participant_id") participantId: Int
+    ): Response<Unit>
+
+    // Messages
     @GET("/api/chat/conversations/{conversation_id}/messages/")
     suspend fun getMessages(@Path("conversation_id") conversationId: Int): Response<List<Message>>
 

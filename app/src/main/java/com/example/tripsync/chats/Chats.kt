@@ -1,15 +1,6 @@
 package com.example.tripsync.api.models
 
-data class User(
-    val id: Int,
-    val email: String,
-    val name: String? = null,
-    val first_name: String? = null,
-    val last_name: String? = null,
-    val profile_picture: String? = null
-)
-
-
+// Keep your existing models
 data class Conversation(
     val id: Int,
     val name: String?,
@@ -19,26 +10,40 @@ data class Conversation(
     val last_message: Message? = null,
     val unread_count: Int? = null,
     val is_group: Boolean? = false,
-    val created_at: String? = null
+    val created_at: String? = null,
+    val created_by: Int? = null,
+    val group_avatar: String? = null
 )
 
 data class Participant(
     val id: Int,
     val email: String,
-    val name: String? = null
+    val name: String? = null,
+    val avatar: String? = null,
+    val is_admin: Boolean? = false
 )
 
 data class Message(
     val id: Int,
     val content: String,
     val sender: MessageSender,
-    val timestamp: String
+    val timestamp: String,
+    val is_edited: Boolean? = false,
+    val attachments: List<Attachment>? = null
 )
 
 data class MessageSender(
     val id: Int,
     val email: String,
-    val name: String? = null
+    val name: String? = null,
+    val avatar: String? = null
+)
+
+data class Attachment(
+    val id: Int,
+    val file_url: String,
+    val file_type: String,
+    val file_name: String
 )
 
 data class CreateConversationRequest(
@@ -46,23 +51,32 @@ data class CreateConversationRequest(
     val name: String? = null
 )
 
+data class AddParticipantsRequest(
+    val participant_ids: List<Int>
+)
+
+data class RemoveParticipantRequest(
+    val participant_id: Int
+)
+
+data class UpdateGroupRequest(
+    val name: String? = null,
+    val group_avatar: String? = null
+)
+
 data class SendMessageRequest(
     val content: String
 )
 
-data class CreateConversationResponse(
-    val status: String?,
-    val message: String?,
-    val data: Conversation?
-)
+// REMOVED - Not needed since API returns Conversation directly
+// data class CreateConversationResponse(
+//     val status: String?,
+//     val message: String?,
+//     val data: Conversation?
+// )
 
 data class MessagesResponse(
     val status: String?,
     val message: String?,
     val data: List<Message>?
-)
-data class ConversationsListResponse(
-    val status: String?,
-    val message: String?,
-    val data: List<Conversation>?
 )
