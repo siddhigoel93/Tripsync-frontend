@@ -23,14 +23,6 @@ data class Participant(
     val is_admin: Boolean? = false
 )
 
-data class Message(
-    val id: Int,
-    val content: String,
-    val sender: MessageSender,
-    val timestamp: String,
-    val is_edited: Boolean? = false,
-    val attachments: List<Attachment>? = null
-)
 
 data class MessageSender(
     val id: Int,
@@ -79,4 +71,18 @@ data class MessagesResponse(
     val status: String?,
     val message: String?,
     val data: List<Message>?
+)
+
+data class Message(
+    val id: Int,
+    val content: String,
+    val sender: MessageSender,
+    val timestamp: String,
+    val is_edited: Boolean? = false,
+    val edited_at: String? = null,
+    val attachments: List<Attachment>? = null
+)
+
+data class EditMessageRequest(
+    val content: String
 )

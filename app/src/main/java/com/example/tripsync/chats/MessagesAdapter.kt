@@ -1,22 +1,23 @@
 package com.example.tripsync
 
+import android.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.tripsync.R
 import com.example.tripsync.api.models.Message
-import com.google.android.material.imageview.ShapeableImageView
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MessagesAdapter(
     private var messages: MutableList<Message>,
     private val currentUserId: Int,
-    private val isGroup: Boolean
+    private val isGroup: Boolean,
+    private val onEditMessage: (Message, String) -> Unit,
+    private val onDeleteMessage: (Message) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -27,13 +28,14 @@ class MessagesAdapter(
     class SentMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val messageText: TextView = view.findViewById(R.id.message_text)
         val messageTime: TextView = view.findViewById(R.id.message_time)
+        val editedIndicator: TextView = view.findViewById(R.id.edited_indicator)
     }
 
     class ReceivedMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-//        val senderAvatar: ShapeableImageView = view.findViewById(R.id.sender_avatar)
         val senderName: TextView = view.findViewById(R.id.sender_name)
         val messageText: TextView = view.findViewById(R.id.message_text)
         val messageTime: TextView = view.findViewById(R.id.message_time)
+        val editedIndicator: TextView = view.findViewById(R.id.edited_indicator)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -68,11 +70,36 @@ class MessagesAdapter(
             is SentMessageViewHolder -> {
                 holder.messageText.text = message.content
                 holder.messageTime.text = formatTime(message.timestamp)
+
+                // Show edited indicator
+                if (message.is_edited == true) {
+                    holder.editedIndicator.visibility = View.VISIBLE
+                    val editedTime = message.edited_at?.let { formatTime(it) } ?: ""
+                    holder.editedIndicator.text = "Edited $editedTime"
+                } else {
+                    holder.editedIndicator.visibility = View.GONE
+                }
+
+                // Long press to show options (only for sent messages)
+                holder.itemView.setOnLongClickListener {
+                    showMessageOptions(holder.itemView.context, message)
+                    true
+                }
+
                 Log.d("MessagesAdapter", "Binding SENT message: ${message.content}")
             }
             is ReceivedMessageViewHolder -> {
                 holder.messageText.text = message.content
                 holder.messageTime.text = formatTime(message.timestamp)
+
+                // Show edited indicator
+                if (message.is_edited == true) {
+                    holder.editedIndicator.visibility = View.VISIBLE
+                    val editedTime = message.edited_at?.let { formatTime(it) } ?: ""
+                    holder.editedIndicator.text = "Edited $editedTime"
+                } else {
+                    holder.editedIndicator.visibility = View.GONE
+                }
 
                 // Show sender name only in group chats
                 if (isGroup) {
@@ -84,21 +111,52 @@ class MessagesAdapter(
                     holder.senderName.visibility = View.GONE
                 }
 
-                // Load avatar
-//                val avatarUrl = message.sender.avatar
-//                if (!avatarUrl.isNullOrEmpty()) {
-//                    Glide.with(holder.itemView.context)
-//                        .load(avatarUrl)
-//                        .placeholder(R.drawable.placeholder_image)
-//                        .error(R.drawable.placeholder_image)
-//                        .into(holder.senderAvatar)
-//                } else {
-//                    holder.senderAvatar.setImageResource(R.drawable.placeholder_image)
-//                }
-
                 Log.d("MessagesAdapter", "Binding RECEIVED message: ${message.content}")
             }
         }
+    }
+
+    private fun showMessageOptions(context: android.content.Context, message: Message) {
+        val options = arrayOf("Edit", "Delete")
+
+        AlertDialog.Builder(context)
+            .setTitle("Message Options")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> showEditDialog(context, message)
+                    1 -> showDeleteConfirmation(context, message)
+                }
+            }
+            .show()
+    }
+
+    private fun showEditDialog(context: android.content.Context, message: Message) {
+        val input = EditText(context)
+        input.setText(message.content)
+        input.setSelection(message.content.length)
+
+        AlertDialog.Builder(context)
+            .setTitle("Edit Message")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val newContent = input.text.toString().trim()
+                if (newContent.isNotEmpty() && newContent != message.content) {
+                    onEditMessage(message, newContent)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showDeleteConfirmation(context: android.content.Context, message: Message) {
+        AlertDialog.Builder(context)
+            .setTitle("Delete Message")
+            .setMessage("Are you sure you want to delete this message?")
+            .setPositiveButton("Delete") { _, _ ->
+                onDeleteMessage(message)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     override fun getItemCount() = messages.size
@@ -123,7 +181,10 @@ class MessagesAdapter(
             // Same size, check if content changed
             var hasChanges = false
             for (i in messages.indices) {
-                if (i < newMessages.size && messages[i].id != newMessages[i].id) {
+                if (i < newMessages.size &&
+                    (messages[i].id != newMessages[i].id ||
+                            messages[i].content != newMessages[i].content ||
+                            messages[i].is_edited != newMessages[i].is_edited)) {
                     hasChanges = true
                     break
                 }

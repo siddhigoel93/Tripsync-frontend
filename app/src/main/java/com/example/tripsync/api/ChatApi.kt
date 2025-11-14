@@ -59,7 +59,7 @@ interface ChatApi {
     suspend fun editMessage(
         @Path("conversation_id") conversationId: Int,
         @Path("id") messageId: Int,
-        @Body request: SendMessageRequest
+        @Body request: EditMessageRequest
     ): Response<Message>
 
     @DELETE("/api/chat/conversations/{conversation_id}/messages/{id}/")

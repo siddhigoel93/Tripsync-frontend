@@ -16,9 +16,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tripsync.MessagesAdapter
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.ChatApi
+import com.example.tripsync.api.models.EditMessageRequest
+import com.example.tripsync.api.models.Message
 import com.example.tripsync.api.models.SendMessageRequest
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -81,7 +82,13 @@ class ChatThreadFragment : Fragment() {
         layoutManager.stackFromEnd = true
         messagesRecycler.layoutManager = layoutManager
 
-        adapter = MessagesAdapter(mutableListOf(), currentUserId, isGroup)
+        adapter = MessagesAdapter(
+            mutableListOf(),
+            currentUserId,
+            isGroup,
+            onEditMessage = { message, newContent -> editMessage(message, newContent) },
+            onDeleteMessage = { message -> deleteMessage(message) }
+        )
         messagesRecycler.adapter = adapter
 
         // Setup send button
@@ -98,14 +105,12 @@ class ChatThreadFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d("ChatThread", "onResume - starting auto-refresh")
-        // Start auto-refresh when fragment becomes visible
         startAutoRefresh()
     }
 
     override fun onPause() {
         super.onPause()
         Log.d("ChatThread", "onPause - stopping auto-refresh")
-        // Stop auto-refresh when fragment is not visible
         stopAutoRefresh()
     }
 
@@ -118,12 +123,11 @@ class ChatThreadFragment : Fragment() {
         }
 
         if (isSending) {
-            return // Prevent double-sending
+            return
         }
 
         Log.d("ChatThread", "Sending message: $content")
 
-        // Disable input while sending
         isSending = true
         messageInput.isEnabled = false
         sendButton.isEnabled = false
@@ -143,8 +147,7 @@ class ChatThreadFragment : Fragment() {
 
                     messageInput.text.clear()
 
-                    // Immediately load messages after sending
-                    delay(100) // Small delay to ensure backend has processed
+                    delay(100)
                     loadMessages(scrollToBottom = true, showToast = false)
                 } else {
                     val errorBody = response.errorBody()?.string()
@@ -158,6 +161,61 @@ class ChatThreadFragment : Fragment() {
                 isSending = false
                 messageInput.isEnabled = true
                 sendButton.isEnabled = true
+            }
+        }
+    }
+
+    private fun editMessage(message: Message, newContent: String) {
+        lifecycleScope.launch {
+            try {
+                val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
+                val request = EditMessageRequest(newContent)
+
+                Log.d("ChatThread", "Editing message ${message.id}: $newContent")
+
+                val response = chatApi.editMessage(conversationId, message.id, request)
+
+                if (response.isSuccessful) {
+                    Log.d("ChatThread", "Message edited successfully")
+                    Toast.makeText(requireContext(), "Message edited", Toast.LENGTH_SHORT).show()
+
+                    delay(100)
+                    loadMessages(scrollToBottom = false, showToast = false)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatThread", "Failed to edit message: ${response.code()} - $errorBody")
+                    Toast.makeText(requireContext(), "Failed to edit message", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("ChatThread", "Error editing message", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun deleteMessage(message: Message) {
+        lifecycleScope.launch {
+            try {
+                val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
+
+                Log.d("ChatThread", "Deleting message ${message.id}")
+
+                val response = chatApi.deleteMessage(conversationId, message.id)
+
+                if (response.isSuccessful) {
+                    Log.d("ChatThread", "Message deleted successfully")
+                    Toast.makeText(requireContext(), "Message deleted", Toast.LENGTH_SHORT).show()
+
+                    delay(100)
+                    loadMessages(scrollToBottom = false, showToast = false)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatThread", "Failed to delete message: ${response.code()} - $errorBody")
+                    Toast.makeText(requireContext(), "Failed to delete message", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("ChatThread", "Error deleting message", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -183,7 +241,6 @@ class ChatThreadFragment : Fragment() {
 
                     if (messages.isEmpty()) {
                         Log.d("ChatThread", "No messages in conversation")
-                        // Don't hide recycler, just show it's empty
                         messagesRecycler.visibility = View.VISIBLE
                         adapter.updateMessages(emptyList())
                     } else {
@@ -191,7 +248,6 @@ class ChatThreadFragment : Fragment() {
                         messagesRecycler.visibility = View.VISIBLE
                         adapter.updateMessages(messages)
 
-                        // Scroll to bottom if requested or if there are new messages
                         if (scrollToBottom || hasNewMessages) {
                             messagesRecycler.post {
                                 messagesRecycler.scrollToPosition(adapter.itemCount - 1)
@@ -217,12 +273,12 @@ class ChatThreadFragment : Fragment() {
     }
 
     private fun startAutoRefresh() {
-        stopAutoRefresh() // Stop any existing refresh
+        stopAutoRefresh()
 
         autoRefreshJob = viewLifecycleOwner.lifecycleScope.launch {
             while (isActive) {
-                delay(2000) // Refresh every 2 seconds
-                if (!isSending) { // Don't refresh while sending
+                delay(2000)
+                if (!isSending) {
                     Log.d("ChatThread", "Auto-refreshing messages...")
                     loadMessages(scrollToBottom = false, showToast = false)
                 }

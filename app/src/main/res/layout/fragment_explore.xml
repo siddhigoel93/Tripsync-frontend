@@ -149,6 +149,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cards"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="32dp">
@@ -250,7 +251,7 @@
                     android:paddingBottom="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/trending_destinations_recycler_view">
+                    app:layout_constraintTop_toBottomOf="@id/cards">
 
                     <TextView
                         android:id="@+id/stay_informed_title"
