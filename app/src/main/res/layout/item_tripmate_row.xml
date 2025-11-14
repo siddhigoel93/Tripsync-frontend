@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tripmate_card"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/iv_tripmate_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_trip_placeholder"
+            android:scaleType="centerCrop"
+            android:contentDescription="tripmate image"
+            android:background="@drawable/bg_avatar_circle" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="12dp">
+
+            <TextView
+                android:id="@+id/tv_tripmate_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tripmate"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_tripmate_meta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="More Details"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:alpha="0.85"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_chat"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/chatbubble"
+            android:contentDescription="chat" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
