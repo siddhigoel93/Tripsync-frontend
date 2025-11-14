@@ -142,7 +142,7 @@ class ChatFragment : Fragment() {
 
         // For 1-on-1 chats, get the other participant's name
         val sharedPref = requireContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
-        val currentUserId = sharedPref.getString("user_id", "-1")?.toIntOrNull() ?: -1
+        val currentUserId = sharedPref.getString("self_id", "-1")?.toIntOrNull() ?: -1
         val otherParticipant = conversation.participants.firstOrNull { it.id != currentUserId }
 
         return otherParticipant?.name ?: otherParticipant?.email ?: "Unknown"
