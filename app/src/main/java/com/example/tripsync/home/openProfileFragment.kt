@@ -62,7 +62,7 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun initViews(view: View) {
-        // Existing views initialization
+
         nameField = view.findViewById(R.id.name)
         emailField = view.findViewById(R.id.email)
         contactField = view.findViewById(R.id.contact)
@@ -82,7 +82,6 @@ class OpenProfileFragment : Fragment() {
         cardSpiritual = view.findViewById(R.id.cardSpiritual)
         cardHistoric = view.findViewById(R.id.cardHistoric)
 
-        // New views initialization
         profileScrollView = view.findViewById(R.id.profile_scroll_view)
         noProfileView = view.findViewById(R.id.no_profile_view)
         retryButton = view.findViewById(R.id.retry_button)
@@ -90,9 +89,7 @@ class OpenProfileFragment : Fragment() {
 
     private fun setupRetryButton() {
         retryButton.setOnClickListener {
-            // Hide error view, show loading (optional, but good practice)
             noProfileView.visibility = View.GONE
-            // Re-attempt to fetch profile
             fetchProfile()
         }
     }
@@ -217,7 +214,6 @@ class OpenProfileFragment : Fragment() {
     }
 
     private fun performLogout() {
-        // Use SessionManager to properly clear only auth data (keeps profile data)
         SessionManager.logout(requireContext())
 
         // Navigate to login
@@ -233,19 +229,16 @@ class OpenProfileFragment : Fragment() {
                 if (response.isSuccessful) {
                     val profile = response.body()?.data?.profile
                     if (profile != null) {
-                        // Successful fetch: Show content, hide error view
                         showProfileContent()
 
-                        // Get the user's actual email from SessionManager
                         val userEmail = SessionManager.getEmail(requireContext())
 
-                        // Save CORRECT profile data to SessionManager
                         SessionManager.saveUserProfile(
                             requireContext(),
                             firstName = profile.fname,
                             lastName = profile.lname,
-                            email = userEmail, // User's email from SessionManager
-                            phone = profile.phone_number, // User's phone
+                            email = userEmail,
+                            phone = profile.phone_number,
                             avatarUrl = profile.profile_pic_url,
                             bio = profile.bio,
                             gender = profile.gender,
@@ -258,7 +251,6 @@ class OpenProfileFragment : Fragment() {
                             emergencyRelation = profile.erelation,
                         )
 
-                        // Update profile completion status
                         SessionManager.checkAndUpdateProfileStatus(requireContext())
 
                         Log.d("OpenProfile", "User Email: $userEmail, Phone: ${profile.phone_number}")
@@ -270,12 +262,10 @@ class OpenProfileFragment : Fragment() {
                         showNoProfileView("Profile data is missing.")
                     }
                 } else {
-                    // API call failed (e.g., 404, 500)
                     showNoProfileView("Status code: ${response.code()}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                // Network or other exception
                 showNoProfileView(e.message ?: "Network error")
             }
         }
@@ -290,11 +280,9 @@ class OpenProfileFragment : Fragment() {
         bloodGroupField.text = profile.bgroup ?: "Not specified"
         allergiesField.text = profile.allergies ?: "None"
 
-        // Display EMERGENCY CONTACT data
         emergencyName.text = profile.ename ?: "Not set"
         emergencyNumber.text = profile.enumber ?: "Not set"
 
-        // Set relationship spinner
         val relations = resources.getStringArray(R.array.relationship_options)
         val index = relations.indexOfFirst { it.equals(profile.erelation, ignoreCase = true) }
         if (index >= 0) {
@@ -317,16 +305,12 @@ class OpenProfileFragment : Fragment() {
             }
         }
 
-        // Highlight ONLY the selected interest
         highlightInterest(profile.prefrence)
-
-        // Load profile picture
         Glide.with(this)
             .load(profile.profile_pic_url ?: R.drawable.placeholder_image)
             .circleCrop()
             .into(avatarImage)
 
-        // Load cover photo
         Glide.with(this)
             .load(R.drawable.cover_image)
             .centerCrop()
@@ -336,7 +320,6 @@ class OpenProfileFragment : Fragment() {
     private fun highlightInterest(preference: String?) {
         val allCards = listOf(cardAdventure, cardRelaxation, cardSpiritual, cardHistoric)
 
-        // Reset ALL cards to transparent (not selected)
         allCards.forEach { card ->
             card.alpha = 0.3f
         }
@@ -352,7 +335,6 @@ class OpenProfileFragment : Fragment() {
             else -> null
         }
 
-        // Make ONLY selected card fully visible
         selectedCard?.alpha = 1f
 
         Log.d("OpenProfile", "Highlighting preference: $preference")
@@ -360,7 +342,6 @@ class OpenProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Re-fetch profile data every time the fragment is resumed (e.g., after EditProfileFragment finishes)
         fetchProfile()
     }
 }

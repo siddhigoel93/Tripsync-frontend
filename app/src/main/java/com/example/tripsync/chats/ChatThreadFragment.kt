@@ -1,5 +1,6 @@
 package com.example.tripsync
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -33,6 +34,7 @@ class ChatThreadFragment : Fragment() {
     private lateinit var sendButton: ImageButton
     private lateinit var chatName: TextView
     private lateinit var chatAvatar: ImageView
+    private lateinit var menuButton: ImageView
     private lateinit var adapter: MessagesAdapter
 
     private var conversationId: Int = -1
@@ -60,24 +62,25 @@ class ChatThreadFragment : Fragment() {
 
         Log.d("ChatThread", "Current User ID: $currentUserId")
 
-        // Initialize views
         messagesRecycler = view.findViewById(R.id.recycler_messages)
         messageInput = view.findViewById(R.id.message_edit_text)
         sendButton = view.findViewById(R.id.button_send)
         chatName = view.findViewById(R.id.toolbar_name)
         chatAvatar = view.findViewById(R.id.toolbar_profile)
 
+        menuButton = view.findViewById(R.id.toolbar_options)
+
         val backButton = view.findViewById<ImageView>(R.id.toolbar_back)
 
-        // Set name
         chatName.text = name
 
-        // Setup back button
         backButton.setOnClickListener {
             findNavController().navigateUp()
         }
+        menuButton.setOnClickListener {
+            showConversationOptions()
+        }
 
-        // Setup RecyclerView
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
         messagesRecycler.layoutManager = layoutManager
@@ -91,12 +94,10 @@ class ChatThreadFragment : Fragment() {
         )
         messagesRecycler.adapter = adapter
 
-        // Setup send button
         sendButton.setOnClickListener {
             sendMessage()
         }
 
-        // Load messages immediately
         loadMessages(scrollToBottom = true, showToast = true)
 
         return view
@@ -112,6 +113,66 @@ class ChatThreadFragment : Fragment() {
         super.onPause()
         Log.d("ChatThread", "onPause - stopping auto-refresh")
         stopAutoRefresh()
+    }
+
+    private fun showConversationOptions() {
+        val options = arrayOf("Leave Conversation")
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Conversation Options")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> showLeaveConfirmation()
+                }
+            }
+            .show()
+    }
+
+    private fun showLeaveConfirmation() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Leave Conversation")
+            .setMessage("Are you sure you want to leave this conversation? You will no longer receive messages from this chat.")
+            .setPositiveButton("Leave") { _, _ ->
+                leaveConversation()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun leaveConversation() {
+        lifecycleScope.launch {
+            try {
+                val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
+
+                Log.d("ChatThread", "Leaving conversation: $conversationId")
+
+                val response = chatApi.leaveConversation(conversationId)
+
+                Log.d("ChatThread", "Leave conversation response code: ${response.code()}")
+
+                if (response.isSuccessful) {
+                    Log.d("ChatThread", "Successfully left conversation")
+                    Toast.makeText(requireContext(), "You have left the conversation", Toast.LENGTH_SHORT).show()
+
+                    // Navigate back to chat list
+                    findNavController().navigateUp()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatThread", "Failed to leave conversation: ${response.code()} - $errorBody")
+
+                    val errorMessage = when (response.code()) {
+                        403 -> "You are not a participant of this conversation"
+                        404 -> "Conversation not found"
+                        else -> "Failed to leave conversation: ${response.code()}"
+                    }
+
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("ChatThread", "Error leaving conversation", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun sendMessage() {
