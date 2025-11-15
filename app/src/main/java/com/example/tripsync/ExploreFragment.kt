@@ -66,6 +66,10 @@ class ExploreFragment : Fragment() {
             navigateToEmergencySos()
         }
 
+        view.findViewById<CardView>(R.id.card_create_trip).setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_communityFragment)
+        }
+
         // Complete profile button
         view.findViewById<MaterialButton>(R.id.complete_profile_button).setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)

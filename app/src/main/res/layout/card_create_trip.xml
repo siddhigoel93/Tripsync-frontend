@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/train"
+            android:src="@drawable/tripmates"
             tools:ignore="ContentDescription" />
     </androidx.cardview.widget.CardView>
 
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Train Info"
+        android:text="Community"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -45,7 +45,7 @@
         android:layout_height="56dp"
         android:layout_marginTop="4dp"
         android:fontFamily="sans-serif"
-        android:text="Get information about any train."
+        android:text="Post your memories."
         android:textColor="#737373"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/card_title_ai"

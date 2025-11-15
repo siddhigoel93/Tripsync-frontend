@@ -3,5 +3,4 @@
     <item android:id="@+id/nav_weather" android:title="AI chatbot" />
     <item android:id="@+id/nav_add_tripmates" android:title="My trips" />
     <item android:id="@+id/nav_friends" android:title="Friends" />
-    <item android:id="@+id/nav_train_info" android:title="Train Info" />
 </menu>
