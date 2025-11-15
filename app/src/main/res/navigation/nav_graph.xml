@@ -109,7 +109,6 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-    <!-- 🟩 HOME / EXPLORE FRAGMENT -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.tripsync.ExploreFragment"
@@ -235,7 +234,16 @@
         <action
             android:id="@+id/action_AIItinearyPlannerFragment_to_budgetFragment"
             app:destination="@id/budgetFragment" />
+        <action
+            android:id="@+id/action_AIItinearyPlannerFragment_to_listExistingTripsFragment"
+            app:destination="@id/listExistingTripsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/listExistingTripsFragment"
+        android:name="com.example.tripsync.ListExistingTripsFragment"
+        android:label="ExistingTrips"
+        tools:layout="@layout/list_existing_trips" />
 
     <fragment
         android:id="@+id/budgetFragment"
@@ -437,7 +445,6 @@
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true"/>
     </dialog>
-
 
     <fragment
         android:id="@+id/recievedRequestsFragment"

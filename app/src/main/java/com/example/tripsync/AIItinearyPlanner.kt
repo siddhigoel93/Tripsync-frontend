@@ -240,6 +240,11 @@ class AIItinearyPlannerFragment : Fragment() {
         view.findViewById<View>(R.id.btn_save_draft).setOnClickListener {
             Toast.makeText(requireContext(), "Draft Saved", Toast.LENGTH_SHORT).show()
         }
+
+        val tvViewTrips: TextView = view.findViewById(R.id.tv_save_draft)
+        tvViewTrips.setOnClickListener {
+            findNavController().navigate(R.id.action_AIItinearyPlannerFragment_to_listExistingTripsFragment)
+        }
     }
 
     private fun showKeyboardFor(view: View) {

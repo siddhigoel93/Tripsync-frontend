@@ -14,6 +14,7 @@ import java.util.Properties
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
+
     private const val DEFAULT_BASE_URL = "http://51.20.254.52/"
     private var retrofitSecure: Retrofit? = null
     private var retrofitInsecure: Retrofit? = null
@@ -35,16 +36,30 @@ object ApiClient {
     private fun buildRetrofit(context: Context, secure: Boolean): Retrofit {
         val baseUrl = getBaseUrl(context)
 
-        val httpLogging = HttpLoggingInterceptor { message -> Log.i("OkHttp", message) }
-        httpLogging.level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        val httpLogging = HttpLoggingInterceptor { message ->
+            Log.i("OkHttp", message)
+        }
+        httpLogging.level =
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
 
         val requestLogger = Interceptor { chain ->
             val request = chain.request()
             val t1 = System.nanoTime()
-            Log.i("ApiClient", "Request: ${request.method} ${request.url}")
+
+            val sb = StringBuilder()
+            sb.append("REQUEST → ${request.method} ${request.url}\n")
+            request.headers.forEach { h ->
+                sb.append("${h.first}: ${h.second}\n")
+            }
+            Log.i("ApiClient", sb.toString())
+
             val response = chain.proceed(request)
+
             val t2 = System.nanoTime()
-            Log.i("ApiClient", "Response: ${response.code} ${response.request.url} in ${(t2 - t1) / 1_000_000}ms")
+            Log.i(
+                "ApiClient",
+                "RESPONSE ← ${response.code} for ${response.request.url} in ${(t2 - t1) / 1_000_000}ms"
+            )
             response
         }
 
@@ -95,7 +110,8 @@ object ApiClient {
     }
 
     fun getBudgetService(context: Context): com.example.tripsync.api.budget.BudgetService {
-        return getRetrofitInstance(context, secure = true).create(com.example.tripsync.api.budget.BudgetService::class.java)
+        return getRetrofitInstance(context, secure = true)
+            .create(com.example.tripsync.api.budget.BudgetService::class.java)
     }
 
     fun getTripmateService(context: Context): TripmateService {
