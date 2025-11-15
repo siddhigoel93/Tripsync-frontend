@@ -49,9 +49,9 @@ object ApiClient {
         }
 
         val clientBuilder = OkHttpClient.Builder()
-            .connectTimeout(25, TimeUnit.SECONDS)
-            .readTimeout(25, TimeUnit.SECONDS)
-            .writeTimeout(25, TimeUnit.SECONDS)
+            .connectTimeout(180, TimeUnit.SECONDS)
+            .readTimeout(180, TimeUnit.SECONDS)
+            .writeTimeout(90, TimeUnit.SECONDS)
             .addInterceptor(requestLogger)
 
         if (BuildConfig.DEBUG) clientBuilder.addInterceptor(httpLogging)

@@ -2,6 +2,7 @@ package com.example.tripsync.utils
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.view.ContextThemeWrapper
 import android.widget.EditText
 import com.example.tripsync.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -9,9 +10,6 @@ import java.util.Calendar
 
 object DialogUtils {
 
-    /**
-     * Show a confirmation dialog with custom styling
-     */
     fun showConfirmationDialog(
         context: Context,
         title: String,
@@ -36,9 +34,6 @@ object DialogUtils {
             .show()
     }
 
-    /**
-     * Show an options dialog (list of choices)
-     */
     fun showOptionsDialog(
         context: Context,
         title: String,
@@ -55,9 +50,6 @@ object DialogUtils {
             .show()
     }
 
-    /**
-     * Show an input dialog with EditText
-     */
     fun showInputDialog(
         context: Context,
         title: String,
@@ -94,9 +86,6 @@ object DialogUtils {
             .show()
     }
 
-    /**
-     * Show a simple alert dialog
-     */
     fun showAlertDialog(
         context: Context,
         title: String,
@@ -115,9 +104,6 @@ object DialogUtils {
             .show()
     }
 
-    /**
-     * Show an error dialog
-     */
     fun showErrorDialog(
         context: Context,
         title: String = "Error",
@@ -136,10 +122,6 @@ object DialogUtils {
             .show()
     }
 
-    /**
-     * Show a styled DatePickerDialog
-     */
-
     fun showDatePicker(
         context: Context,
         initialCalendar: Calendar = Calendar.getInstance(),
@@ -153,8 +135,9 @@ object DialogUtils {
             return DatePickerDialog(context) // return dummy
         }
 
+        val themedContext = ContextThemeWrapper(context, R.style.DatePickerDarkTheme)
         val datePickerDialog = DatePickerDialog(
-            context,
+            themedContext,
             { _, year, month, dayOfMonth ->
                 val act = context as? android.app.Activity
                 if (act != null && !act.isFinishing && !act.isDestroyed) {
@@ -173,13 +156,18 @@ object DialogUtils {
             datePickerDialog.show()
         }
 
+        datePickerDialog.show()
+
+        try {
+            val positive = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+            val negative = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+            positive?.setTextColor(context.getColor(R.color.dp_on_surface))
+            negative?.setTextColor(context.getColor(R.color.dp_on_surface))
+        } catch (_: Exception) {}
+
         return datePickerDialog
     }
 
-
-    /**
-     * Show a loading dialog (simple text-based)
-     */
     fun showLoadingDialog(
         context: Context,
         message: String = "Loading..."
@@ -189,9 +177,6 @@ object DialogUtils {
             .setCancelable(false)
     }
 
-    /**
-     * Show a custom single choice dialog
-     */
     fun showSingleChoiceDialog(
         context: Context,
         title: String,
@@ -221,9 +206,6 @@ object DialogUtils {
             .show()
     }
 
-    /**
-     * Show a multi-choice dialog
-     */
     fun showMultiChoiceDialog(
         context: Context,
         title: String,

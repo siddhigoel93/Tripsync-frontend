@@ -264,28 +264,26 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
 
                 var matchedTripId: Int? = null
                 try {
-                    val raw = listResp?.body()?.string()
-                    if (!raw.isNullOrBlank()) {
-                        val jo = JSONObject(raw)
-                        val data = jo.opt("data")
-                        if (data is JSONArray) {
-                            for (i in 0 until data.length()) {
-                                val item = data.optJSONObject(i)
-                                if (item != null) {
-                                    val name = item.optString("tripname")
-                                    val id = if (item.has("id")) item.optInt("id") else 0
-                                    if (!name.isNullOrBlank() && name.equals(tripName, true)) {
-                                        matchedTripId = if (id != 0) id else null
-                                        break
-                                    }
+                    if (listResp != null && listResp.isSuccessful) {
+                        val body = listResp.body()
+                        val results = body?.data?.results
+                        if (!results.isNullOrEmpty()) {
+                            for (item in results) {
+                                val name = item.tripname
+                                val id = item.id
+                                if (!name.isNullOrBlank() && name.equals(tripName, true)) {
+                                    matchedTripId = if (id != 0) id else null
+                                    break
                                 }
                             }
-                        } else if (data is JSONObject) {
-                            if (data.has("results")) {
-                                val results = data.optJSONArray("results")
-                                if (results != null) {
-                                    for (i in 0 until results.length()) {
-                                        val item = results.optJSONObject(i)
+                        } else {
+                            val raw = runCatching { listResp.raw().body?.string() }.getOrNull()
+                            if (!raw.isNullOrBlank()) {
+                                val jo = JSONObject(raw)
+                                val data = jo.opt("data")
+                                if (data is JSONArray) {
+                                    for (i in 0 until data.length()) {
+                                        val item = data.optJSONObject(i)
                                         if (item != null) {
                                             val name = item.optString("tripname")
                                             val id = if (item.has("id")) item.optInt("id") else 0
@@ -295,17 +293,85 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                                             }
                                         }
                                     }
+                                } else if (data is JSONObject) {
+                                    if (data.has("results")) {
+                                        val resultsArr = data.optJSONArray("results")
+                                        if (resultsArr != null) {
+                                            for (i in 0 until resultsArr.length()) {
+                                                val item = resultsArr.optJSONObject(i)
+                                                if (item != null) {
+                                                    val name = item.optString("tripname")
+                                                    val id = if (item.has("id")) item.optInt("id") else 0
+                                                    if (!name.isNullOrBlank() && name.equals(tripName, true)) {
+                                                        matchedTripId = if (id != 0) id else null
+                                                        break
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        val name = data.optString("tripname")
+                                        val id = if (data.has("id")) data.optInt("id") else 0
+                                        if (!name.isNullOrBlank() && name.equals(tripName, true)) matchedTripId = if (id != 0) id else null
+                                    }
                                 }
-                            } else {
-                                val name = data.optString("tripname")
-                                val id = if (data.has("id")) data.optInt("id") else 0
-                                if (!name.isNullOrBlank() && name.equals(tripName, true)) matchedTripId = if (id != 0) id else null
+                            }
+                        }
+                    } else {
+                        val raw = runCatching { listResp?.raw()?.body?.string() }.getOrNull()
+                        if (!raw.isNullOrBlank()) {
+                            val jo = JSONObject(raw)
+                            val data = jo.opt("data")
+                            if (data is JSONArray) {
+                                for (i in 0 until data.length()) {
+                                    val item = data.optJSONObject(i)
+                                    if (item != null) {
+                                        val name = item.optString("tripname")
+                                        val id = if (item.has("id")) item.optInt("id") else 0
+                                        if (!name.isNullOrBlank() && name.equals(tripName, true)) {
+                                            matchedTripId = if (id != 0) id else null
+                                            break
+                                        }
+                                    }
+                                }
+                            } else if (data is JSONObject) {
+                                if (data.has("results")) {
+                                    val resultsArr = data.optJSONArray("results")
+                                    if (resultsArr != null) {
+                                        for (i in 0 until resultsArr.length()) {
+                                            val item = resultsArr.optJSONObject(i)
+                                            if (item != null) {
+                                                val name = item.optString("tripname")
+                                                val id = if (item.has("id")) item.optInt("id") else 0
+                                                if (!name.isNullOrBlank() && name.equals(tripName, true)) {
+                                                    matchedTripId = if (id != 0) id else null
+                                                    break
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    val name = data.optString("tripname")
+                                    val id = if (data.has("id")) data.optInt("id") else 0
+                                    if (!name.isNullOrBlank() && name.equals(tripName, true)) matchedTripId = if (id != 0) id else null
+                                }
                             }
                         }
                     }
                 } catch (_: Throwable) { }
 
-                val tripId: Int = if (matchedTripId != null) {
+                var dayPlansSource: List<com.example.tripsync.itinerary.DayPlan>? = null
+
+                if (matchedTripId != null) {
+                    val tripResp = try { service.getTrip(matchedTripId) } catch (_: Throwable) { null }
+                    if (tripResp != null && tripResp.isSuccessful) {
+                        dayPlansSource = tripResp.body()?.data?.itinerary?.day_plans
+                    }
+                }
+
+                val tripId: Int = if (matchedTripId != null && dayPlansSource != null) {
+                    matchedTripId
+                } else if (matchedTripId != null && dayPlansSource == null) {
                     matchedTripId
                 } else {
                     val createBody = CreateTripRequest(
@@ -327,25 +393,17 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                         showLoading(false)
                         return@launch
                     }
-                    var id: Int? = createResp.body()?.data?.id
-                    if (id == null || id == 0) {
+                    val id = createResp.body()?.data?.id ?: run {
                         try {
                             val raw = createResp.raw().body?.string()
                             if (!raw.isNullOrBlank()) {
                                 val jo = JSONObject(raw)
-                                if (jo.has("trip_id")) id = jo.optInt("trip_id")
-                                if ((id == null || id == 0) && jo.has("data")) {
-                                    val d = jo.opt("data")
-                                    if (d is JSONObject) id = d.optInt("id")
-                                }
-                                if ((id == null || id == 0) && jo.has("data") && jo.opt("data") is JSONArray) {
-                                    val arr = jo.optJSONArray("data")
-                                    if (arr.length() > 0) id = arr.optJSONObject(0)?.optInt("id")
-                                }
-                            }
-                        } catch (_: Throwable) { }
+                                if (jo.has("trip_id")) jo.optInt("trip_id") else jo.optJSONObject("data")?.optInt("id") ?: 0
+                            } else 0
+                        } catch (_: Throwable) { 0 }
                     }
-                    if (id == null || id == 0) {
+                    dayPlansSource = createResp.body()?.data?.itinerary?.day_plans
+                    if (id == 0) {
                         days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                         renderDynamicDayTabs(days.size)
                         selectDay(0)
@@ -355,61 +413,51 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
                     id
                 }
 
-                val fetchedDays = mutableListOf<LocalDay>()
-                val targetDays = max(1, if (start != null && end != null)
-                    ((abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1) else 1
-                )
-
-                for (d in 1..targetDays) {
-                    try {
-                        val dayResp = service.getDayItinerary(tripId, d)
-                        if (dayResp.isSuccessful) {
-                            val b = dayResp.body()
-                            val title = b?.data?.title ?: "Day $d"
-                            val sections = mutableListOf<LocalSection>()
-                            val dayData = b?.data
-                            if (!dayData?.sections.isNullOrEmpty()) {
-                                val sec = dayData!!.sections!!.map { s ->
-                                    LocalSection(
-                                        label = s.label ?: "",
-                                        iconName = s.icon,
-                                        cards = s.cards.orEmpty().map { c ->
-                                            LocalCard(iconRes = 0, title = c.title ?: "", subtitle = c.subtitle ?: "")
-                                        }
-                                    )
+                if (dayPlansSource != null && dayPlansSource.isNotEmpty()) {
+                    val fetchedDays = mutableListOf<LocalDay>()
+                    for (dp in dayPlansSource) {
+                        val dnum = dp.day_number ?: dp.id ?: 0
+                        val title = dp.title ?: "Day ${dnum}"
+                        val sections = mutableListOf<LocalSection>()
+                        val acts = dp.activities.orEmpty()
+                        val grouped = groupActivitiesByTime(acts)
+                        val order = listOf("Morning", "Afternoon", "Evening", "Night", "Early Morning", "Late Morning")
+                        for (key in order) {
+                            val list = grouped[key].orEmpty()
+                            if (list.isNotEmpty()) {
+                                val cards = list.map { a ->
+                                    val timings = a.timings.orEmpty()
+                                    val desc = a.description.orEmpty()
+                                    val subtitle = if (timings.isNotBlank() && desc.isNotBlank()) "$timings • $desc" else if (timings.isNotBlank()) timings else desc
+                                    LocalCard(iconRes = 0, title = a.title ?: "Untitled activity", subtitle = subtitle)
                                 }
-                                sections.addAll(sec)
-                            } else if (!dayData?.activities.isNullOrEmpty()) {
-                                val actList = dayData!!.activities!!.orEmpty()
-                                val grouped = groupActivitiesByTime(actList)
-                                val order = listOf("Morning", "Afternoon", "Evening", "Night")
-                                for (key in order) {
-                                    val list = grouped[key].orEmpty()
-                                    if (list.isNotEmpty()) {
-                                        val cards = list.map { a -> LocalCard(iconRes = 0, title = a.title ?: "", subtitle = a.description ?: "") }
-                                        val iconName = when (key) {
-                                            "Morning" -> "morning"
-                                            "Afternoon" -> "afternoon"
-                                            "Evening" -> "afternoon"
-                                            "Night" -> "night"
-                                            else -> null
-                                        }
-                                        sections.add(LocalSection(label = key, iconName = iconName, cards = cards))
-                                    }
+                                val iconName = when (key) {
+                                    "Morning" -> "morning"
+                                    "Afternoon" -> "afternoon"
+                                    "Evening" -> "afternoon"
+                                    "Night" -> "night"
+                                    else -> null
                                 }
+                                sections.add(LocalSection(label = key, iconName = iconName, cards = cards))
                             }
-                            fetchedDays.add(LocalDay(d, title, sections))
-                        } else {
-                            fetchedDays.add(LocalDay(d, "Day $d", emptyList()))
                         }
-                    } catch (_: Throwable) {
+                        fetchedDays.add(LocalDay(dnum, title, sections))
+                    }
+                    days = fetchedDays
+                    renderDynamicDayTabs(days.size)
+                    selectDay(0)
+                } else {
+                    val fetchedDays = mutableListOf<LocalDay>()
+                    val targetDays = max(1, if (start != null && end != null)
+                        ((abs(end.time - start.time) / (1000L * 60 * 60 * 24)).toInt() + 1) else 1
+                    )
+                    for (d in 1..targetDays) {
                         fetchedDays.add(LocalDay(d, "Day $d", emptyList()))
                     }
+                    days = fetchedDays
+                    renderDynamicDayTabs(days.size)
+                    selectDay(0)
                 }
-
-                days = fetchedDays
-                renderDynamicDayTabs(days.size)
-                selectDay(0)
             } catch (_: Throwable) {
                 days = listOf(buildEmptyDay(1), buildEmptyDay(2), buildEmptyDay(3), buildEmptyDay(4))
                 renderDynamicDayTabs(days.size)
@@ -492,9 +540,13 @@ class ItinearyProgressThree : Fragment(R.layout.fragment_ai_itinerary_step3) {
         map["Afternoon"] = mutableListOf()
         map["Evening"] = mutableListOf()
         map["Night"] = mutableListOf()
+        map["Early Morning"] = mutableListOf()
+        map["Late Morning"] = mutableListOf()
         for (a in list) {
             val t = (a.time ?: "").trim().lowercase(Locale.getDefault())
             when {
+                t.contains("early") || t.contains("sunrise") -> map["Early Morning"]!!.add(a)
+                t.contains("late") || t.contains("late morning") -> map["Late Morning"]!!.add(a)
                 t.contains("mor") || t.contains("breakfast") -> map["Morning"]!!.add(a)
                 t.contains("aft") || t.contains("lunch") -> map["Afternoon"]!!.add(a)
                 t.contains("eve") -> map["Evening"]!!.add(a)
