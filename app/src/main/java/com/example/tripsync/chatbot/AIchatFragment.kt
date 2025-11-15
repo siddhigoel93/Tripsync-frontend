@@ -1,5 +1,6 @@
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tripsync.KeyboardHidingController
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.chatbot.AIchatAdapter
@@ -139,5 +141,20 @@ class AIchatFragment : Fragment() {
                 }
             }
         }
+    }
+    override fun onResume() {
+        super.onResume()
+
+        (activity as? KeyboardHidingController)?.setKeyboardHidingEnabled(false)
+
+        Log.d("ChatThread", "onResume - starting auto-refresh and reloading messages")
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        (activity as? KeyboardHidingController)?.setKeyboardHidingEnabled(true)
+
+        Log.d("ChatThread", "onPause - stopping auto-refresh")
     }
 }

@@ -38,7 +38,9 @@ import com.example.tripsync.api.models.LogoutRequest
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() , KeyboardHidingController {
+
+    private var isKeyboardHidingEnabled = true
     lateinit var progressLayout: View
     lateinit var app_bar_layout: AppBarLayout
     lateinit var bottom_app_bar_wrapper: BottomAppBar
@@ -215,7 +217,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun setKeyboardHidingEnabled(isEnabled: Boolean) {
+        this.isKeyboardHidingEnabled = isEnabled
+    }
+
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        // Step 2a: Check the flag before executing the logic
+        if (!isKeyboardHidingEnabled) {
+            return super.dispatchTouchEvent(ev)
+        }
+
         if (ev.action == MotionEvent.ACTION_DOWN) {
             val v = currentFocus
             if (v is EditText) {
@@ -231,6 +242,8 @@ class MainActivity : AppCompatActivity() {
         }
         return super.dispatchTouchEvent(ev)
     }
+    // ... rest of MainActivity
+
 
     private fun updateProgress(fragmentId: Int) {
         val circles = listOf(

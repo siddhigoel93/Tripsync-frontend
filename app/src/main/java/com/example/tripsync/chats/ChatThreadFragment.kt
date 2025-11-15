@@ -209,6 +209,7 @@ class ChatThreadFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        (activity as? KeyboardHidingController)?.setKeyboardHidingEnabled(false)
         Log.d("ChatThread", "onResume - starting auto-refresh and reloading messages")
         loadMessages(scrollToBottom = true, showToast = false)
         startAutoRefresh()
@@ -216,6 +217,7 @@ class ChatThreadFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        (activity as? KeyboardHidingController)?.setKeyboardHidingEnabled(true)
         Log.d("ChatThread", "onPause - stopping auto-refresh")
         stopAutoRefresh()
     }
