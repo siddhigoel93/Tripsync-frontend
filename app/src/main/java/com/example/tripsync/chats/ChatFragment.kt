@@ -159,17 +159,52 @@ class ChatFragment : Fragment() {
         )
     }
 
+
     private fun getConversationName(conversation: Conversation): String {
+        Log.d("ChatFragment", "🔍 Getting name for conversation ${conversation.id}")
+
         if (conversation.is_group == true) {
-            return conversation.name ?: "Unnamed Group"
+            val groupName = conversation.name ?: "Unnamed Group"
+            Log.d("ChatFragment", "   Is group, returning: $groupName")
+            return groupName
         }
 
-        // For 1-on-1 chats, get the other participant's name
         val sharedPref = requireContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
         val currentUserId = sharedPref.getString("self_id", "-1")?.toIntOrNull() ?: -1
+
         val otherParticipant = conversation.participants.firstOrNull { it.id != currentUserId }
 
-        return otherParticipant?.name ?: otherParticipant?.email ?: "Unknown"
+        val participantName = otherParticipant?.name?.takeIf {
+            it.isNotBlank() && !it.contains("@") // Exclude emails
+        }
+
+        Log.d("ChatFragment", "   Participant name from API: $participantName")
+
+        val cachedName = com.example.tripsync.ConversationInfoCache.getDisplayName(
+            requireContext(),
+            conversation.id
+        )
+
+        Log.d("ChatFragment", "   Cached name: $cachedName")
+
+        return when {
+            cachedName != "Unknown" -> {
+                Log.d("ChatFragment", "Using cached name: $cachedName")
+                cachedName
+            }
+            !participantName.isNullOrBlank() -> {
+                Log.d("ChatFragment", "Using participant name: $participantName")
+                participantName
+            }
+            !otherParticipant?.email.isNullOrBlank() -> {
+                Log.d("ChatFragment", " Using email: ${otherParticipant?.email}")
+                otherParticipant?.email ?: "Unknown"
+            }
+            else -> {
+                Log.d("ChatFragment", "No name found, using Unknown")
+                "Unknown"
+            }
+        }
     }
 
     private fun startAutoRefresh() {

@@ -50,33 +50,41 @@ class ConversationsAdapter(
             holder.name.text = conversation.name ?: "Unnamed Group"
             holder.groupIndicator.visibility = View.VISIBLE
 
-            // Show group avatar or default
-//            if (!conversation.group_avatar.isNullOrEmpty()) {
-//                Glide.with(context)
-//                    .load(conversation.group_avatar)
-//                    .placeholder(R.drawable.tripmates)
-//                    .error(R.drawable.tripmates)
-//                    .into(holder.avatar)
-//            } else {
-//                holder.avatar.setImageResource(R.drawable.tripmates)
-//            }
+            if (!conversation.group_avatar.isNullOrEmpty()) {
+                Glide.with(context)
+                    .load(conversation.group_avatar)
+                    .placeholder(R.drawable.tripmates)
+                    .error(R.drawable.tripmates)
+                    .into(holder.avatar)
+            } else {
+                holder.avatar.setImageResource(R.drawable.tripmates)
+            }
         } else {
             // 1-on-1 chat - show other participant
             holder.groupIndicator.visibility = View.GONE
             val otherParticipant = conversation.participants.firstOrNull { it.id != currentUserId }
 
             if (otherParticipant != null) {
-                holder.name.text = otherParticipant.name ?: otherParticipant.email
+                holder.name.text = getDisplayName(holder.itemView.context, conversation)
 
-//                if (!otherParticipant.avatar.isNullOrEmpty()) {
-//                    Glide.with(context)
-//                        .load(otherParticipant.avatar)
-//                        .placeholder(R.drawable.placeholder_image)
-//                        .error(R.drawable.placeholder_image)
-//                        .into(holder.avatar)
-//                } else {
-//                    holder.avatar.setImageResource(R.drawable.placeholder_image)
-//                }
+                if (!otherParticipant.avatar.isNullOrEmpty()) {
+                    Glide.with(context)
+                        .load(otherParticipant.avatar)
+                        .placeholder(R.drawable.placeholder_image)
+                        .error(R.drawable.placeholder_image)
+                        .into(holder.avatar)
+                } else {
+                    val cachedPic = com.example.tripsync.ConversationInfoCache.getProfilePic(
+                        context,
+                        conversation.id
+                    )
+
+                    if (!cachedPic.isNullOrEmpty()) {
+                        loadBase64OrUrl(context, holder.avatar, cachedPic)
+                    } else {
+                        holder.avatar.setImageResource(R.drawable.placeholder_image)
+                    }
+                }
             } else {
                 holder.name.text = conversation.name ?: "Unknown"
                 holder.avatar.setImageResource(R.drawable.placeholder_image)
@@ -150,6 +158,55 @@ class ConversationsAdapter(
             }
         } catch (e: Exception) {
             ""
+        }
+    }
+    private fun getDisplayName(context: Context, conversation: Conversation): String {
+        if (conversation.is_group == true) {
+            return conversation.name ?: "Unnamed Group"
+        }
+
+        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val currentUserId = sharedPref.getString("self_id", "-1")?.toIntOrNull() ?: -1
+        val otherParticipant = conversation.participants.firstOrNull { it.id != currentUserId }
+
+        val participantName = otherParticipant?.name?.takeIf {
+            it.isNotBlank() && !it.contains("@")
+        }
+
+        val cachedName = com.example.tripsync.ConversationInfoCache.getDisplayName(
+            context,
+            conversation.id
+        )
+
+        return when {
+            cachedName != "Unknown" -> cachedName
+            !participantName.isNullOrBlank() -> participantName
+            !otherParticipant?.email.isNullOrBlank() -> otherParticipant?.email ?: "Unknown"
+            else -> "Unknown"
+        }
+    }
+    private fun loadBase64OrUrl(context: Context, imageView: ImageView, pictureData: String) {
+        if (pictureData.startsWith("http://") || pictureData.startsWith("https://")) {
+            Glide.with(context)
+                .load(pictureData)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
+                .into(imageView)
+        } else if (pictureData.length > 100) {
+            // Base64 decoding logic (similar to ChatThreadFragment)
+            try {
+                val decodedBytes = android.util.Base64.decode(pictureData, android.util.Base64.DEFAULT)
+                val bitmap = android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                if (bitmap != null) {
+                    imageView.setImageBitmap(bitmap)
+                } else {
+                    imageView.setImageResource(R.drawable.placeholder_image)
+                }
+            } catch (e: Exception) {
+                imageView.setImageResource(R.drawable.placeholder_image)
+            }
+        } else {
+            imageView.setImageResource(R.drawable.placeholder_image)
         }
     }
 

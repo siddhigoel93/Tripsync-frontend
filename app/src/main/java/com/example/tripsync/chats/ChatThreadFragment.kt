@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.ChatApi
 import com.example.tripsync.api.models.EditMessageRequest
@@ -44,6 +45,8 @@ class ChatThreadFragment : Fragment() {
     private var autoRefreshJob: Job? = null
     private var isSending: Boolean = false
 
+    // Add this at the beginning of onCreateView in ChatThreadFragment
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,18 +55,45 @@ class ChatThreadFragment : Fragment() {
 
         // Get arguments
         conversationId = arguments?.getInt("conversationId", -1) ?: -1
-        val name = arguments?.getString("name", "Chat") ?: "Chat"
+        var name = arguments?.getString("name", null)
         isGroup = arguments?.getBoolean("isGroup", false) ?: false
 
-        Log.d("ChatThread", "Opening conversation ID: $conversationId, Name: $name, IsGroup: $isGroup")
+        Log.d("ChatThread", "========================================")
+        Log.d("ChatThread", "📱 Opening conversation")
+        Log.d("ChatThread", "   Conversation ID: $conversationId")
+        Log.d("ChatThread", "   Name from args: $name")
+        Log.d("ChatThread", "   Is Group: $isGroup")
+        Log.d("ChatThread", "========================================")
 
-        // Get current user ID
+        // NEW: Always prefer cached name over email addresses
+        if (!isGroup) {
+            val cachedName = com.example.tripsync.ConversationInfoCache.getDisplayName(
+                requireContext(),
+                conversationId
+            )
+
+            Log.d("ChatThread", "📝 Cached name: $cachedName")
+
+
+            if (cachedName != "Unknown" &&
+                (name.isNullOrEmpty() || name == "Unknown" || name.contains("@"))) {
+                name = cachedName
+                Log.d("ChatThread", "Replaced with cached name: $name")
+            } else if (name?.contains("@") == true && cachedName == "Unknown") {
+                Log.d("ChatThread", "Only email available, keeping: $name")
+            } else {
+                Log.d("ChatThread", "Using name from arguments: $name")
+            }
+        }
+
+        val finalName = name ?: "Chat"
+        Log.d("ChatThread", "Final display name: $finalName")
+
         val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         currentUserId = sharedPref.getString("self_id", "-1")?.toIntOrNull() ?: -1
 
-        Log.d("ChatThread", "Current User ID: $currentUserId")
+        Log.d("ChatThread", "👤 Current User ID: $currentUserId")
 
-        // Initialize views
         messagesRecycler = view.findViewById(R.id.recycler_messages)
         messageInput = view.findViewById(R.id.message_edit_text)
         sendButton = view.findViewById(R.id.button_send)
@@ -72,8 +102,27 @@ class ChatThreadFragment : Fragment() {
         menuButton = view.findViewById(R.id.toolbar_options)
         val backButton = view.findViewById<ImageView>(R.id.toolbar_back)
 
-        // Set name
-        chatName.text = name
+        chatName.text = finalName
+        Log.d("ChatThread", "Set toolbar name to: $finalName")
+
+        // NEW: Set profile picture for 1-on-1 chats
+        if (!isGroup) {
+            Log.d("ChatThread", "Loading profile picture...")
+            val profilePic = com.example.tripsync.ConversationInfoCache.getProfilePic(
+                requireContext(),
+                conversationId
+            )
+            if (profilePic != null) {
+                Log.d("ChatThread", "Found profile picture, loading...")
+                loadProfilePicture(chatAvatar, profilePic)
+            } else {
+                Log.d("ChatThread", "No profile picture, using default")
+                chatAvatar.setImageResource(R.drawable.placeholder_image)
+            }
+        } else {
+            Log.d("ChatThread", "Group chat, using group avatar")
+            chatAvatar.setImageResource(R.drawable.group_avatar)
+        }
 
         // Setup back button
         backButton.setOnClickListener {
@@ -104,7 +153,7 @@ class ChatThreadFragment : Fragment() {
             sendMessage()
         }
 
-        // Handle Enter key press (optional: send on Enter)
+        // Handle Enter key press
         messageInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 sendMessage()
@@ -119,6 +168,44 @@ class ChatThreadFragment : Fragment() {
 
         return view
     }
+
+    private fun loadProfilePicture(imageView: ImageView, pictureData: String) {
+        try {
+
+            if (pictureData.startsWith("http://") || pictureData.startsWith("https://")) {
+                Log.d("ChatThread", "Profile picture URL loading not yet implemented")
+                Glide.with(requireContext())
+                    .load(pictureData)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.placeholder_image)
+                    .into(imageView)
+            }
+
+            else if (pictureData.length > 100) {
+                try {
+                    val decodedBytes = android.util.Base64.decode(pictureData, android.util.Base64.DEFAULT)
+                    val bitmap = android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                    if (bitmap != null) {
+                        imageView.setImageBitmap(bitmap)
+                        Log.d("ChatThread", "Loaded Base64 profile picture")
+                    } else {
+                        imageView.setImageResource(R.drawable.placeholder_image)
+                        Log.e("ChatThread", "Failed to decode Base64 to bitmap")
+                    }
+                } catch (e: Exception) {
+                    Log.e("ChatThread", "Error decoding Base64 profile picture", e)
+                    imageView.setImageResource(R.drawable.placeholder_image)
+                }
+            } else {
+                // Unknown format
+                imageView.setImageResource(R.drawable.placeholder_image)
+            }
+        } catch (e: Exception) {
+            Log.e("ChatThread", "Error loading profile picture", e)
+            imageView.setImageResource(R.drawable.placeholder_image)
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()

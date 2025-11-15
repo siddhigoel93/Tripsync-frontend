@@ -123,7 +123,6 @@ class SearchUsersFragment : Fragment() {
 
                 Log.d("CreateConversation", "Checking/creating conversation with user ID: ${user.id}")
 
-                // First, try to get existing conversations
                 val existingConversations = try {
                     val listResponse = chatApi.getConversations()
                     if (listResponse.isSuccessful) {
@@ -175,7 +174,6 @@ class SearchUsersFragment : Fragment() {
                             return@launch
                         }
                     } else if (response.code() == 409) {
-                        // Conversation already exists - parse the response
                         try {
                             val errorBody = response.errorBody()?.string()
                             Log.d("CreateConversation", "409 error body: $errorBody")
@@ -227,6 +225,27 @@ class SearchUsersFragment : Fragment() {
                     else -> "Unknown User"
                 }
 
+                try {
+                    val cachedInfo = com.example.tripsync.CachedUserInfo(
+                        userId = user.id,
+                        name = displayName,
+                        email = user.email,
+                        fname = user.fname,
+                        lname = user.lname,
+                        profilePicUrl = null // Add user.profilePicUrl if available in your API model
+                    )
+                    com.example.tripsync.ConversationInfoCache.saveUserInfo(
+                        requireContext(),
+                        conversationId,
+                        cachedInfo
+                    )
+                    Log.d("CreateConversation", "Cached user info for conversation $conversationId")
+                } catch (cacheException: Exception) {
+                    // Don't fail the navigation if caching fails
+                    Log.e("CreateConversation", "Failed to cache user info: ${cacheException.message}")
+                }
+                // ========== END NEW CODE ==========
+
                 val bundle = Bundle().apply {
                     putString("name", displayName)
                     putInt("conversationId", conversationId)
@@ -248,4 +267,5 @@ class SearchUsersFragment : Fragment() {
             }
         }
     }
+
 }
