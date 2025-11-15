@@ -50,7 +50,9 @@ data class CreateTripData(
     val trip_type: String? = null,
     val trip_preferences: String? = null,
     val budget: Double? = null,
-    val itinerary: ItinerarySummary? = null
+    val itinerary: ItinerarySummary? = null,
+    val created_at: String? = null,
+    val updated_at: String? = null
 )
 data class ItinerarySummary(
     val id: Int? = null,
@@ -67,13 +69,17 @@ data class DayPlan(
     val updated_at: String? = null
 )
 data class ActivityItem(
+    val id: Int? = null,
     val time: String? = null,
     val title: String? = null,
     val description: String? = null,
     val location: String? = null,
+    val timings: String? = null,
     val duration: String? = null,
     val cost: Double? = null,
-    val category: String? = null
+    val category: String? = null,
+    val created_at: String? = null,
+    val updated_at: String? = null
 )
 
 data class ItineraryDayResponse(

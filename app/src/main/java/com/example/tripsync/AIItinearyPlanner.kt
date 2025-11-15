@@ -33,7 +33,7 @@ class AIItinearyPlannerFragment : Fragment() {
     private lateinit var tripLenTitle: TextView
     private lateinit var tripLenSubtitle: TextView
     private val oneDayMillis = 24L * 60L * 60L * 1000L
-    private val maxDays = 6
+    private val maxDays = 26
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.activity_a_i_itineary_planner, container, false)
@@ -75,7 +75,7 @@ class AIItinearyPlannerFragment : Fragment() {
             sb.toString()
         }
 
-        etTripName.filters = arrayOf(lettersOnlyFilter, InputFilter.LengthFilter(60))
+        etTripName.filters = arrayOf(InputFilter.LengthFilter(60))
         etCurrentLocation.filters = arrayOf(lettersOnlyFilter, InputFilter.LengthFilter(60))
         etDestination.filters = arrayOf(lettersOnlyFilter, InputFilter.LengthFilter(60))
 
@@ -141,7 +141,6 @@ class AIItinearyPlannerFragment : Fragment() {
 
         val startClick = View.OnClickListener {
             val now = Calendar.getInstance()
-
             DialogUtils.showDatePicker(
                 requireContext(),
                 initialCalendar = startCalendar,
@@ -166,6 +165,11 @@ class AIItinearyPlannerFragment : Fragment() {
         val endClick = View.OnClickListener {
             val minDate = if (etStartDate.text.isNullOrBlank()) Calendar.getInstance().timeInMillis else startCalendar.timeInMillis
             val maxEndAllowed = if (etStartDate.text.isNullOrBlank()) Long.MAX_VALUE else startCalendar.timeInMillis + (maxDays - 1) * oneDayMillis
+
+            if (etStartDate.text.isNullOrBlank()) {
+                Toast.makeText(requireContext(), "Select start date first", Toast.LENGTH_SHORT).show()
+                return@OnClickListener
+            }
 
             DialogUtils.showDatePicker(
                 requireContext(),
@@ -200,7 +204,7 @@ class AIItinearyPlannerFragment : Fragment() {
 
             val hasLetters = { s: String -> s.any { it.isLetter() } }
             val allFilled = tripName.isNotEmpty() && currentLocation.isNotEmpty() && destination.isNotEmpty() && startText.isNotEmpty() && endText.isNotEmpty() && selectedPreference.isNotEmpty() && selectedTripType.isNotEmpty()
-            val onlyLettersOk = hasLetters(tripName) && hasLetters(currentLocation) && hasLetters(destination)
+            val onlyLettersOk = hasLetters(currentLocation) && hasLetters(destination)
             val datesValid = if (allFilled) {
                 val s = runCatching { dateFormat.parse(startText) }.getOrNull()
                 val e = runCatching { dateFormat.parse(endText) }.getOrNull()
@@ -208,7 +212,7 @@ class AIItinearyPlannerFragment : Fragment() {
             } else false
 
             if (!allFilled || !onlyLettersOk) {
-                Toast.makeText(requireContext(), "Please enter letters only and fill all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Please enter letters only for location/destination and fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (!datesValid) {

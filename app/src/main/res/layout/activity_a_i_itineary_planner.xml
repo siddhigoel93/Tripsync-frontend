@@ -211,7 +211,6 @@
                     android:paddingHorizontal="12dp"
                     android:textColor="#737373"
                     android:textSize="14sp"
-                    android:drawableEnd="@drawable/itenarydown"
                     android:drawablePadding="8dp"
                     android:layout_marginBottom="17dp"/>
 
@@ -235,7 +234,6 @@
                     android:paddingHorizontal="12dp"
                     android:textColor="#737373"
                     android:textSize="14sp"
-                    android:drawableEnd="@drawable/itenarydown"
                     android:drawablePadding="8dp"
                     android:layout_marginBottom="12dp"/>
 

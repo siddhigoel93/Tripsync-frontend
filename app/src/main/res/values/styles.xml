@@ -5,6 +5,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
+
     <style name="OtpBoxStyle">
         <item name="android:gravity">center</item>
         <item name="android:digits">0123456789</item>
@@ -14,7 +15,6 @@
         <item name="android:padding">0dp</item>
     </style>
 
-    <!-- Day tabs (renamed: no dots) -->
     <style name="DayTabBase">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">36dp</item>
@@ -91,29 +91,29 @@
         <item name="cornerSize">10dp</item>
     </style>
 
-        <style name="DrawerMenuItem">
-            <item name="android:layout_width">match_parent</item>
-            <item name="android:layout_height">wrap_content</item>
-            <item name="android:paddingStart">16dp</item>
-            <item name="android:paddingEnd">16dp</item>
-            <item name="android:paddingTop">12dp</item>
-            <item name="android:paddingBottom">12dp</item>
-            <item name="android:textColor">@color/black</item>
-            <item name="android:textSize">16sp</item>
-            <item name="android:gravity">center_vertical</item>
-            <item name="android:drawablePadding">16dp</item>
-            <item name="android:background">?attr/selectableItemBackground</item>
-        </style>
+    <style name="DrawerMenuItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
 
-        <style name="DrawerBottomItem">
-            <item name="android:layout_width">wrap_content</item>
-            <item name="android:layout_height">wrap_content</item>
-            <item name="android:textSize">16sp</item>
-            <item name="android:textColor">#FF6464</item>
-            <item name="android:gravity">center_vertical</item>
-            <item name="android:drawablePadding">16dp</item>
-            <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-        </style>
+    <style name="DrawerBottomItem">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#FF6464</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
 
     <style name="ToolbarTitle">
         <item name="android:textSize">18sp</item>
@@ -128,26 +128,16 @@
     </style>
 
     <style name="CustomAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <!-- Background color -->
         <item name="android:background">@android:color/white</item>
         <item name="backgroundTint">@android:color/white</item>
-
-        <!-- Title styling -->
         <item name="materialAlertDialogTitleTextStyle">@style/CustomAlertDialogTitle</item>
-
-        <!-- Message styling -->
         <item name="materialAlertDialogBodyTextStyle">@style/CustomAlertDialogMessage</item>
-
-        <!-- Button styling -->
         <item name="buttonBarPositiveButtonStyle">@style/CustomAlertDialogPositiveButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/CustomAlertDialogNegativeButton</item>
         <item name="buttonBarNeutralButtonStyle">@style/CustomAlertDialogNeutralButton</item>
-
-        <!-- Corner radius -->
         <item name="shapeAppearanceOverlay">@style/CustomAlertDialogShape</item>
     </style>
 
-    <!-- Title Text Style -->
     <style name="CustomAlertDialogTitle" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">20sp</item>
@@ -158,7 +148,6 @@
         <item name="android:paddingBottom">16dp</item>
     </style>
 
-    <!-- Message Text Style -->
     <style name="CustomAlertDialogMessage" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">16sp</item>
@@ -167,7 +156,6 @@
         <item name="android:paddingBottom">24dp</item>
     </style>
 
-    <!-- Positive Button Style (e.g., "Delete", "Leave") -->
     <style name="CustomAlertDialogPositiveButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@color/primary_color</item>
         <item name="android:textSize">14sp</item>
@@ -175,7 +163,6 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <!-- Negative Button Style (e.g., "Cancel") -->
     <style name="CustomAlertDialogNegativeButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@android:color/darker_gray</item>
         <item name="android:textSize">14sp</item>
@@ -183,20 +170,17 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <!-- Neutral Button Style -->
     <style name="CustomAlertDialogNeutralButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@android:color/darker_gray</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <!-- Shape with rounded corners -->
     <style name="CustomAlertDialogShape" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>
     </style>
 
-    <!-- Custom DatePicker Dialog Theme -->
     <style name="CustomDatePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="colorAccent">@color/primary_color</item>
         <item name="colorPrimary">@color/primary_color</item>
@@ -206,10 +190,30 @@
         <item name="buttonBarNegativeButtonStyle">@style/CustomAlertDialogNegativeButton</item>
     </style>
 
-    <!-- Custom DatePicker Style -->
     <style name="CustomDatePicker" parent="android:Widget.Material.DatePicker">
         <item name="android:headerBackground">@color/primary_color</item>
         <item name="android:calendarViewShown">true</item>
+    </style>
+
+    <color name="dp_surface">#212121</color>
+    <color name="dp_on_surface">#FFFFFF</color>
+    <color name="dp_primary">#00C896</color>
+
+    <style name="DatePickerDarkTheme" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="colorSurface">@color/dp_surface</item>
+        <item name="colorOnSurface">@color/dp_on_surface</item>
+        <item name="colorPrimary">@color/dp_primary</item>
+        <item name="colorOnPrimary">@color/dp_on_surface</item>
+        <item name="materialButtonStyle">@style/Widget.MyApp.MaterialButton.Text</item>
+        <item name="android:buttonStyle">@style/Widget.MyApp.Button.Text</item>
+    </style>
+
+    <style name="Widget.MyApp.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/dp_on_surface</item>
+    </style>
+
+    <style name="Widget.MyApp.MaterialButton.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/dp_on_surface</item>
     </style>
 
 </resources>
