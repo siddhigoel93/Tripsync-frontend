@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -68,10 +69,7 @@ class ChatThreadFragment : Fragment() {
         sendButton = view.findViewById(R.id.button_send)
         chatName = view.findViewById(R.id.toolbar_name)
         chatAvatar = view.findViewById(R.id.toolbar_profile)
-
-        // Find menu button (three dots) - adjust the ID based on your layout
-        menuButton = view.findViewById(R.id.toolbar_options) // or whatever ID you use
-
+        menuButton = view.findViewById(R.id.toolbar_options)
         val backButton = view.findViewById<ImageView>(R.id.toolbar_back)
 
         // Set name
@@ -82,7 +80,7 @@ class ChatThreadFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        // Setup menu button to show options
+        // Setup menu button
         menuButton.setOnClickListener {
             showConversationOptions()
         }
@@ -106,6 +104,16 @@ class ChatThreadFragment : Fragment() {
             sendMessage()
         }
 
+        // Handle Enter key press (optional: send on Enter)
+        messageInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                sendMessage()
+                true
+            } else {
+                false
+            }
+        }
+
         // Load messages immediately
         loadMessages(scrollToBottom = true, showToast = true)
 
@@ -115,7 +123,6 @@ class ChatThreadFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d("ChatThread", "onResume - starting auto-refresh and reloading messages")
-        // Reload messages to mark them as read (backend should handle this automatically)
         loadMessages(scrollToBottom = true, showToast = false)
         startAutoRefresh()
     }
@@ -167,8 +174,6 @@ class ChatThreadFragment : Fragment() {
                 if (response.isSuccessful) {
                     Log.d("ChatThread", "Successfully left conversation")
                     Toast.makeText(requireContext(), "You have left the conversation", Toast.LENGTH_SHORT).show()
-
-                    // Navigate back to chat list
                     findNavController().navigateUp()
                 } else {
                     val errorBody = response.errorBody()?.string()
@@ -193,7 +198,6 @@ class ChatThreadFragment : Fragment() {
         val content = messageInput.text.toString().trim()
 
         if (content.isEmpty()) {
-            Toast.makeText(requireContext(), "Please enter a message", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -204,8 +208,6 @@ class ChatThreadFragment : Fragment() {
         Log.d("ChatThread", "Sending message: $content")
 
         isSending = true
-        messageInput.isEnabled = false
-        sendButton.isEnabled = false
 
         lifecycleScope.launch {
             try {
@@ -220,7 +222,11 @@ class ChatThreadFragment : Fragment() {
                     val message = response.body()
                     Log.d("ChatThread", "Message sent successfully: ${message?.id}")
 
+                    // Clear input but keep keyboard open
                     messageInput.text.clear()
+
+                    // Keep focus to maintain keyboard
+                    messageInput.requestFocus()
 
                     delay(100)
                     loadMessages(scrollToBottom = true, showToast = false)
@@ -234,8 +240,6 @@ class ChatThreadFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             } finally {
                 isSending = false
-                messageInput.isEnabled = true
-                sendButton.isEnabled = true
             }
         }
     }
@@ -325,7 +329,7 @@ class ChatThreadFragment : Fragment() {
 
                         if (scrollToBottom || hasNewMessages) {
                             messagesRecycler.post {
-                                messagesRecycler.scrollToPosition(adapter.itemCount - 1)
+                                messagesRecycler.smoothScrollToPosition(adapter.itemCount - 1)
                             }
                         }
                     }

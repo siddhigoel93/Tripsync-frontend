@@ -160,7 +160,7 @@
 
     <!-- Message Text Style -->
     <style name="CustomAlertDialogMessage" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
-        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">16sp</item>
         <item name="android:paddingStart">24dp</item>
         <item name="android:paddingEnd">24dp</item>
@@ -199,6 +199,7 @@
     <!-- Custom DatePicker Dialog Theme -->
     <style name="CustomDatePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="colorAccent">@color/primary_color</item>
+        <item name="colorPrimary">@color/primary_color</item>
         <item name="android:datePickerStyle">@style/CustomDatePicker</item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="buttonBarPositiveButtonStyle">@style/CustomAlertDialogPositiveButton</item>
