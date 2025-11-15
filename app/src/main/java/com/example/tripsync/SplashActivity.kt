@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.example.tripsync.api.SessionManager
 import kotlin.math.min
 
 class SplashActivity : AppCompatActivity() {
@@ -19,6 +20,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_splash)
+
 
         val videoView = findViewById<VideoView>(R.id.splashVideo)
         val videoContainer = findViewById<FrameLayout>(R.id.video_container)
@@ -40,16 +42,23 @@ class SplashActivity : AppCompatActivity() {
                 ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     videoContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    val videoW = if (rotationDegrees == 90 || rotationDegrees == 270) mp.videoHeight else mp.videoWidth
-                    val videoH = if (rotationDegrees == 90 || rotationDegrees == 270) mp.videoWidth else mp.videoHeight
-                    sizeVideoToFitInside(videoView, videoContainer.width, videoContainer.height, videoW, videoH)
+                    val videoW =
+                        if (rotationDegrees == 90 || rotationDegrees == 270) mp.videoHeight else mp.videoWidth
+                    val videoH =
+                        if (rotationDegrees == 90 || rotationDegrees == 270) mp.videoWidth else mp.videoHeight
+                    sizeVideoToFitInside(
+                        videoView,
+                        videoContainer.width,
+                        videoContainer.height,
+                        videoW,
+                        videoH
+                    )
                     videoView.start()
                 }
             })
         }
 
         videoView.setOnCompletionListener { navigateToMain() }
-        videoView.setOnErrorListener { _, _, _ -> navigateToMain(); true }
     }
 
     private fun sizeVideoToFitInside(videoView: VideoView, containerW: Int, containerH: Int, videoW: Int, videoH: Int) {
@@ -75,8 +84,27 @@ class SplashActivity : AppCompatActivity() {
 
     private fun navigateToMain() {
         if (isFinishing) return
-        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+
+        val isLoggedIn = SessionManager.isLoggedIn(this)
+        val isProfileCompleted = SessionManager.isProfileCompleted(this)
+
+        val intent = if (isLoggedIn) {
+            if (isProfileCompleted) {
+                Intent(this, MainActivity::class.java).apply {
+                    putExtra("destination", "home")
+                }
+            } else {
+                Intent(this, MainActivity::class.java).apply {
+                    putExtra("destination", "signup")
+                }
+            }
+        } else {
+            Intent(this, MainActivity::class.java)
+        }
+
+        startActivity(intent)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()
     }
+
 }

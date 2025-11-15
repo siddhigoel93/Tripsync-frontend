@@ -43,6 +43,7 @@ class AIchatFragment : Fragment() {
         val sendButton = view.findViewById<ImageButton>(R.id.btn_send)
         val emptyStateContainer = view.findViewById<ViewGroup>(R.id.empty_state_container)
 
+        back = view.findViewById(R.id.back_arrow)
         adapter = AIchatAdapter(messages)
         recyclerView.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext())

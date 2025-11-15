@@ -445,4 +445,8 @@
         android:label="ReceivedRequests"
         tools:layout="@layout/recieved_fragment_received_requests" />
 
+    <action
+        android:id="@+id/action_global_homeFragment"
+        app:destination="@id/homeFragment" />
+
 </navigation>

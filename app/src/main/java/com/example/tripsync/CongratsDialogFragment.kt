@@ -21,7 +21,12 @@ class CongratsDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.findViewById<TextView>(R.id.btnHome).setOnClickListener {
-            findNavController().navigate(R.id.action_congratsDialogFragment_to_homeFragment)
+            dismiss()
+            requireParentFragment()
+                .findNavController()
+                .navigate(R.id.action_global_homeFragment)
         }
+
+
     }
 }

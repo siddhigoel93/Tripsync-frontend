@@ -57,9 +57,11 @@ object SessionManager {
     }
 
     fun isLoggedIn(context: Context): Boolean {
-        return getAuthPrefs(context).getBoolean(KEY_IS_LOGGED_IN, false) &&
-                getAuthToken(context) != null
+        val token = getAuthPrefs(context).getString(KEY_TOKEN, null)
+        val isLogged = getAuthPrefs(context).getBoolean(KEY_IS_LOGGED_IN, false)
+        return isLogged && !token.isNullOrEmpty()
     }
+
 
     fun logout(context: Context) {
         // Clear ONLY auth tokens, not user profile data

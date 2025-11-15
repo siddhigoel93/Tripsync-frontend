@@ -139,6 +139,7 @@ object DialogUtils {
     /**
      * Show a styled DatePickerDialog
      */
+
     fun showDatePicker(
         context: Context,
         initialCalendar: Calendar = Calendar.getInstance(),
@@ -146,10 +147,19 @@ object DialogUtils {
         maxDate: Long? = null,
         onDateSelected: (year: Int, month: Int, dayOfMonth: Int) -> Unit
     ): DatePickerDialog {
+
+        val activity = context as? android.app.Activity
+        if (activity == null || activity.isFinishing || activity.isDestroyed) {
+            return DatePickerDialog(context) // return dummy
+        }
+
         val datePickerDialog = DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
-                onDateSelected(year, month, dayOfMonth)
+                val act = context as? android.app.Activity
+                if (act != null && !act.isFinishing && !act.isDestroyed) {
+                    onDateSelected(year, month, dayOfMonth)
+                }
             },
             initialCalendar.get(Calendar.YEAR),
             initialCalendar.get(Calendar.MONTH),
@@ -159,9 +169,13 @@ object DialogUtils {
         minDate?.let { datePickerDialog.datePicker.minDate = it }
         maxDate?.let { datePickerDialog.datePicker.maxDate = it }
 
-        datePickerDialog.show()
+        if (!activity.isFinishing && !activity.isDestroyed) {
+            datePickerDialog.show()
+        }
+
         return datePickerDialog
     }
+
 
     /**
      * Show a loading dialog (simple text-based)

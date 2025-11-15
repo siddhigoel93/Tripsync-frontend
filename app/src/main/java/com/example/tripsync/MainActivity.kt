@@ -101,6 +101,21 @@ class MainActivity : AppCompatActivity() {
 
         bottom_nav_view.setupWithNavController(navController)
 
+        when (intent.getStringExtra("destination")) {
+
+            "home" -> {
+                navController.navigate(R.id.homeFragment)
+            }
+
+            "signup" -> {
+                navController.navigate(R.id.fragment_signup)
+            }
+
+            else -> {
+                // default → onboardingFragment (startDestination)
+            }
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.fragment_personal_details,
