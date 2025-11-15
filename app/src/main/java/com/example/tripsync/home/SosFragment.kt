@@ -22,6 +22,7 @@ import java.util.Date
 import java.util.Locale
 import android.widget.ImageView
 import com.example.tripsync.R
+import com.example.tripsync.api.SessionManager
 
 class EmergencySosFragment : Fragment() {
 
@@ -39,8 +40,14 @@ class EmergencySosFragment : Fragment() {
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val contact_name = view.findViewById<TextView>(R.id.contact_name)
         val contact_number = view.findViewById<TextView>(R.id.contact_number)
-        contact_name.text = sharedPrefs.getString("ename", "Relation")
-        contact_number.text = sharedPrefs.getString("enumber", "1234567890")
+//        contact_name.text = sharedPrefs.getString("ename", "Relation")
+//        contact_number.text = sharedPrefs.getString("enumber", "1234567890")
+
+        val name = SessionManager.getEmergencyName(requireContext())
+        val number = SessionManager.getEmergencyNumber(requireContext())
+
+        contact_name.text = name ?: "Emergency Contact"
+        contact_number.text = number ?: "Not Set"
 
          close = view.findViewById(R.id.icon_close)
 

@@ -32,6 +32,12 @@ object SessionManager {
     private const val KEY_BLOOD_GROUP = "bgroup"
     private const val KEY_ALLERGIES = "allergies"
     private const val KEY_PROFILE_COMPLETED = "profile_completed"
+    private const val KEY_EMERGENCY_RELATION = "erelation"
+    private const val KEY_MEDICAL_CONDITIONS = "medical_conditions"
+    private const val KEY_EMERGENCY_NAME = "ename"
+    private const val KEY_EMERGENCY_NUMBER = "enumber"
+
+
 
     private fun getAuthPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(AUTH_PREF, Context.MODE_PRIVATE)
@@ -111,6 +117,10 @@ object SessionManager {
             preference?.let { putString(KEY_PREFERENCE, it) }
             bloodGroup?.let { putString(KEY_BLOOD_GROUP, it) }
             allergies?.let { putString(KEY_ALLERGIES, it) }
+            medical?.let { putString(KEY_MEDICAL_CONDITIONS, it) }
+            emergencyNumber?.let { putString(KEY_EMERGENCY_NUMBER, it) }
+            emergencyName?.let { putString(KEY_EMERGENCY_NAME, it) }
+            emergencyRelation?.let { putString(KEY_EMERGENCY_RELATION, it) }
             apply()
         }
     }
@@ -164,6 +174,15 @@ object SessionManager {
 
     fun getAllergies(context: Context): String? {
         return getAppPrefs(context).getString(KEY_ALLERGIES, null)
+    }
+    fun getEmergencyName(context: Context): String? {
+        // Use the new constant KEY_EMERGENCY_NAME
+        return getAppPrefs(context).getString(KEY_EMERGENCY_NAME, null)
+    }
+
+    fun getEmergencyNumber(context: Context): String? {
+        // Use the new constant KEY_EMERGENCY_NUMBER
+        return getAppPrefs(context).getString(KEY_EMERGENCY_NUMBER, null)
     }
 
     // ============ Profile Completion Methods ============
