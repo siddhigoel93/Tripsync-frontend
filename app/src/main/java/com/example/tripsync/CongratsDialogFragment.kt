@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.findNavController
 
 class CongratsDialogFragment : DialogFragment() {
 
@@ -20,8 +21,7 @@ class CongratsDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.findViewById<TextView>(R.id.btnHome).setOnClickListener {
-            dismiss()
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            findNavController().navigate(R.id.action_congratsDialogFragment_to_homeFragment)
         }
     }
 }

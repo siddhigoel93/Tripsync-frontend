@@ -1,5 +1,6 @@
 package com.example.tripsync.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,9 +42,11 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
             return fragment
         }
     }
+
     fun setCommentCountUpdateListener(listener: (Int) -> Unit) {
         commentCountUpdateListener = listener
     }
+
     override fun onStart() {
         super.onStart()
         val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
@@ -71,10 +74,8 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
         recyclerView = view.findViewById(R.id.comments_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-
         commentsAdapter = CommentAdapter(requireContext(), commentsList, this)
         recyclerView.adapter = commentsAdapter
-
     }
 
     private fun setupListeners(view: View) {
@@ -87,27 +88,33 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
                 sendCommentToApi(postId, commentText, commentEditText)
             }
         }
+
+        commentEditText.requestFocus()
+        commentEditText.postDelayed({
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+            imm?.showSoftInput(commentEditText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
     }
 
     private fun fetchPostDetailsAndComments(postId: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val api = ApiClient.getTokenService(requireContext())
-
                 val response = api.getPostDetails(postId)
 
                 if (response.isSuccessful) {
                     val comments = response.body()?.data?.comments
                     if (comments != null) {
                         commentsList.clear()
-
                         commentsList.addAll(comments.reversed())
-
                         commentsAdapter.notifyDataSetChanged()
+
                         commentCountUpdateListener?.invoke(comments.size)
 
                         if (comments.isNotEmpty()) {
-                            recyclerView.scrollToPosition(0)
+                            recyclerView.postDelayed({
+                                recyclerView.smoothScrollToPosition(comments.size)
+                            }, 100)
                         }
                     }
                 } else {
@@ -121,6 +128,7 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
             }
         }
     }
+
     private fun sendCommentToApi(postId: Int, commentText: String, inputField: EditText) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -131,29 +139,33 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
                 if (response.isSuccessful) {
                     val newCommentData = response.body()?.data
                     if (newCommentData != null) {
+                        // ONLY call adapter method
                         commentsAdapter.addComment(newCommentData)
 
                         inputField.setText("")
                         recyclerView.scrollToPosition(0)
+
                         commentCountUpdateListener?.invoke(commentsList.size)
                         Toast.makeText(context, "Comment added successfully!", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     val errorBody = response.errorBody()?.string()
-                    Toast.makeText(context, "Failed to add comment: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Failed to add comment: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Network Error adding comment", e)
-                Toast.makeText(context, "Network error" , Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Network error", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-
     override fun onUpdate(commentId: Int, newText: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             val position = commentsList.indexOfFirst { it.id == commentId }
-            if (position == -1) return@launch
+            if (position == -1) {
+                Log.e(TAG, "Comment not found: $commentId")
+                return@launch
+            }
 
             try {
                 val api = ApiClient.getTokenService(requireContext())
@@ -163,6 +175,7 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
                 if (response.isSuccessful) {
                     val updatedCommentData = response.body()?.data
                     if (updatedCommentData != null) {
+                        // ONLY call adapter method
                         commentsAdapter.updateComment(updatedCommentData, position)
                         Toast.makeText(context, "Comment updated.", Toast.LENGTH_SHORT).show()
                     }
@@ -171,30 +184,35 @@ class CommentsFragment : BottomSheetDialogFragment(), CommentActionListener {
                     commentsAdapter.notifyItemChanged(position)
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Error updating comment", e)
                 Toast.makeText(context, "Network error updating comment.", Toast.LENGTH_LONG).show()
                 commentsAdapter.notifyItemChanged(position)
             }
         }
     }
+
     override fun onDelete(commentId: Int, position: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
-            if (position == -1) return@launch
+            if (position < 0 || position >= commentsList.size) {
+                Log.e(TAG, "Invalid position: $position")
+                return@launch
+            }
 
             try {
                 val api = ApiClient.getTokenService(requireContext())
                 val response = api.deleteComment(commentId)
 
                 if (response.isSuccessful) {
-                    commentsList.removeAt(position)
+                    // ONLY call adapter method - DON'T modify commentsList directly
                     commentsAdapter.removeComment(position)
 
                     commentCountUpdateListener?.invoke(commentsList.size)
-
                     Toast.makeText(context, "Comment deleted successfully.", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Failed to delete comment.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Error deleting comment", e)
                 Toast.makeText(context, "Network error deleting comment.", Toast.LENGTH_LONG).show()
             }
         }

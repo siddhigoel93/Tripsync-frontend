@@ -1,152 +1,377 @@
 package com.example.tripsync
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tripsync.adapters.MessagesAdapter
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.ChatApi
+import com.example.tripsync.api.models.EditMessageRequest
 import com.example.tripsync.api.models.Message
-import com.example.tripsync.websocket.WebSocketManager
+import com.example.tripsync.api.models.SendMessageRequest
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 class ChatThreadFragment : Fragment() {
 
-    private var conversationId: Int = -1
-    private lateinit var recycler: RecyclerView
+    private lateinit var messagesRecycler: RecyclerView
+    private lateinit var messageInput: EditText
+    private lateinit var sendButton: ImageButton
+    private lateinit var chatName: TextView
+    private lateinit var chatAvatar: ImageView
+    private lateinit var menuButton: ImageView
     private lateinit var adapter: MessagesAdapter
-    private var webSocketManager: WebSocketManager? = null
-    private lateinit var messageEditText: EditText
-    private lateinit var sendButton: ImageView
+
+    private var conversationId: Int = -1
+    private var currentUserId: Int = -1
+    private var isGroup: Boolean = false
+    private var autoRefreshJob: Job? = null
+    private var isSending: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val v = inflater.inflate(R.layout.fragment_chat_thread, container, false)
+        val view = inflater.inflate(R.layout.fragment_chat_thread, container, false)
 
-        val back = v.findViewById<ImageView>(R.id.toolbar_back)
-        val profileImg = v.findViewById<ImageView>(R.id.toolbar_profile)
-        val nameTv = v.findViewById<TextView>(R.id.toolbar_name)
+        // Get arguments
+        conversationId = arguments?.getInt("conversationId", -1) ?: -1
+        val name = arguments?.getString("name", "Chat") ?: "Chat"
+        isGroup = arguments?.getBoolean("isGroup", false) ?: false
 
+        Log.d("ChatThread", "Opening conversation ID: $conversationId, Name: $name, IsGroup: $isGroup")
 
-        val args = requireArguments()
-        nameTv.text = args.getString("name", "")
-        conversationId = args.getInt("conversationId", -1)
+        // Get current user ID
+        val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        currentUserId = sharedPref.getString("self_id", "-1")?.toIntOrNull() ?: -1
 
-        back.setOnClickListener { requireActivity().onBackPressed() }
+        Log.d("ChatThread", "Current User ID: $currentUserId")
 
-        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val selfId = prefs.getInt("self_id", -1)
-
-        recycler = v.findViewById(R.id.recycler_messages)
-        recycler.layoutManager = LinearLayoutManager(requireContext())
-        adapter = MessagesAdapter(mutableListOf(), selfId)
-        recycler.adapter = adapter
-
-        loadMessages()
-        connectWebSocket()
-
-        return v
-    }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        messageEditText = view.findViewById(R.id.message_edit_text)
+        // Initialize views
+        messagesRecycler = view.findViewById(R.id.recycler_messages)
+        messageInput = view.findViewById(R.id.message_edit_text)
         sendButton = view.findViewById(R.id.button_send)
+        chatName = view.findViewById(R.id.toolbar_name)
+        chatAvatar = view.findViewById(R.id.toolbar_profile)
+        menuButton = view.findViewById(R.id.toolbar_options)
+        val backButton = view.findViewById<ImageView>(R.id.toolbar_back)
 
+        // Set name
+        chatName.text = name
+
+        // Setup back button
+        backButton.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        // Setup menu button
+        menuButton.setOnClickListener {
+            showConversationOptions()
+        }
+
+        // Setup RecyclerView
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.stackFromEnd = true
+        messagesRecycler.layoutManager = layoutManager
+
+        adapter = MessagesAdapter(
+            mutableListOf(),
+            currentUserId,
+            isGroup,
+            onEditMessage = { message, newContent -> editMessage(message, newContent) },
+            onDeleteMessage = { message -> deleteMessage(message) }
+        )
+        messagesRecycler.adapter = adapter
+
+        // Setup send button
         sendButton.setOnClickListener {
-            val content = messageEditText.text.toString().trim()
-            if (content.isNotEmpty()) {
-                sendMessage(content)
-                messageEditText.text.clear()
+            sendMessage()
+        }
+
+        // Handle Enter key press (optional: send on Enter)
+        messageInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                sendMessage()
+                true
+            } else {
+                false
+            }
+        }
+
+        // Load messages immediately
+        loadMessages(scrollToBottom = true, showToast = true)
+
+        return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("ChatThread", "onResume - starting auto-refresh and reloading messages")
+        loadMessages(scrollToBottom = true, showToast = false)
+        startAutoRefresh()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("ChatThread", "onPause - stopping auto-refresh")
+        stopAutoRefresh()
+    }
+
+    private fun showConversationOptions() {
+        val options = arrayOf("Leave Conversation")
+
+        com.example.tripsync.utils.DialogUtils.showOptionsDialog(
+            requireContext(),
+            "Conversation Options",
+            options
+        ) { which ->
+            when (which) {
+                0 -> showLeaveConfirmation()
             }
         }
     }
 
+    private fun showLeaveConfirmation() {
+        com.example.tripsync.utils.DialogUtils.showConfirmationDialog(
+            requireContext(),
+            "Leave Conversation",
+            "Are you sure you want to leave this conversation? You will no longer receive messages from this chat.",
+            positiveButtonText = "Leave",
+            negativeButtonText = "Cancel",
+            onPositiveClick = {
+                leaveConversation()
+            }
+        )
+    }
 
-    private fun loadMessages() {
-        if (conversationId == -1) return
-
+    private fun leaveConversation() {
         lifecycleScope.launch {
             try {
                 val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
-                val response = chatApi.getMessages(conversationId)
+
+                Log.d("ChatThread", "Leaving conversation: $conversationId")
+
+                val response = chatApi.leaveConversation(conversationId)
+
+                Log.d("ChatThread", "Leave conversation response code: ${response.code()}")
+
                 if (response.isSuccessful) {
-                    val messages = response.body()?.data ?: emptyList()
-                    adapter.updateMessages(messages)
-                    recycler.scrollToPosition(messages.size - 1)
+                    Log.d("ChatThread", "Successfully left conversation")
+                    Toast.makeText(requireContext(), "You have left the conversation", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
                 } else {
-                    Toast.makeText(requireContext(), "Failed to load messages", Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatThread", "Failed to leave conversation: ${response.code()} - $errorBody")
+
+                    val errorMessage = when (response.code()) {
+                        403 -> "You are not a participant of this conversation"
+                        404 -> "Conversation not found"
+                        else -> "Failed to leave conversation: ${response.code()}"
+                    }
+
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("ChatThread", "Error leaving conversation", e)
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun connectWebSocket() {
-        if (conversationId == -1) return
+    private fun sendMessage() {
+        val content = messageInput.text.toString().trim()
 
-        val sp = requireContext().getSharedPreferences("auth" , Context.MODE_PRIVATE)
-        val token = sp.getString("access_token" , null) ?: return
+        if (content.isEmpty()) {
+            return
+        }
 
-        val wsUrl = "wss://51.20.254.52/ws/chat/$conversationId/?token=$token"
+        if (isSending) {
+            return
+        }
 
-        webSocketManager = WebSocketManager(wsUrl, object : WebSocketManager.WebSocketEvents {
-            override fun onOpen() {
-                Toast.makeText(requireContext(), "Connected to chat", Toast.LENGTH_SHORT).show()
+        Log.d("ChatThread", "Sending message: $content")
+
+        isSending = true
+
+        lifecycleScope.launch {
+            try {
+                val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
+                val request = SendMessageRequest(content)
+
+                val response = chatApi.sendMessage(conversationId, request)
+
+                Log.d("ChatThread", "Send response code: ${response.code()}")
+
+                if (response.isSuccessful) {
+                    val message = response.body()
+                    Log.d("ChatThread", "Message sent successfully: ${message?.id}")
+
+                    // Clear input but keep keyboard open
+                    messageInput.text.clear()
+
+                    // Keep focus to maintain keyboard
+                    messageInput.requestFocus()
+
+                    delay(100)
+                    loadMessages(scrollToBottom = true, showToast = false)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatThread", "Failed to send message: ${response.code()} - $errorBody")
+                    Toast.makeText(requireContext(), "Failed to send message: ${response.code()}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("ChatThread", "Error sending message", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                isSending = false
             }
+        }
+    }
 
-            override fun onMessageReceived(message: String) {
-                val json = JSONObject(message)
-                val data = json.optJSONObject("data") ?: return
-                val msg = Message(
-                    id = data.optInt("id"),
-                    content = data.optString("content"),
-                    sender = com.example.tripsync.api.models.MessageSender(
-                        id = data.getJSONObject("sender").optInt("id"),
-                        email = data.getJSONObject("sender").optString("email")
-                    ),
-                    timestamp = data.optString("timestamp")
-                )
-                requireActivity().runOnUiThread {
-                    adapter.addMessage(msg)
-                    recycler.scrollToPosition(adapter.itemCount - 1)
+    private fun editMessage(message: Message, newContent: String) {
+        lifecycleScope.launch {
+            try {
+                val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
+                val request = EditMessageRequest(newContent)
+
+                Log.d("ChatThread", "Editing message ${message.id}: $newContent")
+
+                val response = chatApi.editMessage(conversationId, message.id, request)
+
+                if (response.isSuccessful) {
+                    Log.d("ChatThread", "Message edited successfully")
+                    Toast.makeText(requireContext(), "Message edited", Toast.LENGTH_SHORT).show()
+
+                    delay(100)
+                    loadMessages(scrollToBottom = false, showToast = false)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatThread", "Failed to edit message: ${response.code()} - $errorBody")
+                    Toast.makeText(requireContext(), "Failed to edit message", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("ChatThread", "Error editing message", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun deleteMessage(message: Message) {
+        lifecycleScope.launch {
+            try {
+                val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
+
+                Log.d("ChatThread", "Deleting message ${message.id}")
+
+                val response = chatApi.deleteMessage(conversationId, message.id)
+
+                if (response.isSuccessful) {
+                    Log.d("ChatThread", "Message deleted successfully")
+                    Toast.makeText(requireContext(), "Message deleted", Toast.LENGTH_SHORT).show()
+
+                    delay(100)
+                    loadMessages(scrollToBottom = false, showToast = false)
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatThread", "Failed to delete message: ${response.code()} - $errorBody")
+                    Toast.makeText(requireContext(), "Failed to delete message", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("ChatThread", "Error deleting message", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun loadMessages(scrollToBottom: Boolean = false, showToast: Boolean = false) {
+        lifecycleScope.launch {
+            try {
+                val chatApi = ApiClient.createService(requireContext(), ChatApi::class.java)
+
+                Log.d("ChatThread", "Loading messages for conversation: $conversationId")
+
+                val response = chatApi.getMessages(conversationId)
+
+                Log.d("ChatThread", "Load messages response code: ${response.code()}")
+
+                if (response.isSuccessful) {
+                    val messages = response.body() ?: emptyList()
+
+                    Log.d("ChatThread", "Loaded ${messages.size} messages")
+
+                    val previousCount = adapter.itemCount
+                    val hasNewMessages = messages.size > previousCount
+
+                    if (messages.isEmpty()) {
+                        Log.d("ChatThread", "No messages in conversation")
+                        messagesRecycler.visibility = View.VISIBLE
+                        adapter.updateMessages(emptyList())
+                    } else {
+                        Log.d("ChatThread", "Updating adapter with messages")
+                        messagesRecycler.visibility = View.VISIBLE
+                        adapter.updateMessages(messages)
+
+                        if (scrollToBottom || hasNewMessages) {
+                            messagesRecycler.post {
+                                messagesRecycler.smoothScrollToPosition(adapter.itemCount - 1)
+                            }
+                        }
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("ChatThread", "Failed to load messages: ${response.code()} - $errorBody")
+
+                    if (showToast) {
+                        Toast.makeText(requireContext(), "Failed to load messages: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ChatThread", "Error loading messages", e)
+
+                if (showToast) {
+                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
 
-            override fun onFailure(t: Throwable) {
-                Toast.makeText(requireContext(), "WebSocket error: ${t.message}", Toast.LENGTH_SHORT).show()
+    private fun startAutoRefresh() {
+        stopAutoRefresh()
+
+        autoRefreshJob = viewLifecycleOwner.lifecycleScope.launch {
+            while (isActive) {
+                delay(2000)
+                if (!isSending) {
+                    Log.d("ChatThread", "Auto-refreshing messages...")
+                    loadMessages(scrollToBottom = false, showToast = false)
+                }
             }
-        })
-        webSocketManager?.connect()
-    }
-    private fun sendMessage(content: String) {
-        if (webSocketManager == null) return
-
-        val json = JSONObject()
-        json.put("content", content)
-        json.put("conversation_id", conversationId)
-
-        webSocketManager?.sendMessage(json.toString())
+        }
     }
 
+    private fun stopAutoRefresh() {
+        autoRefreshJob?.cancel()
+        autoRefreshJob = null
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        webSocketManager?.disconnect()
+        stopAutoRefresh()
     }
 }

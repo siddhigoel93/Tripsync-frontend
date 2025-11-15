@@ -36,14 +36,8 @@ class CommentAdapter(
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = comments[position]
 
-        // Use safe access to ensure 'comment.user' is not null before accessing its properties
         comment.user?.let { user ->
-            // This code block only executes if 'comment.user' is NOT null
-
-            // 1. Set the user name (Safely access fname and lname)
             holder.userName.text = "${user.fname} ${user.lname}"
-
-            // 2. Load the avatar (Safely access pic)
             val avatarUrl = user.pic
 
             if (!avatarUrl.isNullOrEmpty()) {
@@ -60,7 +54,6 @@ class CommentAdapter(
         } ?: run {
             holder.userName.text = "Unknown User"
             holder.userAvatar.setImageResource(R.drawable.placeholder_image)
-            // Optionally, log an error or hide the entire comment if user data is critical
         }
 
         holder.commentText.text = comment.text
@@ -91,9 +84,16 @@ class CommentAdapter(
     }
 
     fun removeComment(position: Int) {
-        comments.removeAt(position)
-        notifyItemRemoved(position)
+        if (position >= 0 && position < comments.size) {
+            comments.removeAt(position)
+            notifyItemRemoved(position)
+            // Fix positions of remaining items
+            if (position < comments.size) {
+                notifyItemRangeChanged(position, comments.size - position)
+            }
+        }
     }
+
 
     fun updateComment(updatedComment: CommentData, position: Int) {
         if (position >= 0 && position < comments.size) {
@@ -106,7 +106,6 @@ class CommentAdapter(
 
     private fun showPopupMenu(view: View, comment: CommentData, position: Int) {
         val popup = android.widget.PopupMenu(context, view)
-        // Ensure you have a 'comment_menu.xml' defined with action_edit and action_delete
         popup.menuInflater.inflate(R.menu.comment_menu, popup.menu)
 
         popup.setOnMenuItemClickListener { item ->

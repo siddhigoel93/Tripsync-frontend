@@ -21,15 +21,31 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.tripsync.api.ApiClient
 import com.example.tripsync.api.AuthService
+import com.example.tripsync.api.SessionManager
 import com.example.tripsync.api.models.TrendingPlace
 import com.example.tripsync.api.models.TravelStory
 import com.example.tripsync.api.models.TravelStoryAdapter
+import com.example.tripsync.api.models.WeatherResponse
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import android.Manifest
+import android.content.pm.PackageManager
+import android.util.Log
+import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.Dispatchers
+import kotlin.getValue
 
 class ExploreFragment : Fragment() {
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var city: TextView
+    private lateinit var sos_btn: MaterialButton
     private val args: ExploreFragmentArgs by navArgs()
     private lateinit var storiesAdapter: TravelStoryAdapter
 
@@ -38,8 +54,20 @@ class ExploreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
+        city = view.findViewById(R.id.weather_subtitle)
+        sos_btn = view.findViewById(R.id.sos_btn)
 
-        view.findViewById<MaterialButton>(R.id.complete_profile_button)?.setOnClickListener {
+        // Setup SOS button click listener
+        sos_btn.setOnClickListener {
+            navigateToEmergencySos()
+        }
+
+        view.findViewById<CardView>(R.id.card_emergency_sos).setOnClickListener {
+            navigateToEmergencySos()
+        }
+
+        // Complete profile button
+        view.findViewById<MaterialButton>(R.id.complete_profile_button).setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_fragment_personal_details)
         }
 
@@ -58,7 +86,15 @@ class ExploreFragment : Fragment() {
         }
 
         view.findViewById<CardView>(R.id.card_ai_planner).setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_AIItinearyPlannerFragment)
+            if (SessionManager.isProfileCompleted(requireContext())) {
+                findNavController().navigate(R.id.action_homeFragment_to_AIItinearyPlannerFragment)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Please complete your profile to create itineraries",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
 
         view.findViewById<CardView>(R.id.card_add_tripmates).setOnClickListener {
@@ -91,6 +127,18 @@ class ExploreFragment : Fragment() {
         return view
     }
 
+    private fun navigateToEmergencySos() {
+        if (SessionManager.isProfileCompleted(requireContext())) {
+            findNavController().navigate(R.id.action_homeFragment_to_emergencySosFragment)
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Please complete your profile to access Emergency SOS",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     private fun fetchTrendingPlacesAndPopulate(context: Context, recyclerView: RecyclerView) {
         lifecycleScope.launch {
             try {
@@ -98,7 +146,9 @@ class ExploreFragment : Fragment() {
                 val places: List<TrendingPlace> = service.getTrendingPlaces()
 
                 if (places.isNotEmpty()) {
-                    val stories = places.map { place ->
+                    val selectedPlaces = places.shuffled().take(4)
+
+                    val stories = selectedPlaces.map { place ->
                         TravelStory(id = place.id, cityName = place.name, imageUrl = place.main)
                     }
 
@@ -110,7 +160,7 @@ class ExploreFragment : Fragment() {
                             findNavController().navigate(R.id.travelStoryDetailFragment, bundle)
                         } catch (_: Exception) {
                             try {
-                                val frag = com.example.tripsync.TravelStoryDetailFragment().apply {
+                                val frag = TravelStoryDetailFragment().apply {
                                     arguments = Bundle().apply {
                                         putInt("place_id", story.id ?: -1)
                                     }
@@ -140,13 +190,23 @@ class ExploreFragment : Fragment() {
 
         val appBarLayout = view.findViewById<AppBarLayout>(R.id.app_bar_layout)
         val customHeader = view.findViewById<ConstraintLayout>(R.id.header)
+        val chatbot = view.findViewById<ImageButton>(R.id.toolbar_btn_chat)
 
-        val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val isProfileCompleted = sharedPrefs.getBoolean("profile_completed", false)
+        view.findViewById<MaterialButton>(R.id.sos_btn).bringToFront()
+
+
+        // Use SessionManager instead of direct SharedPreferences access
+        val isProfileCompleted = SessionManager.isProfileCompleted(requireContext())
+        val savedUrl = SessionManager.getAvatarUrl(requireContext())
+        updateExploreProfileImage(savedUrl)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        getUserLocation()
+
         customHeader.visibility = if (isProfileCompleted) View.GONE else View.VISIBLE
 
         if (args.showHeader) {
-            val avatarUrl = sharedPrefs.getString("userAvatarUrl", null)
+            val avatarUrl = SessionManager.getAvatarUrl(requireContext())
             val profileImageView = view.findViewById<ImageView>(R.id.menu_icon)
             if (!avatarUrl.isNullOrEmpty()) {
                 Glide.with(this)
@@ -165,9 +225,53 @@ class ExploreFragment : Fragment() {
         appBarLayout.elevation = elevationInPixels
         appBarLayout.translationZ = elevationInPixels
         appBarLayout.bringToFront()
+
+        chatbot.bringToFront()
+        customHeader.setOnTouchListener { _, _ -> false }
+
+
+        chatbot.setOnClickListener {
+            findNavController().navigate(R.id.AIchatFragment)
+        }
+
+        (activity as? MainActivity)?.addProfileObserver { newUrl ->
+            if (isAdded && view != null) {
+                newUrl?.let { updateExploreProfileImage(it) }
+            }
+        }
+    }
+
+    private fun fetchWeather(location: String) {
+        lifecycleScope.launch {
+            try {
+                if (!isAdded) return@launch
+
+                val api = ApiClient.getAuthService(requireContext())
+                val weatherResponse: WeatherResponse = withContext(Dispatchers.IO) {
+                    api.getWeather(location)
+                }
+
+                if (!isAdded || view == null) return@launch
+                val weather = weatherResponse.data
+                view?.findViewById<TextView>(R.id.temp_yesterday)?.text = "${weather.wind} km/h"
+                view?.findViewById<TextView>(R.id.temp_today)?.text = "${weather.chance_of_rain}%"
+                view?.findViewById<TextView>(R.id.temp_tomorrow)?.text = "${weather.temperature}°"
+
+            } catch (e: Exception) {
+                if (isAdded && context != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error: ${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
     }
 
     fun updateExploreProfileImage(url: String?) {
+        if (!isAdded || view == null) return
+
         val exploreProfileImage = requireView().findViewById<ImageView>(R.id.menu_icon)
         if (!url.isNullOrEmpty()) {
             Glide.with(this)
@@ -178,6 +282,54 @@ class ExploreFragment : Fragment() {
                 .into(exploreProfileImage)
         } else {
             exploreProfileImage.setImageResource(R.drawable.profile)
+        }
+    }
+
+    private fun getUserLocation() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        val lat = location.latitude
+                        val lon = location.longitude
+                        Log.d("Location", "Lat: $lat, Lon: $lon")
+
+                        val cityName = getCityNameFromLocation(lat, lon)
+                        Log.d("Location", "City: $cityName")
+                        fetchWeather(cityName ?: "Delhi")
+                        city.text = cityName
+                    } else {
+                        fetchWeather("Delhi")
+                    }
+                }
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                getUserLocation()
+            } else {
+                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
+                fetchWeather("Delhi")
+            }
+        }
+
+    private fun getCityNameFromLocation(lat: Double, lon: Double): String? {
+        return try {
+            val geocoder = android.location.Geocoder(requireContext(), java.util.Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, lon, 1)
+            addresses?.firstOrNull()?.locality
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 }

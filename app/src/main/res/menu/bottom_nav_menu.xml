@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/home"
+        android:icon="@drawable/home_selector"
         android:title="Home" />
     <item
         android:id="@+id/trendingDestinationFragment"
-        android:icon="@drawable/trending"
+        android:icon="@drawable/trending_selector"
         android:title="Trending" />
     <item
         android:id="@+id/nav_store_placeholder"
@@ -14,10 +14,10 @@
         android:enabled="false" />
     <item
     android:id="@+id/nav_community"
-    android:icon="@drawable/community"
+    android:icon="@drawable/community_selector"
     android:title="Community" />
     <item
         android:id="@+id/chatFragment"
-        android:icon="@drawable/chat"
+        android:icon="@drawable/chat_selector"
         android:title="Chat" />
 </menu>

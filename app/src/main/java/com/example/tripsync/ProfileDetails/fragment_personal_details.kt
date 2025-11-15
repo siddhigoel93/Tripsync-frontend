@@ -1,7 +1,6 @@
 package com.example.tripsync.ui
 
 import android.Manifest
-import android.app.DatePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -12,7 +11,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,8 +20,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
 import com.example.tripsync.ProfileDetails.ProfileViewModel
 import com.example.tripsync.databinding.FragmentPersonalDetailsBinding
+import com.example.tripsync.utils.DialogUtils
 import java.util.Calendar
-
 
 class FragmentPersonalDetails : Fragment() {
 
@@ -33,7 +31,6 @@ class FragmentPersonalDetails : Fragment() {
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
     private var selectedGender: String? = null
-
     private var pickedImageUri: Uri? = null
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -94,7 +91,6 @@ class FragmentPersonalDetails : Fragment() {
                 arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
                 100)
         }
-
 
         binding.profileImageView.setOnClickListener { pickImage.launch("image/*") }
 
@@ -178,7 +174,6 @@ class FragmentPersonalDetails : Fragment() {
             hasError = true
         }
 
-
         if (hasError) return
 
         profileViewModel.firstName = first
@@ -200,7 +195,6 @@ class FragmentPersonalDetails : Fragment() {
         findNavController().navigate(R.id.emergencyFragment)
     }
 
-
     private fun selectGender(value: String?) {
         selectedGender = value
         if (!isAdded || _binding == null) return
@@ -210,18 +204,19 @@ class FragmentPersonalDetails : Fragment() {
         binding.tvGenderOthers.isSelected = value == "others"
     }
 
-
-
-
     private fun openDatePicker() {
-        val ctx = context ?: return
         val cal = Calendar.getInstance()
-        DatePickerDialog(ctx, { _, y, m, d ->
-            if (!isAdded || _binding == null) return@DatePickerDialog
-            val mm = (m + 1).toString().padStart(2, '0')
-            val dd = d.toString().padStart(2, '0')
-            binding.etDOB.setText("$y-$mm-$dd")
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+
+        DialogUtils.showDatePicker(
+            requireContext(),
+            initialCalendar = cal,
+            onDateSelected = { year, month, dayOfMonth ->
+                if (!isAdded || _binding == null) return@showDatePicker
+                val mm = (month + 1).toString().padStart(2, '0')
+                val dd = dayOfMonth.toString().padStart(2, '0')
+                binding.etDOB.setText("$year-$mm-$dd")
+            }
+        )
     }
 
     private fun isAtLeast13(dobIso: String): Boolean {

@@ -15,7 +15,9 @@
             app:destination="@id/fragment_otp" />
         <action
             android:id="@+id/action_fragment_signup_to_login"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -25,7 +27,9 @@
         tools:layout="@layout/fragment_otp">
         <action
             android:id="@+id/action_fragment_otp_to_login"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_fragment_otp_to_welcomeFragment"
             app:destination="@id/welcomeFragment"
@@ -38,8 +42,8 @@
         android:name="com.example.tripsync.onboarding.OnboardingFragment"
         android:label="Onboarding">
         <action
-            android:id="@+id/action_onboarding_to_login"
-            app:destination="@id/loginFragment"
+            android:id="@+id/action_onboarding_to_signup"
+            app:destination="@id/fragment_signup"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
         <action
@@ -72,7 +76,9 @@
         android:label="Reset Password">
         <action
             android:id="@+id/action_resetPasswordFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_resetPasswordFragment_to_resetOTP"
             app:destination="@id/resetOTP" />
@@ -84,7 +90,9 @@
         android:label="Forgot Password">
         <action
             android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="false"/>
         <action
             android:id="@+id/action_forgotPasswordFragment_to_resetPasswordFragment"
             app:destination="@id/resetPasswordFragment" />
@@ -101,11 +109,12 @@
             app:popUpToInclusive="true" />
     </fragment>
 
+    <!-- 🟩 HOME / EXPLORE FRAGMENT -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.tripsync.ExploreFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_explore">
+        tools:layout="@layout/fragment_explore" >
         <argument
             android:name="showHeader"
             app:argType="boolean"
@@ -147,6 +156,12 @@
         <action
             android:id="@+id/action_fragment_connections_tripmates_to_recievedRequestsFragment"
             app:destination="@id/recievedRequestsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_AIchatFragment"
+            app:destination="@id/AIchatFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_trendingDestinationFragment2"
+            app:destination="@id/trendingDestinationFragment" />
     </fragment>
 
     <fragment
@@ -182,6 +197,11 @@
         <action
             android:id="@+id/action_welcomeFragment_to_fragment_personal_details"
             app:destination="@id/fragment_personal_details" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -202,7 +222,9 @@
             app:destination="@id/preferencesFragment" />
         <action
             android:id="@+id/action_contactVerifyFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -293,6 +315,12 @@
         <action
             android:id="@+id/action_chatFragment_to_searchUsersFragment"
             app:destination="@id/searchUsersFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_newGroupFragment"
+            app:destination="@id/newGroupFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_chatThreadFragment"
+            app:destination="@id/chatThreadFragment" />
     </fragment>
 
     <fragment
@@ -325,7 +353,17 @@
     <fragment
         android:id="@+id/openProfileFragment"
         android:name="com.example.tripsync.home.OpenProfileFragment"
-        android:label="openProfileFragment" />
+        android:label="openProfileFragment" >
+        <action
+            android:id="@+id/action_openProfileFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true"/>
+        <action
+            android:id="@+id/action_openProfileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/searchUsersFragment"
@@ -333,9 +371,8 @@
         android:label="Search Users">
         <action
             android:id="@+id/action_searchUsersFragment_to_chatThreadFragment"
-            app:destination="@id/chatThreadFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim" />
+            app:destination="@id/chatThreadFragment" />
+
     </fragment>
 
     <fragment
@@ -354,6 +391,10 @@
         android:id="@+id/emergencySosFragment"
         android:name="com.example.tripsync.home.EmergencySosFragment"
         android:label="EmergencySosFragment" />
+    <fragment
+        android:id="@+id/AIchatFragment"
+        android:name="AIchatFragment"
+        android:label="AIchatFragment" />
 
     <fragment
         android:id="@+id/travelStoryDetailFragment"
@@ -365,6 +406,38 @@
             app:argType="integer"
             android:defaultValue="-1" />
     </fragment>
+    <fragment
+        android:id="@+id/trendingDestinationFragment"
+        android:name="com.example.tripsync.travelStories.TrendingDestinationFragment"
+        android:label="TrendingDestinationFragment" >
+        <action
+            android:id="@+id/action_trendingDestinationFragment2_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newGroupFragment"
+        android:name="com.example.tripsync.NewGroupFragment"
+        android:label="New Group">
+        <action
+            android:id="@+id/action_newGroupFragment_to_chatThreadFragment"
+            app:destination="@id/chatThreadFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.tripsync.home.EditProfileFragment"
+        android:label="EditProfileFragment" />
+    <dialog
+        android:id="@+id/congratsDialogFragment"
+        android:name="com.example.tripsync.CongratsDialogFragment"
+        android:label="CongratsDialogFragment" >
+        <action
+            android:id="@+id/action_congratsDialogFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
+    </dialog>
+
 
     <fragment
         android:id="@+id/recievedRequestsFragment"

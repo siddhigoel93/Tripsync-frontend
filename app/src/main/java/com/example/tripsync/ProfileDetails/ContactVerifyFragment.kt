@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -19,11 +20,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.tripsync.R
 import com.example.tripsync.api.ApiClient
-import com.example.tripsync.api.models.EmailRequest
+import com.example.tripsync.api.SessionManager
 import com.example.tripsync.api.models.OtpCodeRequest
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 class ContactVerifyFragment : Fragment() {
 
@@ -34,7 +34,6 @@ class ContactVerifyFragment : Fragment() {
     private lateinit var btnPrevious : MaterialButton
     private lateinit var verifyOtpTitle: TextView
     private lateinit var otpSubtitle: TextView
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,8 +64,8 @@ class ContactVerifyFragment : Fragment() {
         tvResend.paintFlags = tvResend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         hiddenEditText.requestFocus()
 
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-        imm.showSoftInput(hiddenEditText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(hiddenEditText, InputMethodManager.SHOW_IMPLICIT)
 
         setupOtpInput()
 
@@ -93,7 +92,7 @@ class ContactVerifyFragment : Fragment() {
         boxes.forEach { box ->
             box.setOnClickListener {
                 hiddenEditText.requestFocus()
-                imm.showSoftInput(hiddenEditText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+                imm.showSoftInput(hiddenEditText, InputMethodManager.SHOW_IMPLICIT)
             }
         }
 
@@ -103,19 +102,15 @@ class ContactVerifyFragment : Fragment() {
             if (keyboardHeight > 0) {
                 view.animate().translationY(-keyboardHeight * 0.55f).setDuration(200).start()
                 verifyOtpTitle.animate().translationY(-keyboardHeight * 0.28f)
-
-            }else{
+            } else {
                 view.animate().translationY(0f).setDuration(200).start()
                 verifyOtpTitle.animate().translationY(0f)
                     .scaleX(1f).scaleY(1f).setDuration(200).start()
                 otpSubtitle.animate().alpha(1f).setDuration(200).start()
             }
-
             insets
         }
     }
-
-
 
     private fun verifyProfileOtp(otp: String) {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -123,29 +118,44 @@ class ContactVerifyFragment : Fragment() {
                 val api = ApiClient.getTokenService(requireContext())
                 val response = api.verifyPhoneOtp(OtpCodeRequest(otp))
 
-
                 if (response.isSuccessful) {
                     val body = response.body()
                     val profile = body?.data?.profile
 
                     if (body?.success == true && profile != null) {
-                        val prefs =
-                            requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                        // Save profile data using SessionManager
+                        SessionManager.saveUserProfile(
+                            requireContext(),
+                            firstName = profile.fname,
+                            lastName = profile.lname,
+                            email = profile.ename,
+                            phone = profile.enumber,
+                            avatarUrl = profile.profilePicUrl ?: profile.profilePic,
+                            medical = profile.medical,
+                            emergencyNumber = profile.enumber,
+                            emergencyName = profile.ename,
+                            emergencyRelation =profile.emergencyRelation,
+                        )
+
+                        // Also save to legacy SharedPreferences for backward compatibility
+                        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                         prefs.edit()
                             .putString("fname", profile.fname ?: "")
                             .putString("lname", profile.lname ?: "")
-                            .putString("ename" , profile.ename)
-                            .putString("enum" , profile.enumber)
-                            .putString(
-                                "userAvatarUrl",
-                                profile.profilePicUrl ?: profile.profilePic ?: ""
-                            )
+                            .putString("ename", profile.ename)
+                            .putString("enum", profile.enumber)
+                            .putString("self_id", profile.id.toString())
+                            .putString("ename", profile.ename)
+                            .putString("enumber", profile.enumber)
+                            .putString("userAvatarUrl", profile.profilePicUrl ?: profile.profilePic ?: "")
                             .apply()
-                    }
+
+                        // CRITICAL: Check and update profile completion status
+                        SessionManager.checkAndUpdateProfileStatus(requireContext())
+
                         Toast.makeText(requireContext(), "Phone number verified!", Toast.LENGTH_SHORT).show()
-                    val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                    sharedPrefs.edit().putBoolean("profile_completed", true).apply()
-                    navigateToExplore()
+                        navigateToExplore()
+                    }
                 } else {
                     val error = response.errorBody()?.string()
                     showOtpError("Invalid or expired OTP")
@@ -154,18 +164,18 @@ class ContactVerifyFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e("VerifyProfileOtp", "Exception: ${e.message}")
                 Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
-            }finally {
+            } finally {
                 btnVerifyOtp.isEnabled = true
                 btnVerifyOtp.text = "Verify OTP"
             }
         }
     }
 
-    fun navigateToExplore() {
+    private fun navigateToExplore() {
         val action = ContactVerifyFragmentDirections.actionContactVerifyFragmentToHomeFragment(showHeader = true)
-
         findNavController().navigate(action)
     }
+
     private fun resendProfileOtp() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -182,7 +192,6 @@ class ContactVerifyFragment : Fragment() {
         }
     }
 
-
     private fun showOtpError(message: String) {
         otpError.text = message
         otpError.visibility = View.VISIBLE
@@ -194,7 +203,7 @@ class ContactVerifyFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val text = s.toString()
-                otpError.visibility = View.GONE // Hide error on new input
+                otpError.visibility = View.GONE
 
                 boxes.forEachIndexed { index, box ->
                     if (index < text.length) {

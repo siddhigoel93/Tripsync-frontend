@@ -9,6 +9,7 @@
     android:layout_marginEnd="16dp"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
+    android:paddingBottom="12dp"
     android:background="@drawable/bg_card_rounded_white"
     android:elevation="4dp"
     android:clickable="true"
@@ -20,11 +21,14 @@
         android:layout_width="0dp"
         android:layout_height="180dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/placeholder_image"
+        android:src="@drawable/cover_image"
+        android:adjustViewBounds="true"
+        android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        app:shapeAppearanceOverlay="@style/RoundedImageStyle" />
 
     <TextView
         android:id="@+id/destination_title"
@@ -38,22 +42,11 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/action_arrow"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/destination_image" />
 
-    <TextView
-        android:id="@+id/destination_description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
-        android:text="Lorem is where ancient charm meets modern chaos."
-        android:textColor="@android:color/darker_gray"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/destination_title"
-        app:layout_constraintStart_toStartOf="@id/destination_title"
-        app:layout_constraintTop_toBottomOf="@id/destination_title" />
+
 
     <ImageView
         android:id="@+id/action_arrow"
@@ -64,9 +57,9 @@
         android:padding="8dp"
         android:src="@drawable/arrow_right"
         app:tint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/destination_description"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/destination_title"
+        app:layout_constraintTop_toBottomOf="@+id/destination_image"
         tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -35,7 +35,6 @@ class fragment_signup : Fragment() {
     private lateinit var etConfirm: EditText
     private lateinit var ivTogglePass: ImageView
     private lateinit var ivToggleConfirm: ImageView
-    private lateinit var ivEmailValid: ImageView
     private lateinit var btnSignUp: TextView
     private var tvConfirmError: TextView? = null
     private lateinit var confirmContainer: View
@@ -80,7 +79,6 @@ class fragment_signup : Fragment() {
         etConfirm = view.findViewById(R.id.etConfirm)
         ivTogglePass = view.findViewById(R.id.ivTogglePass)
         ivToggleConfirm = view.findViewById(R.id.ivToggleConfirm)
-        ivEmailValid = view.findViewById(R.id.ivEmailValid)
         btnSignUp = view.findViewById(R.id.btnSignUp)
         tvConfirmError = view.findViewById(R.id.tvConfirmErrorInline)
         confirmContainer = view.findViewById(R.id.confirmContainer)
@@ -111,20 +109,20 @@ class fragment_signup : Fragment() {
         tvRuleDigitConfirm = view.findViewById(R.id.pwRuleDigitConfirm)
 
         val blockEmojiAndSpaces = InputFilter { source, _, _, _, _, _ ->
-            if (source.any { Character.getType(it) == Character.SURROGATE.toInt() ||
-                        Character.getType(it) == Character.OTHER_SYMBOL.toInt() ||
-                        it.isWhitespace() }) "" else source
+            if (source.any {
+                    Character.getType(it) == Character.SURROGATE.toInt() ||
+                            Character.getType(it) == Character.OTHER_SYMBOL.toInt() ||
+                            it.isWhitespace()
+                }) "" else source
         }
-        val limit20 = InputFilter.LengthFilter(20)
 
-        etEmail.filters = arrayOf(blockEmojiAndSpaces)
-        etPassword.filters = arrayOf(blockEmojiAndSpaces, limit20)
-        etConfirm.filters = arrayOf(blockEmojiAndSpaces, limit20)
+        val limit30 = InputFilter.LengthFilter(30)
+        etEmail.filters = arrayOf(blockEmojiAndSpaces, limit30)
+        etPassword.filters = arrayOf(blockEmojiAndSpaces, limit30)
+        etConfirm.filters = arrayOf(blockEmojiAndSpaces, limit30)
 
         signin.paintFlags = signin.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         tvTerms.paintFlags = tvTerms.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-        ivEmailValid.setImageResource(R.drawable.ic_check_green)
-        ivEmailValid.visibility = View.GONE
 
         signin.setOnClickListener {
             view.findNavController().navigate(R.id.action_fragment_signup_to_login)
@@ -153,6 +151,8 @@ class fragment_signup : Fragment() {
             }
         })
 
+
+
         etConfirm.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -172,22 +172,10 @@ class fragment_signup : Fragment() {
 
         etEmail.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             etEmail.setBackgroundResource(if (hasFocus) R.drawable.selected_input else R.drawable.input_border)
-            if (!hasFocus) {
-                val email = etEmail.text?.toString()?.trim() ?: ""
-                ivEmailValid.visibility = if (isEmailSimpleValid(email)) View.VISIBLE else View.GONE
-            } else {
-                ivEmailValid.visibility = View.GONE
-            }
+
         }
 
-        etEmail.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val email = s?.toString()?.trim() ?: ""
-                ivEmailValid.visibility = if (isEmailSimpleValid(email)) View.VISIBLE else View.GONE
-            }
-        })
+
 
         btnSignUp.setOnClickListener {
             clearErrors()
@@ -287,7 +275,6 @@ class fragment_signup : Fragment() {
         spannable.setSpan(RelativeSizeSpan(0.75f), originalEmailLabel.length, combined.length, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
         lblEmail.text = spannable
         etEmail.setBackgroundResource(R.drawable.wrong_input)
-        ivEmailValid.visibility = View.GONE
     }
 
     private fun showPasswordError(message: String) {

@@ -53,32 +53,5 @@
     </ScrollView>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="20dp">
-
-        <ImageView
-            android:id="@+id/menu_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/logout" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/menu_sos"
-           android:src="@drawable/sos_icon"
-            android:layout_marginTop="8dp"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/menu_delete"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/delete_profile"
-            android:layout_marginTop="8dp"/>
-
-    </LinearLayout>
 
 </LinearLayout>

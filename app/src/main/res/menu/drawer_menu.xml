@@ -1,8 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/openProfileFragment" android:title="Profile" />
+    <item android:id="@+id/nav_weather" android:title="AI chatbot" />
     <item android:id="@+id/nav_add_tripmates" android:title="My trips" />
     <item android:id="@+id/nav_friends" android:title="Friends" />
-    <item android:id="@+id/nav_delete" android:title="Delete account" />
-    <item android:id="@+id/nav_logout" android:title="Logout" />
-    <item android:id="@+id/emergencySosFragment" android:title="SOS" />
+    <item android:id="@+id/nav_train_info" android:title="Train Info" />
 </menu>

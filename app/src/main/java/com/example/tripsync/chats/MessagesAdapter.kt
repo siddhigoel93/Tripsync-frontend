@@ -1,82 +1,233 @@
-package com.example.tripsync.adapters
+package com.example.tripsync
 
+import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tripsync.R
 import com.example.tripsync.api.models.Message
+import com.example.tripsync.utils.DialogUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MessagesAdapter(
-    private val messages: MutableList<Message>,
-    private val selfId: Int // logged-in user id
-) : RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>() {
+    private var messages: MutableList<Message>,
+    private val currentUserId: Int,
+    private val isGroup: Boolean,
+    private val onEditMessage: (Message, String) -> Unit,
+    private val onDeleteMessage: (Message) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val containerLeft: LinearLayout = itemView.findViewById(R.id.container_left)
-        val bubbleLeft: TextView = itemView.findViewById(R.id.bubble_left)
-        val timeLeft: TextView = itemView.findViewById(R.id.time_left)
-
-        val containerRight: LinearLayout = itemView.findViewById(R.id.container_right)
-        val bubbleRight: TextView = itemView.findViewById(R.id.bubble_right)
-        val timeRight: TextView = itemView.findViewById(R.id.time_right)
+    companion object {
+        private const val VIEW_TYPE_SENT = 1
+        private const val VIEW_TYPE_RECEIVED = 2
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_message, parent, false)
-        return MessageViewHolder(view)
+    class SentMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val messageText: TextView = view.findViewById(R.id.message_text)
+        val messageTime: TextView = view.findViewById(R.id.message_time)
+        val editedIndicator: TextView = view.findViewById(R.id.edited_indicator)
     }
 
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
+    class ReceivedMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val senderName: TextView = view.findViewById(R.id.sender_name)
+        val messageText: TextView = view.findViewById(R.id.message_text)
+        val messageTime: TextView = view.findViewById(R.id.message_time)
+        val editedIndicator: TextView = view.findViewById(R.id.edited_indicator)
+    }
+
+    override fun getItemViewType(position: Int): Int {
         val message = messages[position]
-        val isSelf = message.sender.id == selfId
-        val formattedTime = message.timestamp?.let { formatTime(it) } ?: ""
+        val isSentByMe = message.sender.id == currentUserId
 
-        if (isSelf) {
-            // Show right bubble
-            holder.containerRight.visibility = View.VISIBLE
-            holder.bubbleRight.text = message.content
-            holder.timeRight.text = formattedTime
+        Log.d("MessagesAdapter", "Message ${message.id}: sender=${message.sender.id}, currentUser=$currentUserId, isSent=$isSentByMe")
 
-            holder.containerLeft.visibility = View.GONE
+        return if (isSentByMe) {
+            VIEW_TYPE_SENT
         } else {
-            // Show left bubble
-            holder.containerLeft.visibility = View.VISIBLE
-            holder.bubbleLeft.text = message.content
-            holder.timeLeft.text = formattedTime
-
-            holder.containerRight.visibility = View.GONE
+            VIEW_TYPE_RECEIVED
         }
     }
 
-    override fun getItemCount(): Int = messages.size
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_SENT) {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_message_sent, parent, false)
+            SentMessageViewHolder(view)
+        } else {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_message_received, parent, false)
+            ReceivedMessageViewHolder(view)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val message = messages[position]
+
+        when (holder) {
+            is SentMessageViewHolder -> {
+                holder.messageText.text = message.content
+                holder.messageTime.text = formatTime(message.timestamp)
+
+                // Show edited indicator
+                if (message.is_edited == true) {
+                    holder.editedIndicator.visibility = View.VISIBLE
+                    val editedTime = message.edited_at?.let { formatTime(it) } ?: ""
+                    holder.editedIndicator.text = "Edited $editedTime"
+                } else {
+                    holder.editedIndicator.visibility = View.GONE
+                }
+
+                // Long press to show options (only for sent messages)
+                holder.itemView.setOnLongClickListener {
+                    showMessageOptions(holder.itemView.context, message)
+                    true
+                }
+
+                Log.d("MessagesAdapter", "Binding SENT message: ${message.content}")
+            }
+            is ReceivedMessageViewHolder -> {
+                holder.messageText.text = message.content
+                holder.messageTime.text = formatTime(message.timestamp)
+
+                // Show edited indicator
+                if (message.is_edited == true) {
+                    holder.editedIndicator.visibility = View.VISIBLE
+                    val editedTime = message.edited_at?.let { formatTime(it) } ?: ""
+                    holder.editedIndicator.text = "Edited $editedTime"
+                } else {
+                    holder.editedIndicator.visibility = View.GONE
+                }
+
+                // Show sender name only in group chats
+                if (isGroup) {
+                    holder.senderName.visibility = View.VISIBLE
+                    holder.senderName.text = message.sender.name?.split(" ")?.firstOrNull()
+                        ?: message.sender.email?.split("@")?.firstOrNull()
+                                ?: "Unknown"
+                } else {
+                    holder.senderName.visibility = View.GONE
+                }
+
+                Log.d("MessagesAdapter", "Binding RECEIVED message: ${message.content}")
+            }
+        }
+    }
+
+    private fun showMessageOptions(context: android.content.Context, message: Message) {
+        val options = arrayOf("Edit", "Delete")
+
+        DialogUtils.showOptionsDialog(
+            context,
+            "Message Options",
+            options
+        ) { which ->
+            when (which) {
+                0 -> showEditDialog(context, message)
+                1 -> showDeleteConfirmation(context, message)
+            }
+        }
+    }
+
+    private fun showEditDialog(context: Context, message: Message) {
+
+        DialogUtils.showInputDialog(
+            context = context,
+            title = "Edit Message",
+            hint = "Enter your message",
+            prefillText = message.content ?: "",
+            positiveButtonText = "Save",
+            negativeButtonText = "Cancel",
+            onPositiveClick = { newContent ->
+                val updated = newContent.trim()
+
+                if (updated.isNotEmpty() && updated != message.content) {
+                    onEditMessage(message, updated)
+                }
+            },
+            onNegativeClick = {
+
+            }
+        )
+    }
+
+
+
+    private fun showDeleteConfirmation(context: android.content.Context, message: Message) {
+        DialogUtils.showConfirmationDialog(
+            context,
+            "Delete Message",
+            "Are you sure you want to delete this message?",
+            positiveButtonText = "Delete",
+            negativeButtonText = "Cancel",
+            onPositiveClick = {
+                onDeleteMessage(message)
+            }
+        )
+    }
+
+    override fun getItemCount() = messages.size
 
     fun updateMessages(newMessages: List<Message>) {
-        messages.clear()
-        messages.addAll(newMessages)
-        notifyDataSetChanged()
+        val oldSize = messages.size
+        val newSize = newMessages.size
+
+        Log.d("MessagesAdapter", "Updating messages: oldSize=$oldSize, newSize=$newSize")
+
+        // If we have new messages, only notify about the new ones
+        if (newSize > oldSize) {
+            messages.clear()
+            messages.addAll(newMessages)
+            notifyItemRangeInserted(oldSize, newSize - oldSize)
+        } else if (newSize < oldSize) {
+            // Messages were deleted, full refresh
+            messages.clear()
+            messages.addAll(newMessages)
+            notifyDataSetChanged()
+        } else {
+            // Same size, check if content changed
+            var hasChanges = false
+            for (i in messages.indices) {
+                if (i < newMessages.size &&
+                    (messages[i].id != newMessages[i].id ||
+                            messages[i].content != newMessages[i].content ||
+                            messages[i].is_edited != newMessages[i].is_edited)) {
+                    hasChanges = true
+                    break
+                }
+            }
+            if (hasChanges) {
+                messages.clear()
+                messages.addAll(newMessages)
+                notifyDataSetChanged()
+            }
+        }
     }
 
-    fun addMessage(message: Message) {
-        messages.add(message)
-        notifyItemInserted(messages.size - 1)
-    }
-
-    // Format ISO timestamp to HH:mm
-    private fun formatTime(isoTime: String): String {
+    private fun formatTime(timestamp: String): String {
         return try {
-            val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-            parser.timeZone = TimeZone.getTimeZone("UTC")
-            val date = parser.parse(isoTime)
-            val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-            formatter.format(date ?: Date())
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+            val date = inputFormat.parse(timestamp) ?: return ""
+
+            val now = Calendar.getInstance()
+            val messageTime = Calendar.getInstance().apply { time = date }
+
+            if (isSameDay(now, messageTime)) {
+                SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
+            } else {
+                SimpleDateFormat("dd/MM HH:mm", Locale.getDefault()).format(date)
+            }
         } catch (e: Exception) {
+            Log.e("MessagesAdapter", "Error formatting timestamp: $timestamp", e)
             ""
         }
+    }
+
+    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 }
