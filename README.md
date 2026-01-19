@@ -86,12 +86,35 @@ TripSync provides a unified platform for planning, managing, and experiencing tr
   <img src="assets/screenshots/signup.jpeg" width="280" />
 </div>
 
-### 👤 Profiles & Community
+### 👤 Profiles 
 <div align="center">
   <img src="assets/screenshots/profile.jpeg" width="280" />
   <img src="assets/screenshots/profiles.jpeg" width="280" />
 </div>
 
+### 🗺️ AI Itinerary Planner
+<div align="center">
+  <img src="assets/screenshots/itinerary1.jpeg" width="260" />
+  <img src="assets/screenshots/itinerary2.jpeg" width="260" />
+</div>
+
+### 💬 Group Chats
+<div align="center">
+  <img src="assets/screenshots/chat.jpeg" width="260" />
+  <img src="assets/screenshots/searchchat.jpeg" width="260" />
+</div>
+
+### 🌍 Community & Social
+<div align="center">
+  <img src="assets/screenshots/community.jpeg" width="260" />
+  <img src="assets/screenshots/posts.jpeg" width="260" />
+  <img src="assets/screenshots/comments.jpeg" width="260" />
+</div>
+
+### 🚨 Emergency SOS
+<div align="center">
+  <img src="assets/screenshots/sos.jpeg" width="260" />
+</div>
 
 ## 🎥 Feature Demo Videos
 
