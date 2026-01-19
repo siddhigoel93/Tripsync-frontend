@@ -78,3 +78,19 @@ TripSync provides a unified platform for planning, managing, and experiencing tr
 
 ---
 
+## 📸 App Screenshots
+
+### 🔐 Authentication
+![Login Screen](assets/screenshots/login.jpeg)
+![Signup Screen](assets/screenshots/signup.jpeg)
+
+### 👤 Profile
+![Profile](assets/screenshots/profile.jpeg)
+![Profiles](assets/screenshots/profiles.jpeg)
+
+## 🎥 Feature Demo Videos
+
+- 🔐 Authentication Flow → [Watch Video](assets/screenshots/auth.mp4)
+- 🗺️ Itinerary Planning → [Watch Video](assets/screenshots/itinerary.mp4)
+- 💬 Group Chats → [Watch Video](assets/screenshots/chats.mp4)
+- 👤 Profile Creation → [Watch Video](assets/screenshots/profilecreation.mp4)
